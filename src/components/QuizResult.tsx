@@ -97,7 +97,7 @@ const QuizResult = ({ cognitiveType, explanation, motivation, onClose, onFindMat
               You're {cognitiveType}
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl">
-              {explanation}
+              You connect best with partners who appreciate your {cognitiveType.toLowerCase()} nature and can engage with your unique way of thinking and approaching life.
             </p>
           </div>
 
