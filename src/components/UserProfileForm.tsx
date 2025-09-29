@@ -11,7 +11,7 @@ import { Brain, Sparkles, Users, Heart } from 'lucide-react';
 
 interface UserProfileFormProps {
   cognitiveType?: string;
-  onComplete?: () => void;
+  onComplete?: (userData: { name: string; age: number; gender: string }) => void;
   onClose?: () => void;
 }
 
@@ -71,7 +71,7 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({
     if (!name.trim() || !gender) {
       toast({
         title: "Please complete all fields",
-        description: "Name and gender are required to find your matches.",
+        description: "Name and gender are required to proceed.",
         variant: "destructive"
       });
       return;
@@ -92,10 +92,14 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({
 
       toast({
         title: "Profile created successfully! 🎉",
-        description: "We're now finding your perfect mind matches...",
+        description: "Ready to start your cognitive quiz!",
       });
 
-      onComplete?.();
+      onComplete?.({
+        name: name.trim(),
+        age: age[0],
+        gender
+      });
     } catch (error: any) {
       toast({
         title: "Error creating profile",
@@ -115,10 +119,10 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({
             <Heart className="h-6 w-6 text-primary-foreground" />
           </div>
           <CardTitle className="text-2xl bg-gradient-hero bg-clip-text text-transparent">
-            Find Your Mind Match
+            Create Your Profile
           </CardTitle>
           <p className="text-muted-foreground text-sm">
-            Let's create your profile to find compatible minds
+            Tell us about yourself before we analyze your mind
           </p>
         </CardHeader>
 
@@ -206,7 +210,7 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({
                 className="flex-1 bg-gradient-hero hover:shadow-glow transition-all duration-300"
                 disabled={isSubmitting}
               >
-                {isSubmitting ? "Creating..." : "Find Matches"}
+                {isSubmitting ? "Creating..." : "Start Quiz"}
               </Button>
             </div>
           </form>

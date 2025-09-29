@@ -14,6 +14,11 @@ const HeroSection = () => {
   const [showResult, setShowResult] = useState(false);
   const [showProfileForm, setShowProfileForm] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [profileData, setProfileData] = useState<{
+    name: string;
+    age: number;
+    gender: string;
+  } | null>(null);
   const [quizResult, setQuizResult] = useState<{
     cognitiveType: string;
     explanation: string;
@@ -42,6 +47,20 @@ const HeroSection = () => {
         return;
       }
       
+      // Update the user's profile with the cognitive type
+      if (profileData && data.cognitiveType) {
+        const { error: updateError } = await supabase
+          .from('profiles')
+          .update({ cognitive_type: data.cognitiveType })
+          .eq('name', profileData.name)
+          .eq('age', profileData.age)
+          .eq('gender', profileData.gender);
+          
+        if (updateError) {
+          console.error('Error updating profile with cognitive type:', updateError);
+        }
+      }
+      
       setQuizResult(data);
       setIsAnalyzing(false);
       setShowResult(true);
@@ -64,7 +83,7 @@ const HeroSection = () => {
   };
 
   const handleStartQuiz = () => {
-    setShowQuiz(true);
+    setShowProfileForm(true);
   };
 
   const handleCloseQuiz = () => {
@@ -76,19 +95,23 @@ const HeroSection = () => {
     setQuizResult(null);
   };
 
-  const handleFindMatches = () => {
-    setShowResult(false);
-    setShowProfileForm(true);
-  };
-
-  const handleProfileComplete = () => {
+  const handleProfileComplete = (userData: { name: string; age: number; gender: string }) => {
+    setProfileData(userData);
     setShowProfileForm(false);
-    // Here you could navigate to a matches page or show matches
+    setShowQuiz(true);
   };
 
   const handleCloseProfileForm = () => {
     setShowProfileForm(false);
-    setShowResult(true); // Go back to results
+  };
+
+  const handleFindMatches = () => {
+    setShowResult(false);
+    // Here you could navigate to a matches page or show matches
+    toast({
+      title: "Profile Complete! 🎉",
+      description: "Your profile has been saved. Check the Cloud panel to see your data!",
+    });
   };
   return (
     <section className="min-h-screen flex items-center justify-center bg-gradient-hero relative overflow-hidden">
@@ -203,9 +226,9 @@ const HeroSection = () => {
         />
       )}
 
-      {showProfileForm && quizResult && (
+      {showProfileForm && (
         <UserProfileForm
-          cognitiveType={quizResult.cognitiveType}
+          cognitiveType={quizResult?.cognitiveType}
           onComplete={handleProfileComplete}
           onClose={handleCloseProfileForm}
         />
