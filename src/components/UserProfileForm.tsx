@@ -11,6 +11,7 @@ import { Brain, Sparkles, Users, Heart } from 'lucide-react';
 
 interface UserProfileFormProps {
   cognitiveType?: string;
+  isForCouple?: boolean;
   onComplete?: (userData: { name: string; age: number; gender: string }) => void;
   onClose?: () => void;
 }
@@ -55,6 +56,7 @@ const getGenerationInfo = (age: number) => {
 
 const UserProfileForm: React.FC<UserProfileFormProps> = ({ 
   cognitiveType, 
+  isForCouple = false,
   onComplete, 
   onClose 
 }) => {
@@ -91,8 +93,8 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({
       if (error) throw error;
 
       toast({
-        title: "Profile created successfully! 🎉",
-        description: "Ready to start your cognitive quiz!",
+        title: isForCouple ? "Couple profile created! 💕" : "Profile created successfully! 🎉",
+        description: isForCouple ? "Ready to analyze your compatibility!" : "Ready to start your cognitive quiz!",
       });
 
       onComplete?.({
@@ -119,10 +121,13 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({
             <Heart className="h-6 w-6 text-primary-foreground" />
           </div>
           <CardTitle className="text-2xl bg-gradient-hero bg-clip-text text-transparent">
-            Create Your Profile
+            {isForCouple ? "Couple Profile Setup" : "Create Your Profile"}
           </CardTitle>
           <p className="text-muted-foreground text-sm">
-            Tell us about yourself before we analyze your mind
+            {isForCouple 
+              ? "Set up your profile to discover your couple compatibility" 
+              : "Tell us about yourself before we analyze your mind"
+            }
           </p>
         </CardHeader>
 
@@ -210,7 +215,12 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({
                 className="flex-1 bg-gradient-hero hover:shadow-glow transition-all duration-300"
                 disabled={isSubmitting}
               >
-                {isSubmitting ? "Creating..." : "Start Quiz"}
+                {isSubmitting 
+                  ? "Creating..." 
+                  : isForCouple 
+                    ? "Start Compatibility Quiz" 
+                    : "Start Quiz"
+                }
               </Button>
             </div>
           </form>

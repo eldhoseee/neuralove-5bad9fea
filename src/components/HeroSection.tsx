@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Heart, Brain, Sparkles } from "lucide-react";
+import { Heart, Brain, Sparkles, Users } from "lucide-react";
 import heroImage from "@/assets/hero-mindmatch.jpg";
 import CognitiveQuiz from "./CognitiveQuiz";
 import QuizResult from "./QuizResult";
@@ -20,6 +20,7 @@ const HeroSection = () => {
     age: number;
     gender: string;
   } | null>(null);
+  const [isForCouple, setIsForCouple] = useState(false);
   const [quizResult, setQuizResult] = useState<{
     cognitiveType: string;
     explanation: string;
@@ -84,6 +85,12 @@ const HeroSection = () => {
   };
 
   const handleStartQuiz = () => {
+    setIsForCouple(false);
+    setShowProfileForm(true);
+  };
+
+  const handleStartCoupleMatch = () => {
+    setIsForCouple(true);
     setShowProfileForm(true);
   };
 
@@ -108,10 +115,13 @@ const HeroSection = () => {
 
   const handleFindMatches = () => {
     setShowResult(false);
-    // Here you could navigate to a matches page or show matches
+    const message = isForCouple 
+      ? "Couple compatibility analysis complete! 💕 Check the Cloud panel to see your data!"
+      : "Profile Complete! 🎉 Your profile has been saved. Check the Cloud panel to see your data!";
+    
     toast({
-      title: "Profile Complete! 🎉",
-      description: "Your profile has been saved. Check the Cloud panel to see your data!",
+      title: isForCouple ? "Couple Analysis Complete! 💕" : "Profile Complete! 🎉",
+      description: message,
     });
   };
   return (
@@ -160,6 +170,18 @@ const HeroSection = () => {
               <div className="flex items-center gap-1">
                 <Brain className="w-4 h-4" />
                 <Heart className="w-4 h-4 text-secondary-foreground group-hover:animate-pulse" />
+              </div>
+            </Button>
+            
+            <Button 
+              size="lg" 
+              className="group shadow-glow hover:shadow-xl transition-all duration-300 bg-accent hover:bg-accent/90"
+              onClick={handleStartCoupleMatch}
+            >
+              <span className="mr-2">Couple Match Finder</span>
+              <div className="flex items-center gap-1">
+                <Users className="w-4 h-4" />
+                <Heart className="w-4 h-4 group-hover:animate-pulse" />
               </div>
             </Button>
             
@@ -236,6 +258,7 @@ const HeroSection = () => {
       {showProfileForm && (
         <UserProfileForm
           cognitiveType={quizResult?.cognitiveType}
+          isForCouple={isForCouple}
           onComplete={handleProfileComplete}
           onClose={handleCloseProfileForm}
         />
