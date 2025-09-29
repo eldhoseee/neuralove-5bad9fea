@@ -5,40 +5,51 @@ const HowItWorks = () => {
   const steps = [
     {
       icon: Brain,
-      title: "Take the Quiz",
-      description: "Answer 5 minutes of psychology-based questions about how you think, feel, and make decisions.",
+      title: "Take the Cognitive Quiz",
+      description: "Answer psychology-based questions about how you think, solve problems, and process emotions. Our 5-minute assessment reveals your unique cognitive profile.",
       color: "bg-neural-purple"
     },
     {
       icon: Users,
-      title: "Discover Your Type",
-      description: "Get your unique cognitive profile based on proven psychological frameworks and research.",
+      title: "Get Your Mind Type",
+      description: "Discover your cognitive personality - whether you're a Strategic Visionary, Empathetic Connector, or one of 8 other scientifically-backed thinking patterns.",
       color: "bg-neural-blue"
     },
     {
       icon: Heart,
-      title: "Find Your Matches",
-      description: "See compatibility scores with people whose minds complement and understand yours.",
+      title: "Find Compatible Minds",
+      description: "See people whose thinking styles create natural chemistry with yours. No more guessing - we show you why you'll click mentally and emotionally.",
       color: "bg-primary"
     },
     {
       icon: MessageCircle,
-      title: "Start Real Conversations",
-      description: "Connect with conversation starters based on your shared thinking patterns and values.",
+      title: "Connect with Purpose",
+      description: "Start conversations with personalized icebreakers based on your shared values, interests, and communication styles. Real depth from day one.",
       color: "bg-accent"
     }
   ];
 
   return (
-    <section className="py-20 bg-background">
+    <section id="how-it-works" className="py-20 bg-background">
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
-            How It Works
+            How MindMatch Works
           </h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            From mind to match in four simple steps. No more endless swiping, no more surface-level connections.
+          <p className="text-xl text-muted-foreground max-w-4xl mx-auto mb-8">
+            Traditional dating apps focus on what you look like. We focus on how you think. 
+            MindMatch uses psychology-based profiling to connect people whose minds naturally click together.
           </p>
+          <div className="bg-muted/30 rounded-2xl p-6 max-w-4xl mx-auto">
+            <p className="text-lg text-foreground font-medium mb-4">
+              💡 The Big Idea
+            </p>
+            <p className="text-muted-foreground leading-relaxed">
+              Ever met someone and felt like they "just get you"? That's cognitive compatibility in action. 
+              We help you find people who process information, make decisions, and view the world in ways that complement your own thinking style. 
+              The result? Deeper conversations, stronger connections, and relationships built on genuine mental harmony.
+            </p>
+          </div>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -72,9 +83,16 @@ const HowItWorks = () => {
           ))}
         </div>
 
-        <div className="text-center mt-16">
+        <div className="text-center mt-16 space-y-6">
+          <div className="bg-gradient-primary rounded-2xl p-8 max-w-3xl mx-auto text-white">
+            <h3 className="text-2xl font-bold mb-4">Why Cognitive Compatibility Matters</h3>
+            <p className="text-lg leading-relaxed opacity-90">
+              Research shows that couples with compatible thinking styles have 73% longer-lasting relationships. 
+              When your minds sync up, everything else follows - from communication to shared goals to genuine understanding.
+            </p>
+          </div>
           <p className="text-lg text-muted-foreground">
-            Ready to find someone who truly gets you?
+            Ready to find someone who truly gets how your mind works? 🧠💕
           </p>
         </div>
       </div>

@@ -162,7 +162,15 @@ const HeroSection = () => {
               </div>
             </Button>
             
-            <Button size="lg" variant="outline" className="border-foreground/30 text-foreground hover:bg-foreground/10">
+            <Button 
+              size="lg" 
+              variant="outline" 
+              className="border-foreground/30 text-foreground hover:bg-foreground/10"
+              onClick={() => {
+                const howItWorksSection = document.getElementById('how-it-works');
+                howItWorksSection?.scrollIntoView({ behavior: 'smooth' });
+              }}
+            >
               How It Works
             </Button>
           </div>
