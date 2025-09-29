@@ -1,6 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Brain, Heart, Sparkles, Share2, ArrowRight, CheckCircle, Users, MessageCircle, Compass, ToggleLeft, ToggleRight, Loader2 } from "lucide-react";
+import { ResultCard } from "@/components/ui/result-card";
+import { LoadingIndicator } from "@/components/ui/loading-indicator";
+import { Brain, Heart, Sparkles, Share2, ArrowRight, CheckCircle, Users, MessageCircle, Compass, ToggleLeft, ToggleRight } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -99,55 +101,22 @@ const QuizResult = ({ cognitiveType, explanation, motivation, onClose, onFindMat
             </p>
           </div>
 
-          {/* Simple Mode Content */}
-          {isSimpleMode ? (
-            <div className="space-y-6">
-              {/* Basic Explanation */}
-              <Card className="p-6 bg-muted/30">
-                <h3 className="text-xl font-semibold text-foreground mb-3 flex items-center gap-2">
-                  <Brain className="w-5 h-5 text-primary" />
-                  Your Cognitive Profile
-                </h3>
-                <p className="text-muted-foreground leading-relaxed">
-                  {explanation}
-                </p>
-              </Card>
-
-              {/* Superpower */}
-              <Card className="p-6 bg-gradient-to-br from-primary/5 to-secondary/5 border-primary/20">
-                <h3 className="text-xl font-semibold text-foreground mb-3 flex items-center gap-2">
-                  <Sparkles className="w-5 h-5 text-primary" />
-                  Your Superpower
-                </h3>
-                <p className="text-foreground leading-relaxed font-medium">
-                  {motivation}
-                </p>
-              </Card>
-            </div>
-          ) : (
-            /* Detailed Mode Content */
-            <div className="space-y-8">
-              {/* Cognitive Profile */}
-              <Card className="p-6 bg-muted/30">
-                <h3 className="text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
-                  <Brain className="w-5 h-5 text-primary" />
-                  Your Cognitive Profile
-                </h3>
-                <p className="text-muted-foreground leading-relaxed mb-4">
-                  {explanation}
-                </p>
-                
-                {/* Key Strengths */}
+          <div className="space-y-8">
+            {/* Cognitive Profile with Key Strengths (always shown) */}
+            <ResultCard variant="base">
+              <h3 className="text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
+                <Brain className="w-5 h-5 text-primary" />
+                Your Cognitive Profile
+              </h3>
+              
+              {!isSimpleMode && (
                 <div className="mt-6">
                   <h4 className="font-semibold text-foreground mb-3 flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-primary" />
                     Key Strengths
                   </h4>
                   {isLoadingInsights ? (
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      <span>AI is analyzing your unique strengths...</span>
-                    </div>
+                    <LoadingIndicator message="AI is analyzing your unique strengths..." />
                   ) : (
                     <div className="grid gap-3">
                       {insights?.keyStrengths?.map((strength, index) => (
@@ -159,88 +128,84 @@ const QuizResult = ({ cognitiveType, explanation, motivation, onClose, onFindMat
                     </div>
                   )}
                 </div>
-              </Card>
+              )}
+            </ResultCard>
 
-              {/* Validation Statements */}
-              <Card className="p-6 bg-gradient-to-br from-accent/5 to-primary/5 border-accent/20">
-                <h3 className="text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
-                  <Heart className="w-5 h-5 text-accent" />
-                  What Makes You Special
-                </h3>
-                {isLoadingInsights ? (
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    <span>Generating personalized insights...</span>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    {insights?.validationStatements?.map((validation, index) => (
-                      <div key={index} className="flex items-start gap-3 p-4 bg-background/50 rounded-lg">
-                        <CheckCircle className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                        <p className="text-foreground">{validation}</p>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </Card>
+            {/* Detailed Mode Only Sections */}
+            {!isSimpleMode && (
+              <>
+                {/* Validation Statements */}
+                <ResultCard variant="accent">
+                  <h3 className="text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
+                    <Heart className="w-5 h-5 text-accent" />
+                    What Makes You Special
+                  </h3>
+                  {isLoadingInsights ? (
+                    <LoadingIndicator message="Generating personalized insights..." />
+                  ) : (
+                    <div className="space-y-3">
+                      {insights?.validationStatements?.map((validation, index) => (
+                        <div key={index} className="flex items-start gap-3 p-4 bg-background/50 rounded-lg">
+                          <CheckCircle className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
+                          <p className="text-foreground">{validation}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </ResultCard>
 
-              {/* Ideal Matches */}
-              <Card className="p-6 bg-gradient-to-br from-secondary/5 to-primary/5 border-secondary/20">
-                <h3 className="text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
-                  <Users className="w-5 h-5 text-secondary" />
-                  Your Ideal Mind Matches
-                </h3>
-                {isLoadingInsights ? (
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    <span>Finding compatible cognitive types...</span>
-                  </div>
-                ) : (
-                  <div className="grid gap-4">
-                    {insights?.idealMatches?.map((match, index) => (
-                      <div key={index} className="p-4 bg-background/50 rounded-lg">
-                        <h4 className="font-medium text-foreground mb-2">{match}</h4>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </Card>
+                {/* Ideal Matches */}
+                <ResultCard variant="secondary">
+                  <h3 className="text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
+                    <Users className="w-5 h-5 text-secondary" />
+                    Your Ideal Mind Matches
+                  </h3>
+                  {isLoadingInsights ? (
+                    <LoadingIndicator message="Finding compatible cognitive types..." />
+                  ) : (
+                    <div className="grid gap-4">
+                      {insights?.idealMatches?.map((match, index) => (
+                        <div key={index} className="p-4 bg-background/50 rounded-lg">
+                          <h4 className="font-medium text-foreground mb-2">{match}</h4>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </ResultCard>
 
-              {/* Relationship Dynamics */}
-              <Card className="p-6 bg-gradient-to-br from-primary/5 to-accent/5 border-primary/20">
-                <h3 className="text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
-                  <MessageCircle className="w-5 h-5 text-primary" />
-                  Your Relationship Style
-                </h3>
-                {isLoadingInsights ? (
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    <span>Analyzing relationship insights...</span>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {insights?.relationshipDynamics?.map((style, index) => (
-                      <div key={index} className="flex items-start gap-3 p-4 bg-background/50 rounded-lg">
-                        <Compass className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
-                        <p className="text-foreground">{style}</p>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </Card>
+                {/* Relationship Dynamics */}
+                <ResultCard variant="primary">
+                  <h3 className="text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
+                    <MessageCircle className="w-5 h-5 text-primary" />
+                    Your Relationship Style
+                  </h3>
+                  {isLoadingInsights ? (
+                    <LoadingIndicator message="Analyzing relationship insights..." />
+                  ) : (
+                    <div className="space-y-4">
+                      {insights?.relationshipDynamics?.map((style, index) => (
+                        <div key={index} className="flex items-start gap-3 p-4 bg-background/50 rounded-lg">
+                          <Compass className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                          <p className="text-foreground">{style}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </ResultCard>
+              </>
+            )}
 
-              {/* Superpower */}
-              <Card className="p-6 bg-gradient-to-br from-primary/10 to-secondary/10 border-primary/30">
-                <h3 className="text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
-                  <Sparkles className="w-5 h-5 text-primary" />
-                  Your Superpower
-                </h3>
-                <p className="text-lg text-foreground leading-relaxed font-medium">
-                  {motivation}
-                </p>
-              </Card>
-            </div>
-          )}
+            {/* Superpower (always shown) */}
+            <ResultCard variant="superpower">
+              <h3 className="text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-primary" />
+                Your Superpower
+              </h3>
+              <p className="text-lg text-foreground leading-relaxed font-medium">
+                {motivation}
+              </p>
+            </ResultCard>
+          </div>
 
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 pt-8">
