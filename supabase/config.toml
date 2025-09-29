@@ -1,0 +1,7 @@
+project_id = "ofcktyrnwvlfiqnnhkoc"
+
+[functions.analyze-cognitive-quiz]
+verify_jwt = false
+
+[functions.generate-cognitive-insights]
+verify_jwt = false
