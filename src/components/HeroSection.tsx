@@ -6,6 +6,7 @@ import heroImage from "@/assets/hero-mindmatch.jpg";
 import CognitiveQuiz from "./CognitiveQuiz";
 import QuizResult from "./QuizResult";
 import UserProfileForm from "./UserProfileForm";
+import CoupleNamesForm from "./CoupleNamesForm";
 import QuizAnalyzing from "./QuizAnalyzing";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -14,11 +15,16 @@ const HeroSection = () => {
   const [showQuiz, setShowQuiz] = useState(false);
   const [showResult, setShowResult] = useState(false);
   const [showProfileForm, setShowProfileForm] = useState(false);
+  const [showCoupleNamesForm, setShowCoupleNamesForm] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [profileData, setProfileData] = useState<{
     name: string;
     age: number;
     gender: string;
+  } | null>(null);
+  const [coupleNames, setCoupleNames] = useState<{
+    person1Name: string;
+    person2Name: string;
   } | null>(null);
   const [isForCouple, setIsForCouple] = useState(false);
   const [quizResult, setQuizResult] = useState<{
@@ -91,7 +97,18 @@ const HeroSection = () => {
 
   const handleStartCoupleMatch = () => {
     setIsForCouple(true);
-    setShowProfileForm(true);
+    setShowCoupleNamesForm(true);
+  };
+
+  const handleCoupleNamesComplete = (names: { person1Name: string; person2Name: string }) => {
+    setCoupleNames(names);
+    setShowCoupleNamesForm(false);
+    setShowQuiz(true);
+  };
+
+  const handleCloseCoupleNames = () => {
+    setShowCoupleNamesForm(false);
+    setIsForCouple(false);
   };
 
   const handleCloseQuiz = () => {
@@ -178,7 +195,7 @@ const HeroSection = () => {
               className="group shadow-glow hover:shadow-xl transition-all duration-300 bg-accent hover:bg-accent/90"
               onClick={handleStartCoupleMatch}
             >
-              <span className="mr-2">Couple Match Finder</span>
+              <span className="mr-2">Relationship Compatibility Test</span>
               <div className="flex items-center gap-1">
                 <Users className="w-4 h-4" />
                 <Heart className="w-4 h-4 group-hover:animate-pulse" />
@@ -238,6 +255,8 @@ const HeroSection = () => {
         <CognitiveQuiz 
           onComplete={handleQuizComplete}
           onClose={handleCloseQuiz}
+          isForCouple={isForCouple}
+          coupleNames={coupleNames}
         />
       )}
 
@@ -252,15 +271,26 @@ const HeroSection = () => {
           motivation={quizResult.motivation}
           onClose={handleCloseResult}
           onFindMatches={handleFindMatches}
+          isForCouple={isForCouple}
+          coupleNames={coupleNames}
         />
       )}
 
+      {/* Profile Form Modal */}
       {showProfileForm && (
         <UserProfileForm
           cognitiveType={quizResult?.cognitiveType}
           isForCouple={isForCouple}
           onComplete={handleProfileComplete}
           onClose={handleCloseProfileForm}
+        />
+      )}
+
+      {/* Couple Names Form Modal */}
+      {showCoupleNamesForm && (
+        <CoupleNamesForm
+          onComplete={handleCoupleNamesComplete}
+          onClose={handleCloseCoupleNames}
         />
       )}
     </section>

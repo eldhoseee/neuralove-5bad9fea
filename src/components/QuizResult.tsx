@@ -13,6 +13,8 @@ interface QuizResultProps {
   motivation: string;
   onClose: () => void;
   onFindMatches: () => void;
+  isForCouple?: boolean;
+  coupleNames?: { person1Name: string; person2Name: string } | null;
 }
 
 interface CognitiveInsights {
@@ -22,7 +24,7 @@ interface CognitiveInsights {
   validationStatements: string[];
 }
 
-const QuizResult = ({ cognitiveType, explanation, motivation, onClose, onFindMatches }: QuizResultProps) => {
+const QuizResult = ({ cognitiveType, explanation, motivation, onClose, onFindMatches, isForCouple = false, coupleNames }: QuizResultProps) => {
   const [isSimpleMode, setIsSimpleMode] = useState(false);
   const [insights, setInsights] = useState<CognitiveInsights | null>(null);
   const [isLoadingInsights, setIsLoadingInsights] = useState(true);
