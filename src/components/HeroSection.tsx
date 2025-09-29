@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Heart, Brain, Sparkles } from "lucide-react";
-import heroImage from "@/assets/hero-mindmatch.jpg";
+import { Heart, Brain, Sparkles, Clock } from "lucide-react";
+import brainHeartImage from "@/assets/brain-heart.png";
 import CognitiveQuiz from "./CognitiveQuiz";
 import QuizResult from "./QuizResult";
 import UserProfileForm from "./UserProfileForm";
@@ -114,92 +114,106 @@ const HeroSection = () => {
     });
   };
   return (
-    <section className="min-h-screen flex items-center justify-center bg-gradient-hero relative overflow-hidden">
-      {/* Animated background elements */}
+    <section className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-900 via-purple-800 to-pink-800 relative overflow-hidden">
+      {/* Floating hearts background */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-20 left-10 w-4 h-4 bg-neural-pink rounded-full animate-float opacity-60"></div>
-        <div className="absolute top-40 right-20 w-6 h-6 bg-neural-blue rounded-full animate-float opacity-40" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute bottom-20 left-20 w-5 h-5 bg-neural-purple rounded-full animate-float opacity-50" style={{ animationDelay: '2s' }}></div>
-        <div className="absolute bottom-40 right-10 w-3 h-3 bg-accent rounded-full animate-float opacity-70" style={{ animationDelay: '0.5s' }}></div>
+        {[...Array(20)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute text-pink-400 opacity-60 animate-float"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 3}s`,
+              animationDuration: `${3 + Math.random() * 2}s`
+            }}
+          >
+            <Heart className="w-4 h-4" fill="currentColor" />
+          </div>
+        ))}
       </div>
 
       <div className="container mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center relative z-10">
         {/* Left Content */}
-        <div className="text-center lg:text-left space-y-8">
-          <div className="space-y-4">
-            <div className="flex items-center justify-center lg:justify-start gap-2 text-primary-foreground/80">
+        <div className="text-left space-y-8">
+          <div className="space-y-6">
+            <div className="flex items-center gap-2 text-white/80">
               <Brain className="w-5 h-5" />
-              <span className="text-sm font-medium tracking-wide">POWERED BY PSYCHOLOGY</span>
+              <span className="text-sm font-medium tracking-wide uppercase">POWERED BY PSYCHOLOGY</span>
             </div>
             
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-primary-foreground leading-tight">
-              Find someone who
-              <span className="block bg-gradient-accent bg-clip-text text-transparent">
-                *thinks* like you
-              </span>
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight">
+              Find someone
+              <br />
+              who <span className="text-yellow-400">thinks</span>
+              <br />
+              like you
             </h1>
             
-            <p className="text-xl md:text-2xl text-primary-foreground/90 leading-relaxed max-w-2xl">
+            <p className="text-xl md:text-2xl text-white/90 leading-relaxed max-w-lg">
               MindMatch helps you discover people who vibe with your thoughts, not just your looks.
-            </p>
-            
-            <p className="text-lg md:text-xl text-primary-foreground/80 leading-relaxed max-w-2xl font-medium">
-              From late-night deep conversations to building dreams together — it starts with your mind.
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+          <div className="flex flex-col sm:flex-row gap-4">
             <Button 
               size="lg" 
               variant="secondary" 
-              className="group shadow-glow hover:shadow-xl transition-all duration-300"
+              className="bg-white text-black hover:bg-white/90 font-semibold px-8 py-4 text-lg rounded-full"
               onClick={handleStartQuiz}
             >
-              <span className="mr-2">Find Your MindMatch</span>
-              <div className="flex items-center gap-1">
-                <Brain className="w-4 h-4" />
-                <Heart className="w-4 h-4 text-secondary-foreground group-hover:animate-pulse" />
-              </div>
+              Find Your MindMatch
             </Button>
             
-            <Button size="lg" variant="outline" className="border-foreground/30 text-foreground hover:bg-foreground/10">
+            <Button 
+              size="lg" 
+              variant="outline" 
+              className="border-white/30 text-white hover:bg-white/10 font-semibold px-8 py-4 text-lg rounded-full"
+            >
               How It Works
             </Button>
           </div>
 
-          <div className="flex items-center justify-center lg:justify-start gap-6 pt-4">
-            <div className="flex items-center gap-2 text-primary-foreground/70">
-              <Sparkles className="w-4 h-4" />
-              <span className="text-sm">5-minute quiz</span>
+          <div className="flex items-center gap-8 pt-4">
+            <div className="flex items-center gap-2 text-white/80">
+              <Clock className="w-5 h-5" />
+              <span className="text-sm font-medium">5-minute quiz</span>
             </div>
-            <div className="flex items-center gap-2 text-primary-foreground/70">
-              <Brain className="w-4 h-4" />
-              <span className="text-sm">Psychology-backed</span>
+            <div className="flex items-center gap-2 text-white/80">
+              <Brain className="w-5 h-5" />
+              <span className="text-sm font-medium">Psychology-backed</span>
             </div>
-            <div className="flex items-center gap-2 text-primary-foreground/70">
-              <Heart className="w-4 h-4" />
-              <span className="text-sm">Real connections</span>
+            <div className="flex items-center gap-2 text-white/80">
+              <Heart className="w-5 h-5" />
+              <span className="text-sm font-medium">Real connections</span>
             </div>
           </div>
         </div>
 
-        {/* Right Image */}
-        <div className="relative">
-          <div className="relative rounded-3xl overflow-hidden shadow-glow">
+        {/* Right Brain-Heart Image */}
+        <div className="relative flex items-center justify-center">
+          <div className="relative">
             <img 
-              src={heroImage} 
-              alt="MindMatch - Connect minds, not just hearts"
-              className="w-full h-auto object-cover"
+              src={brainHeartImage} 
+              alt="Brain Heart - Connecting minds and hearts"
+              className="w-full max-w-lg h-auto object-contain animate-float"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent"></div>
-          </div>
-          
-          {/* Floating elements */}
-          <div className="absolute -top-4 -right-4 bg-secondary p-3 rounded-full shadow-card animate-float">
-            <Heart className="w-6 h-6 text-secondary-foreground" />
-          </div>
-          <div className="absolute -bottom-4 -left-4 bg-secondary p-3 rounded-full shadow-card animate-float" style={{ animationDelay: '1.5s' }}>
-            <Brain className="w-6 h-6 text-secondary-foreground" />
+            
+            {/* Additional floating hearts around the brain */}
+            {[...Array(8)].map((_, i) => (
+              <div
+                key={i}
+                className="absolute text-pink-400 opacity-70 animate-float"
+                style={{
+                  left: `${20 + Math.random() * 60}%`,
+                  top: `${20 + Math.random() * 60}%`,
+                  animationDelay: `${Math.random() * 2}s`,
+                  animationDuration: `${2 + Math.random() * 1}s`
+                }}
+              >
+                <Heart className="w-6 h-6" fill="currentColor" />
+              </div>
+            ))}
           </div>
         </div>
       </div>
