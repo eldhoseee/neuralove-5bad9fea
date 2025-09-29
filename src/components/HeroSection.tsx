@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Heart, Brain, Sparkles } from "lucide-react";
 import heroImage from "@/assets/hero-mindmatch.jpg";
@@ -162,17 +163,15 @@ const HeroSection = () => {
               </div>
             </Button>
             
-            <Button 
-              size="lg" 
-              variant="outline" 
-              className="border-foreground/30 text-foreground hover:bg-foreground/10"
-              onClick={() => {
-                const howItWorksSection = document.getElementById('how-it-works');
-                howItWorksSection?.scrollIntoView({ behavior: 'smooth' });
-              }}
-            >
-              How It Works
-            </Button>
+            <Link to="/psychology">
+              <Button 
+                size="lg" 
+                variant="outline" 
+                className="border-foreground/30 text-foreground hover:bg-foreground/10"
+              >
+                How It Works
+              </Button>
+            </Link>
           </div>
 
           <div className="flex items-center justify-center lg:justify-start gap-6 pt-4">
