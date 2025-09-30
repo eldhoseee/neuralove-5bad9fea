@@ -45,9 +45,8 @@ const BrainConnectionVisualization: React.FC<BrainConnectionVisualizationProps> 
   return (
     <div 
       ref={containerRef}
-      className={`absolute inset-0 ${className} overflow-hidden`}
+      className={`absolute inset-0 ${className} overflow-hidden pointer-events-auto`}
       onMouseMove={handleMouseMove}
-      style={{ pointerEvents: 'auto' }}
     >
       {/* Animated background gradient */}
       <div 

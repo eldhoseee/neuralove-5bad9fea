@@ -238,7 +238,7 @@ const HeroSection = () => {
               alt="MindMatch - Connect minds, not just hearts"
               className="w-full h-auto object-cover"
             />
-            <BrainConnectionVisualization className="opacity-80" />
+            <BrainConnectionVisualization className="opacity-90 z-10" />
           </div>
           
           {/* Floating elements */}
