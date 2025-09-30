@@ -151,9 +151,9 @@ const HeroSection = () => {
         <div className="absolute bottom-40 right-10 w-3 h-3 bg-accent rounded-full animate-float opacity-70" style={{ animationDelay: '0.5s' }}></div>
       </div>
 
-      <div className="container mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center relative z-30">
+      <div className="container mx-auto px-6 grid lg:grid-cols-2 gap-12 lg:gap-20 items-center relative z-30">
         {/* Left Content */}
-        <div className="text-center lg:text-left space-y-8">
+        <div className="text-center lg:text-left space-y-8 max-w-xl mx-auto lg:mx-0">
           <div className="space-y-4">
             <div className="flex items-center justify-center lg:justify-start gap-2 text-primary-foreground/80">
               <Brain className="w-5 h-5" />
@@ -206,7 +206,7 @@ const HeroSection = () => {
               <Button 
                 size="lg" 
                 variant="outline" 
-                className="border-foreground/30 text-foreground hover:bg-foreground/10 relative z-25"
+                className="border-foreground/30 text-foreground hover:bg-foreground/10"
               >
                 How It Works
               </Button>
@@ -230,7 +230,7 @@ const HeroSection = () => {
         </div>
 
         {/* Right Image */}
-        <div className="relative">
+        <div className="relative lg:ml-8">
           <div className="relative rounded-3xl overflow-hidden shadow-glow">
             <img 
               src={heroImage} 
