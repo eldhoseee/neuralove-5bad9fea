@@ -80,18 +80,29 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({
       return;
     }
 
-    // Validate against test names
+    setIsSubmitting(true);
+
+    // Check if it's a test name
     const testNamePattern = /^test\d*$/i;
-    if (testNamePattern.test(name.trim())) {
+    const isTestName = testNamePattern.test(name.trim());
+
+    if (isTestName) {
+      // Skip database save for test names
       toast({
-        title: "Invalid name",
-        description: "Please enter your real name to continue.",
-        variant: "destructive"
+        title: "Test Mode",
+        description: "Proceeding without saving to database",
       });
+      
+      onComplete?.({
+        id: 'test-id',
+        name: name.trim(),
+        age: age[0],
+        gender
+      });
+      setIsSubmitting(false);
       return;
     }
 
-    setIsSubmitting(true);
     try {
       const { data: insertedProfile, error } = await supabase
         .from('profiles')
