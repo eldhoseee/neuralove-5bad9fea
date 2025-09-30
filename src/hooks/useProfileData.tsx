@@ -22,6 +22,7 @@ export const useProfileData = () => {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
+      console.log("Fetched profiles:", data);
       return data as Profile[];
     },
   });

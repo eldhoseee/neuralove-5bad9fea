@@ -21,6 +21,7 @@ type SortField = "name" | "age" | "gender" | "cognitive_type" | "created_at";
 type SortDirection = "asc" | "desc";
 
 export const ProfileTable = ({ profiles }: ProfileTableProps) => {
+  console.log("ProfileTable received profiles:", profiles);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortField, setSortField] = useState<SortField>("created_at");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
