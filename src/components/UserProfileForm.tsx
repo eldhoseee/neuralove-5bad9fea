@@ -8,7 +8,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Brain, Sparkles, Users, Heart, GraduationCap, Activity, Wine, Cigarette, Target, Baby, Dog, MapPin } from 'lucide-react';
+import { Brain, Sparkles, Users, Heart } from 'lucide-react';
 
 interface UserProfileFormProps {
   cognitiveType?: string;
@@ -64,15 +64,6 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({
   const [name, setName] = useState('');
   const [age, setAge] = useState([25]);
   const [gender, setGender] = useState('');
-  const [education, setEducation] = useState('');
-  const [height, setHeight] = useState([170]);
-  const [exercise, setExercise] = useState('');
-  const [drinking, setDrinking] = useState('');
-  const [smoking, setSmoking] = useState('');
-  const [relationshipGoal, setRelationshipGoal] = useState('');
-  const [childrenPreference, setChildrenPreference] = useState('');
-  const [pets, setPets] = useState('');
-  const [location, setLocation] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
@@ -109,15 +100,6 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({
           age: age[0],
           gender,
           cognitive_type: cognitiveType,
-          education: education || null,
-          height_cm: height[0],
-          exercise: exercise || null,
-          drinking: drinking || null,
-          smoking: smoking || null,
-          relationship_goal: relationshipGoal || null,
-          children_preference: childrenPreference || null,
-          pets: pets || null,
-          location: location.trim() || null,
         })
         .select()
         .single();
@@ -167,38 +149,20 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({
 
         <CardContent className="space-y-4 sm:space-y-6 p-4 sm:p-6">
           <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
-            <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
-              {/* Name Field */}
-              <div className="space-y-2">
-                <Label htmlFor="name" className="text-sm font-medium flex items-center gap-2">
-                  <Users className="h-4 w-4 text-primary" />
-                  Your Name <span className="text-destructive">*</span>
-                </Label>
-                <Input
-                  id="name"
-                  type="text"
-                  placeholder="Enter your name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="transition-all duration-300 focus:shadow-glow/20"
-                />
-              </div>
-
-              {/* Location */}
-              <div className="space-y-2">
-                <Label htmlFor="location" className="text-sm font-medium flex items-center gap-2">
-                  <MapPin className="h-4 w-4 text-primary" />
-                  Location
-                </Label>
-                <Input
-                  id="location"
-                  type="text"
-                  placeholder="City, Country"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                  className="transition-all duration-300 focus:shadow-glow/20"
-                />
-              </div>
+            {/* Name Field */}
+            <div className="space-y-2">
+              <Label htmlFor="name" className="text-sm font-medium flex items-center gap-2">
+                <Users className="h-4 w-4 text-primary" />
+                Your Name <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                id="name"
+                type="text"
+                placeholder="Enter your name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="transition-all duration-300 focus:shadow-glow/20"
+              />
             </div>
 
             {/* Age Slider */}
@@ -251,156 +215,6 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({
               </RadioGroup>
             </div>
 
-            <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
-              {/* Education */}
-              <div className="space-y-2">
-                <Label className="text-sm font-medium flex items-center gap-2">
-                  <GraduationCap className="h-4 w-4 text-primary" />
-                  Education
-                </Label>
-                <Select value={education} onValueChange={setEducation}>
-                  <SelectTrigger className="bg-background">
-                    <SelectValue placeholder="Select education level" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-popover z-50">
-                    <SelectItem value="high_school">High School</SelectItem>
-                    <SelectItem value="bachelors">Bachelor's Degree</SelectItem>
-                    <SelectItem value="masters">Master's Degree</SelectItem>
-                    <SelectItem value="phd">PhD</SelectItem>
-                    <SelectItem value="other">Other</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Exercise */}
-              <div className="space-y-2">
-                <Label className="text-sm font-medium flex items-center gap-2">
-                  <Activity className="h-4 w-4 text-primary" />
-                  Exercise
-                </Label>
-                <Select value={exercise} onValueChange={setExercise}>
-                  <SelectTrigger className="bg-background">
-                    <SelectValue placeholder="How often?" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-popover z-50">
-                    <SelectItem value="never">Never</SelectItem>
-                    <SelectItem value="sometimes">Sometimes</SelectItem>
-                    <SelectItem value="regularly">Regularly</SelectItem>
-                    <SelectItem value="daily">Daily</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Drinking */}
-              <div className="space-y-2">
-                <Label className="text-sm font-medium flex items-center gap-2">
-                  <Wine className="h-4 w-4 text-primary" />
-                  Drinking
-                </Label>
-                <Select value={drinking} onValueChange={setDrinking}>
-                  <SelectTrigger className="bg-background">
-                    <SelectValue placeholder="Select habit" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-popover z-50">
-                    <SelectItem value="never">Never</SelectItem>
-                    <SelectItem value="socially">Socially</SelectItem>
-                    <SelectItem value="regularly">Regularly</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Smoking */}
-              <div className="space-y-2">
-                <Label className="text-sm font-medium flex items-center gap-2">
-                  <Cigarette className="h-4 w-4 text-primary" />
-                  Smoking
-                </Label>
-                <Select value={smoking} onValueChange={setSmoking}>
-                  <SelectTrigger className="bg-background">
-                    <SelectValue placeholder="Select habit" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-popover z-50">
-                    <SelectItem value="never">Never</SelectItem>
-                    <SelectItem value="sometimes">Sometimes</SelectItem>
-                    <SelectItem value="regularly">Regularly</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Relationship Goal */}
-              <div className="space-y-2">
-                <Label className="text-sm font-medium flex items-center gap-2">
-                  <Target className="h-4 w-4 text-primary" />
-                  Looking For
-                </Label>
-                <Select value={relationshipGoal} onValueChange={setRelationshipGoal}>
-                  <SelectTrigger className="bg-background">
-                    <SelectValue placeholder="What are you seeking?" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-popover z-50">
-                    <SelectItem value="friendship">Friendship</SelectItem>
-                    <SelectItem value="dating">Dating</SelectItem>
-                    <SelectItem value="relationship">Relationship</SelectItem>
-                    <SelectItem value="marriage">Marriage</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Children Preference */}
-              <div className="space-y-2">
-                <Label className="text-sm font-medium flex items-center gap-2">
-                  <Baby className="h-4 w-4 text-primary" />
-                  Children
-                </Label>
-                <Select value={childrenPreference} onValueChange={setChildrenPreference}>
-                  <SelectTrigger className="bg-background">
-                    <SelectValue placeholder="Your preference" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-popover z-50">
-                    <SelectItem value="have_and_want_more">Have & want more</SelectItem>
-                    <SelectItem value="have_and_dont_want">Have & don't want more</SelectItem>
-                    <SelectItem value="dont_have_but_want">Don't have but want</SelectItem>
-                    <SelectItem value="dont_have_and_dont_want">Don't have & don't want</SelectItem>
-                    <SelectItem value="open">Open to discussion</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Pets */}
-              <div className="space-y-2">
-                <Label className="text-sm font-medium flex items-center gap-2">
-                  <Dog className="h-4 w-4 text-primary" />
-                  Pets
-                </Label>
-                <Select value={pets} onValueChange={setPets}>
-                  <SelectTrigger className="bg-background">
-                    <SelectValue placeholder="Pet preference" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-popover z-50">
-                    <SelectItem value="dog">Dog person</SelectItem>
-                    <SelectItem value="cat">Cat person</SelectItem>
-                    <SelectItem value="both">Love both</SelectItem>
-                    <SelectItem value="other">Other pets</SelectItem>
-                    <SelectItem value="none">No pets</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Height */}
-              <div className="space-y-4 sm:col-span-2">
-                <Label className="text-sm font-medium flex items-center gap-2">
-                  Height: {height[0]} cm ({Math.floor(height[0] / 30.48 / 12)}'{Math.round((height[0] / 30.48) % 12)}")
-                </Label>
-                <Slider
-                  value={height}
-                  onValueChange={setHeight}
-                  max={220}
-                  min={140}
-                  step={1}
-                  className="w-full"
-                />
-              </div>
-            </div>
 
             {/* Action Buttons */}
             <div className="flex gap-3 pt-4">
