@@ -206,7 +206,7 @@ const HeroSection = () => {
               <Button 
                 size="lg" 
                 variant="outline" 
-                className="border-foreground/30 text-foreground hover:bg-foreground/10"
+                className="border-foreground/30 text-foreground hover:bg-foreground/10 relative z-50"
               >
                 How It Works
               </Button>
