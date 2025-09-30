@@ -142,7 +142,7 @@ const HeroSection = () => {
     });
   };
   return (
-    <section className="min-h-screen flex items-center justify-center bg-gradient-hero relative overflow-hidden">
+    <section className="min-h-screen flex items-center justify-center bg-gradient-hero relative z-20 overflow-hidden">
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-20 left-10 w-4 h-4 bg-neural-pink rounded-full animate-float opacity-60"></div>
@@ -151,7 +151,7 @@ const HeroSection = () => {
         <div className="absolute bottom-40 right-10 w-3 h-3 bg-accent rounded-full animate-float opacity-70" style={{ animationDelay: '0.5s' }}></div>
       </div>
 
-      <div className="container mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center relative z-10">
+      <div className="container mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center relative z-30">
         {/* Left Content */}
         <div className="text-center lg:text-left space-y-8">
           <div className="space-y-4">
