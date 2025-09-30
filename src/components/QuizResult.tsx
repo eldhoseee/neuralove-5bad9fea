@@ -44,6 +44,18 @@ const QuizResult = ({ cognitiveType, explanation, motivation, onClose, onFindMat
           }
         });
         
+        const ensureArray = (v: any): string[] => Array.isArray(v) ? v.map((x) => String(x)) : [];
+        const fallbackLikes = [
+          `Partners who respect your ${cognitiveType.toLowerCase()} thinking style`,
+          "Clear, honest communication and shared long-term goals",
+          "Space for deep, meaningful conversations and mutual growth"
+        ];
+        const fallbackHates = [
+          "Dismissive attitudes toward your ideas or perspective",
+          "Inconsistency, unreliability, or avoidant communication",
+          "Unnecessary drama, manipulation, or rigid control dynamics"
+        ];
+        
         if (error) {
           console.error('Error generating insights:', error);
           toast({
@@ -51,8 +63,24 @@ const QuizResult = ({ cognitiveType, explanation, motivation, onClose, onFindMat
             description: "Using default insights instead.",
             variant: "destructive"
           });
+          setInsights({
+            keyStrengths: [],
+            idealMatches: [],
+            relationshipDynamics: [],
+            relationshipLikes: fallbackLikes,
+            relationshipHates: fallbackHates,
+          });
         } else {
-          setInsights(data);
+          const likes = ensureArray((data as any)?.relationshipLikes);
+          const hates = ensureArray((data as any)?.relationshipHates);
+          const normalized = {
+            keyStrengths: ensureArray((data as any)?.keyStrengths),
+            idealMatches: ensureArray((data as any)?.idealMatches),
+            relationshipDynamics: ensureArray((data as any)?.relationshipDynamics),
+            relationshipLikes: likes.length ? likes : fallbackLikes,
+            relationshipHates: hates.length ? hates : fallbackHates,
+          } as CognitiveInsights;
+          setInsights(normalized);
         }
       } catch (error) {
         console.error('Error calling insights function:', error);
