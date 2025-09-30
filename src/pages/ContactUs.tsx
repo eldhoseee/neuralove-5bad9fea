@@ -354,7 +354,7 @@ const ContactUs = () => {
               <ResultCard key={index} variant="base" className="text-center group hover:shadow-card transition-all duration-300">
                 <div className="flex flex-col items-center">
                   <Avatar className="w-32 h-32 mb-4 border-4 border-primary/20 group-hover:border-primary/40 transition-colors">
-                    <AvatarImage src={member.image} alt={member.name} />
+                    <AvatarImage src={member.image} alt={member.name} className="object-cover" />
                     <AvatarFallback className="text-2xl">{member.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
                   </Avatar>
                   
