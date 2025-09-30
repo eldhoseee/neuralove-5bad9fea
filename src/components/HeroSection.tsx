@@ -230,15 +230,10 @@ const HeroSection = () => {
           </div>
         </div>
 
-        {/* Right Image with Brain Visualization */}
-        <div className="relative">
-          <div className="relative rounded-3xl overflow-hidden shadow-glow">
-            <img 
-              src={heroImage} 
-              alt="MindMatch - Connect minds, not just hearts"
-              className="w-full h-auto object-cover"
-            />
-            <BrainConnectionVisualization className="opacity-90 z-10" />
+        {/* Interactive Brain Visualization */}
+        <div className="relative h-96 lg:h-[500px]">
+          <div className="relative w-full h-full rounded-3xl overflow-hidden shadow-glow bg-gradient-to-br from-neural-blue/20 via-neural-purple/20 to-neural-pink/20">
+            <BrainConnectionVisualization className="opacity-100 z-10" />
           </div>
           
           {/* Floating elements */}

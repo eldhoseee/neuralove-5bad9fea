@@ -6,18 +6,40 @@ interface BrainConnectionVisualizationProps {
 
 const BrainConnectionVisualization: React.FC<BrainConnectionVisualizationProps> = ({ className = "" }) => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [connections, setConnections] = useState<Array<{ id: number; delay: number; rotation: number }>>([]);
+  const [connections, setConnections] = useState<Array<{ 
+    id: number; 
+    delay: number; 
+    rotation: number;
+    opacity: number;
+    length: number;
+  }>>([]);
   const containerRef = useRef<HTMLDivElement>(null);
+  const animationRef = useRef<number>();
 
   useEffect(() => {
-    // Generate initial connections
-    const initialConnections = Array.from({ length: 6 }, (_, i) => ({
-      id: i,
-      delay: i * 0.3,
-      rotation: (Math.random() - 0.5) * 30
-    }));
-    setConnections(initialConnections);
-  }, []);
+    // Generate flowing connections that update continuously
+    const updateConnections = () => {
+      const connectionCount = 8 + Math.floor(Math.abs(mousePosition.x) * 6);
+      const newConnections = Array.from({ length: connectionCount }, (_, i) => ({
+        id: i,
+        delay: i * 0.1,
+        rotation: (i / connectionCount) * 360 + mousePosition.x * 30,
+        opacity: 0.3 + Math.abs(mousePosition.x) * 0.5,
+        length: 0.6 + Math.abs(mousePosition.x) * 0.4
+      }));
+      setConnections(newConnections);
+      
+      animationRef.current = requestAnimationFrame(updateConnections);
+    };
+
+    updateConnections();
+    
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
+  }, [mousePosition]);
 
   const handleMouseMove = (event: React.MouseEvent) => {
     if (!containerRef.current) return;
@@ -27,118 +49,224 @@ const BrainConnectionVisualization: React.FC<BrainConnectionVisualizationProps> 
     const y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
     
     setMousePosition({ x, y });
-
-    // Generate new connections when mouse is in center area
-    if (Math.abs(x) < 0.4) {
-      const newConnections = Array.from({ length: 8 + Math.floor(Math.random() * 4) }, (_, i) => ({
-        id: Date.now() + i,
-        delay: i * 0.1,
-        rotation: (Math.random() - 0.5) * 40
-      }));
-      setConnections(newConnections);
-    }
   };
 
-  const mouseInfluence = 1 - Math.abs(mousePosition.x);
-  const connectionIntensity = 0.3 + mouseInfluence * 0.5;
+  const mouseInfluence = Math.max(0.2, 1 - Math.sqrt(mousePosition.x * mousePosition.x + mousePosition.y * mousePosition.y));
 
   return (
     <div 
       ref={containerRef}
-      className={`absolute inset-0 ${className} overflow-hidden pointer-events-auto`}
+      className={`absolute inset-0 ${className} overflow-hidden pointer-events-auto cursor-none`}
       onMouseMove={handleMouseMove}
     >
-      {/* Animated background gradient */}
+      {/* Dynamic background that responds to mouse */}
       <div 
-        className="absolute inset-0 bg-gradient-to-r from-blue-500/20 via-purple-500/30 to-pink-500/20 transition-all duration-500"
+        className="absolute inset-0 bg-gradient-radial from-transparent via-neural-blue/10 to-transparent transition-all duration-500"
         style={{
-          opacity: 0.4 + mouseInfluence * 0.3,
-          transform: `scale(${1 + mouseInfluence * 0.1})`
+          background: `radial-gradient(circle at ${50 + mousePosition.x * 25}% ${50 + mousePosition.y * 25}%, 
+                      rgba(99, 102, 241, 0.15) 0%, 
+                      rgba(147, 51, 234, 0.1) 30%, 
+                      rgba(236, 72, 153, 0.08) 60%, 
+                      transparent 80%)`
         }}
       />
       
-      {/* Floating particles */}
-      <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-cyan-400 rounded-full animate-pulse opacity-60" 
-           style={{ transform: `translate(${mousePosition.x * 20}px, ${mousePosition.y * 10}px)` }} />
-      <div className="absolute top-3/4 right-1/4 w-1.5 h-1.5 bg-blue-400 rounded-full animate-pulse opacity-50" 
-           style={{ transform: `translate(${-mousePosition.x * 15}px, ${-mousePosition.y * 8}px)`, animationDelay: '0.5s' }} />
-      <div className="absolute top-1/2 left-1/3 w-1 h-1 bg-purple-400 rounded-full animate-pulse opacity-70" 
-           style={{ transform: `translate(${mousePosition.x * 25}px, ${mousePosition.y * 12}px)`, animationDelay: '1s' }} />
-      
-      {/* Neural connection lines */}
-      {connections.map((connection) => (
+      {/* Flowing particles that follow cursor */}
+      {Array.from({ length: 12 }, (_, i) => (
         <div
-          key={connection.id}
-          className="absolute top-1/2 left-1/4 w-1/2 h-0.5 bg-gradient-to-r from-cyan-400 via-blue-300 to-cyan-400 origin-left transition-all duration-300"
+          key={i}
+          className="absolute w-1 h-1 bg-cyan-300 rounded-full transition-all duration-300 ease-out"
           style={{
-            opacity: connectionIntensity * 0.8,
-            transform: `rotate(${connection.rotation + mousePosition.x * 10}deg) scaleX(${0.8 + mouseInfluence * 0.4})`,
-            animationDelay: `${connection.delay}s`,
-            filter: 'blur(0.5px)',
-            boxShadow: `0 0 ${4 + mouseInfluence * 8}px rgba(6, 182, 212, ${0.3 + mouseInfluence * 0.4})`
+            left: `${30 + (mousePosition.x + 1) * 20 + Math.sin(Date.now() * 0.001 + i) * 10}%`,
+            top: `${40 + (mousePosition.y + 1) * 15 + Math.cos(Date.now() * 0.001 + i) * 10}%`,
+            opacity: mouseInfluence * (0.4 + Math.sin(Date.now() * 0.002 + i) * 0.3),
+            transform: `scale(${0.5 + mouseInfluence * 1.5})`,
+            boxShadow: `0 0 ${mouseInfluence * 10}px rgba(6, 182, 212, 0.6)`
           }}
         />
       ))}
       
-      {/* Additional connection layers for depth */}
-      {connections.slice(0, 3).map((connection) => (
-        <div
-          key={`layer2-${connection.id}`}
-          className="absolute top-1/3 left-1/4 w-1/2 h-px bg-gradient-to-r from-blue-300 via-purple-300 to-pink-300 origin-left transition-all duration-500"
-          style={{
-            opacity: connectionIntensity * 0.6,
-            transform: `rotate(${-connection.rotation + mousePosition.x * 8}deg) scaleX(${0.6 + mouseInfluence * 0.3})`,
-            animationDelay: `${connection.delay + 0.2}s`,
-            filter: 'blur(1px)'
-          }}
-        />
+      {/* Neural connection lines that flow */}
+      {connections.map((connection, index) => (
+        <div key={connection.id}>
+          {/* Main connection line */}
+          <div
+            className="absolute origin-left transition-all duration-200 ease-out"
+            style={{
+              left: '25%',
+              top: '50%',
+              width: `${connection.length * 50}%`,
+              height: '2px',
+              background: `linear-gradient(90deg, 
+                         rgba(6, 182, 212, ${connection.opacity}) 0%, 
+                         rgba(139, 92, 246, ${connection.opacity * 0.8}) 30%,
+                         rgba(236, 72, 153, ${connection.opacity}) 60%,
+                         rgba(6, 182, 212, ${connection.opacity * 0.6}) 100%)`,
+              transform: `rotate(${connection.rotation}deg) translateY(-50%)`,
+              filter: `blur(${1 - mouseInfluence}px)`,
+              boxShadow: `0 0 ${mouseInfluence * 15}px rgba(6, 182, 212, ${connection.opacity * 0.5})`
+            }}
+          />
+          
+          {/* Flowing energy pulses */}
+          <div
+            className="absolute origin-left"
+            style={{
+              left: '25%',
+              top: '50%',
+              width: '4px',
+              height: '4px',
+              background: `radial-gradient(circle, rgba(255, 255, 255, ${connection.opacity}) 0%, transparent 70%)`,
+              transform: `rotate(${connection.rotation}deg) translateX(${(connection.length * 300 * (0.3 + Math.sin(Date.now() * 0.003 + index * 0.5) * 0.7))}px) translateY(-50%)`,
+              borderRadius: '50%',
+              boxShadow: `0 0 ${mouseInfluence * 20}px rgba(255, 255, 255, 0.8)`
+            }}
+          />
+        </div>
       ))}
       
-      {connections.slice(3, 6).map((connection) => (
-        <div
-          key={`layer3-${connection.id}`}
-          className="absolute top-2/3 left-1/4 w-1/2 h-px bg-gradient-to-r from-pink-300 via-purple-300 to-blue-300 origin-left transition-all duration-700"
-          style={{
-            opacity: connectionIntensity * 0.4,
-            transform: `rotate(${connection.rotation * 0.7 + mousePosition.x * 5}deg) scaleX(${0.7 + mouseInfluence * 0.2})`,
-            animationDelay: `${connection.delay + 0.4}s`,
-            filter: 'blur(1.5px)'
-          }}
-        />
-      ))}
-      
-      {/* Brain representations with pulsing effect */}
+      {/* Left Heart-shaped Brain */}
       <div 
-        className="absolute top-1/2 left-1/4 w-20 h-20 bg-gradient-to-br from-blue-400/40 to-blue-600/60 rounded-full transform -translate-x-1/2 -translate-y-1/2 transition-all duration-300"
+        className="absolute transition-all duration-300 ease-out"
         style={{
-          transform: `translate(-50%, -50%) scale(${1 + mouseInfluence * 0.2})`,
-          boxShadow: `0 0 ${20 + mouseInfluence * 20}px rgba(59, 130, 246, ${0.4 + mouseInfluence * 0.3})`,
-          filter: 'blur(2px)'
+          left: '20%',
+          top: '50%',
+          transform: `translate(-50%, -50%) scale(${1 + mouseInfluence * 0.3}) rotate(${mousePosition.x * 5}deg)`
         }}
       >
-        <div className="absolute inset-2 bg-blue-300/30 rounded-full animate-pulse" />
-        <div className="absolute inset-4 bg-blue-200/40 rounded-full animate-pulse" style={{ animationDelay: '0.5s' }} />
+        {/* Heart shape using CSS */}
+        <div 
+          className="relative w-16 h-16 transition-all duration-300"
+          style={{
+            background: `linear-gradient(45deg, 
+                        rgba(99, 102, 241, ${0.6 + mouseInfluence * 0.4}), 
+                        rgba(139, 92, 246, ${0.5 + mouseInfluence * 0.3}))`,
+            borderRadius: '50px 50px 0 0',
+            transform: 'rotate(-45deg)',
+            filter: `blur(${2 - mouseInfluence * 1.5}px)`,
+            boxShadow: `0 0 ${20 + mouseInfluence * 30}px rgba(99, 102, 241, ${0.4 + mouseInfluence * 0.4})`
+          }}
+        >
+          <div 
+            className="absolute -top-4 -left-4 w-8 h-8 rounded-full"
+            style={{
+              background: `linear-gradient(45deg, 
+                          rgba(99, 102, 241, ${0.8 + mouseInfluence * 0.2}), 
+                          rgba(139, 92, 246, ${0.7 + mouseInfluence * 0.3}))`
+            }}
+          />
+          <div 
+            className="absolute -top-4 -right-4 w-8 h-8 rounded-full"
+            style={{
+              background: `linear-gradient(45deg, 
+                          rgba(99, 102, 241, ${0.8 + mouseInfluence * 0.2}), 
+                          rgba(139, 92, 246, ${0.7 + mouseInfluence * 0.3}))`
+            }}
+          />
+        </div>
+        
+        {/* Brain neural network overlay */}
+        <div className="absolute inset-0 opacity-70">
+          {Array.from({ length: 6 }, (_, i) => (
+            <div
+              key={i}
+              className="absolute w-1 h-1 bg-blue-200 rounded-full animate-pulse"
+              style={{
+                left: `${20 + Math.cos(i * 60 * Math.PI / 180) * 25}px`,
+                top: `${20 + Math.sin(i * 60 * Math.PI / 180) * 25}px`,
+                animationDelay: `${i * 0.2}s`,
+                opacity: mouseInfluence
+              }}
+            />
+          ))}
+        </div>
       </div>
       
+      {/* Right Heart-shaped Brain */}
       <div 
-        className="absolute top-1/2 right-1/4 w-20 h-20 bg-gradient-to-br from-pink-400/40 to-pink-600/60 rounded-full transform translate-x-1/2 -translate-y-1/2 transition-all duration-300"
+        className="absolute transition-all duration-300 ease-out"
         style={{
-          transform: `translate(50%, -50%) scale(${1 + mouseInfluence * 0.2})`,
-          boxShadow: `0 0 ${20 + mouseInfluence * 20}px rgba(236, 72, 153, ${0.4 + mouseInfluence * 0.3})`,
-          filter: 'blur(2px)'
+          right: '20%',
+          top: '50%',
+          transform: `translate(50%, -50%) scale(${1 + mouseInfluence * 0.3}) rotate(${-mousePosition.x * 5}deg)`
         }}
       >
-        <div className="absolute inset-2 bg-pink-300/30 rounded-full animate-pulse" style={{ animationDelay: '0.3s' }} />
-        <div className="absolute inset-4 bg-pink-200/40 rounded-full animate-pulse" style={{ animationDelay: '0.8s' }} />
+        <div 
+          className="relative w-16 h-16 transition-all duration-300"
+          style={{
+            background: `linear-gradient(45deg, 
+                        rgba(236, 72, 153, ${0.6 + mouseInfluence * 0.4}), 
+                        rgba(219, 39, 119, ${0.5 + mouseInfluence * 0.3}))`,
+            borderRadius: '50px 50px 0 0',
+            transform: 'rotate(-45deg)',
+            filter: `blur(${2 - mouseInfluence * 1.5}px)`,
+            boxShadow: `0 0 ${20 + mouseInfluence * 30}px rgba(236, 72, 153, ${0.4 + mouseInfluence * 0.4})`
+          }}
+        >
+          <div 
+            className="absolute -top-4 -left-4 w-8 h-8 rounded-full"
+            style={{
+              background: `linear-gradient(45deg, 
+                          rgba(236, 72, 153, ${0.8 + mouseInfluence * 0.2}), 
+                          rgba(219, 39, 119, ${0.7 + mouseInfluence * 0.3}))`
+            }}
+          />
+          <div 
+            className="absolute -top-4 -right-4 w-8 h-8 rounded-full"
+            style={{
+              background: `linear-gradient(45deg, 
+                          rgba(236, 72, 153, ${0.8 + mouseInfluence * 0.2}), 
+                          rgba(219, 39, 119, ${0.7 + mouseInfluence * 0.3}))`
+            }}
+          />
+        </div>
+        
+        {/* Brain neural network overlay */}
+        <div className="absolute inset-0 opacity-70">
+          {Array.from({ length: 6 }, (_, i) => (
+            <div
+              key={i}
+              className="absolute w-1 h-1 bg-pink-200 rounded-full animate-pulse"
+              style={{
+                left: `${20 + Math.cos(i * 60 * Math.PI / 180) * 25}px`,
+                top: `${20 + Math.sin(i * 60 * Math.PI / 180) * 25}px`,
+                animationDelay: `${i * 0.2 + 0.1}s`,
+                opacity: mouseInfluence
+              }}
+            />
+          ))}
+        </div>
       </div>
       
-      {/* Center connection point that responds to mouse */}
+      {/* Center connection hub that follows cursor */}
       <div 
-        className="absolute top-1/2 left-1/2 w-4 h-4 bg-white/80 rounded-full transform -translate-x-1/2 -translate-y-1/2 transition-all duration-200"
+        className="absolute transition-all duration-200 ease-out"
         style={{
-          opacity: mouseInfluence,
-          transform: `translate(-50%, -50%) scale(${mouseInfluence * 2})`,
-          boxShadow: `0 0 ${mouseInfluence * 30}px rgba(255, 255, 255, 0.8)`
+          left: `${50 + mousePosition.x * 10}%`,
+          top: `${50 + mousePosition.y * 10}%`,
+          transform: 'translate(-50%, -50%)'
+        }}
+      >
+        <div 
+          className="w-6 h-6 bg-white rounded-full transition-all duration-200"
+          style={{
+            opacity: mouseInfluence,
+            transform: `scale(${mouseInfluence * 3})`,
+            boxShadow: `0 0 ${mouseInfluence * 40}px rgba(255, 255, 255, 0.8),
+                       0 0 ${mouseInfluence * 60}px rgba(6, 182, 212, 0.4),
+                       0 0 ${mouseInfluence * 80}px rgba(236, 72, 153, 0.3)`
+          }}
+        />
+      </div>
+      
+      {/* Cursor follower */}
+      <div 
+        className="absolute w-2 h-2 bg-cyan-300 rounded-full pointer-events-none transition-all duration-100 ease-out"
+        style={{
+          left: `${(mousePosition.x + 1) * 50}%`,
+          top: `${(-mousePosition.y + 1) * 50}%`,
+          transform: 'translate(-50%, -50%)',
+          boxShadow: `0 0 20px rgba(6, 182, 212, 0.8)`
         }}
       />
     </div>
