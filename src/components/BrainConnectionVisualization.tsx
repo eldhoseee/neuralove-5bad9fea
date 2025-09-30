@@ -1,175 +1,4 @@
-import React, { useRef, useState } from 'react';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Sphere, Line } from '@react-three/drei';
-import * as THREE from 'three';
-
-interface BrainProps {
-  position: [number, number, number];
-  color: string;
-  mousePosition: { x: number; y: number };
-}
-
-const Brain: React.FC<BrainProps> = ({ position, color, mousePosition }) => {
-  const meshRef = useRef<THREE.Mesh>(null);
-  const groupRef = useRef<THREE.Group>(null);
-
-  useFrame((state, delta) => {
-    if (groupRef.current) {
-      groupRef.current.rotation.y += delta * 0.1;
-      
-      // Respond to mouse position
-      const mouseInfluence = 1 - Math.abs(mousePosition.x);
-      groupRef.current.rotation.x = Math.sin(state.clock.elapsedTime) * 0.1 * mouseInfluence;
-    }
-  });
-
-  // Create brain nodes
-  const nodes = Array.from({ length: 12 }, (_, i) => {
-    const phi = Math.acos(-1 + (2 * i) / 12);
-    const theta = Math.sqrt(12 * Math.PI) * phi;
-    
-    return [
-      1.3 * Math.cos(theta) * Math.sin(phi),
-      1.3 * Math.sin(theta) * Math.sin(phi),
-      1.3 * Math.cos(phi)
-    ] as [number, number, number];
-  });
-
-  return (
-    <group ref={groupRef} position={position}>
-      {/* Main brain body */}
-      <Sphere ref={meshRef} args={[1, 16, 12]}>
-        <meshPhongMaterial 
-          color={color} 
-          transparent 
-          opacity={0.7} 
-          emissive={color}
-          emissiveIntensity={0.1}
-        />
-      </Sphere>
-      
-      {/* Neural nodes */}
-      {nodes.map((nodePos, index) => (
-        <Sphere key={index} position={nodePos} args={[0.05, 8, 6]}>
-          <meshPhongMaterial 
-            color="#ffffff" 
-            emissive={color}
-            emissiveIntensity={0.3}
-          />
-        </Sphere>
-      ))}
-    </group>
-  );
-};
-
-interface ConnectionProps {
-  start: [number, number, number];
-  end: [number, number, number];
-  mousePosition: { x: number; y: number };
-}
-
-const Connection: React.FC<ConnectionProps> = ({ start, end, mousePosition }) => {
-  const materialRef = useRef<THREE.LineBasicMaterial>(null);
-
-  useFrame((state) => {
-    if (materialRef.current) {
-      const mouseInfluence = 1 - Math.abs(mousePosition.x);
-      materialRef.current.opacity = 0.3 + Math.sin(state.clock.elapsedTime * 2) * 0.2 + mouseInfluence * 0.4;
-    }
-  });
-
-  // Create curved path
-  const midPoint: [number, number, number] = [
-    (start[0] + end[0]) / 2,
-    (start[1] + end[1]) / 2 + (Math.random() - 0.5) * 2,
-    (start[2] + end[2]) / 2 + (Math.random() - 0.5) * 1
-  ];
-
-  const curve = new THREE.QuadraticBezierCurve3(
-    new THREE.Vector3(...start),
-    new THREE.Vector3(...midPoint),
-    new THREE.Vector3(...end)
-  );
-
-  const points = curve.getPoints(20);
-
-  return (
-    <line>
-      <bufferGeometry>
-        <bufferAttribute
-          attach="attributes-position"
-          count={points.length}
-          array={new Float32Array(points.flatMap(p => [p.x, p.y, p.z]))}
-          itemSize={3}
-        />
-      </bufferGeometry>
-      <lineBasicMaterial 
-        ref={materialRef}
-        color="#00ffff" 
-        transparent 
-        opacity={0.6}
-      />
-    </line>
-  );
-};
-
-const BrainScene: React.FC<{ mousePosition: { x: number; y: number } }> = ({ mousePosition }) => {
-  const { camera } = useThree();
-  
-  React.useEffect(() => {
-    camera.position.set(0, 2, 8);
-    camera.lookAt(0, 0, 0);
-  }, [camera]);
-
-  // Generate connections based on mouse position
-  const connections = React.useMemo(() => {
-    const connectionCount = 3 + Math.floor(Math.abs(mousePosition.x) * 5);
-    return Array.from({ length: connectionCount }, (_, i) => {
-      const startAngle = (i / connectionCount) * Math.PI * 2;
-      const endAngle = ((i + Math.random() - 0.5) / connectionCount) * Math.PI * 2;
-      
-      return {
-        start: [
-          -3 + Math.cos(startAngle) * 1.2,
-          Math.sin(startAngle) * 1.2,
-          (Math.random() - 0.5) * 2
-        ] as [number, number, number],
-        end: [
-          3 + Math.cos(endAngle) * 1.2,
-          Math.sin(endAngle) * 1.2,
-          (Math.random() - 0.5) * 2
-        ] as [number, number, number]
-      };
-    });
-  }, [mousePosition.x]);
-
-  return (
-    <>
-      <ambientLight intensity={0.6} />
-      <directionalLight position={[5, 5, 5]} intensity={0.8} />
-      
-      <Brain 
-        position={[-3, 0, 0]} 
-        color="#6366f1" 
-        mousePosition={mousePosition}
-      />
-      <Brain 
-        position={[3, 0, 0]} 
-        color="#ec4899" 
-        mousePosition={mousePosition}
-      />
-      
-      {connections.map((connection, index) => (
-        <Connection
-          key={index}
-          start={connection.start}
-          end={connection.end}
-          mousePosition={mousePosition}
-        />
-      ))}
-    </>
-  );
-};
+import React, { useState, useRef, useEffect } from 'react';
 
 interface BrainConnectionVisualizationProps {
   className?: string;
@@ -177,14 +6,17 @@ interface BrainConnectionVisualizationProps {
 
 const BrainConnectionVisualization: React.FC<BrainConnectionVisualizationProps> = ({ className = "" }) => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [connections, setConnections] = useState<Array<{ id: number; delay: number; rotation: number }>>([]);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  console.log("BrainConnectionVisualization mounting");
-
-  React.useEffect(() => {
-    console.log("BrainConnectionVisualization mounted");
-    setIsLoaded(true);
+  useEffect(() => {
+    // Generate initial connections
+    const initialConnections = Array.from({ length: 6 }, (_, i) => ({
+      id: i,
+      delay: i * 0.3,
+      rotation: (Math.random() - 0.5) * 30
+    }));
+    setConnections(initialConnections);
   }, []);
 
   const handleMouseMove = (event: React.MouseEvent) => {
@@ -195,37 +27,121 @@ const BrainConnectionVisualization: React.FC<BrainConnectionVisualizationProps> 
     const y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
     
     setMousePosition({ x, y });
-    console.log("Mouse position:", { x, y });
+
+    // Generate new connections when mouse is in center area
+    if (Math.abs(x) < 0.4) {
+      const newConnections = Array.from({ length: 8 + Math.floor(Math.random() * 4) }, (_, i) => ({
+        id: Date.now() + i,
+        delay: i * 0.1,
+        rotation: (Math.random() - 0.5) * 40
+      }));
+      setConnections(newConnections);
+    }
   };
+
+  const mouseInfluence = 1 - Math.abs(mousePosition.x);
+  const connectionIntensity = 0.3 + mouseInfluence * 0.5;
 
   return (
     <div 
       ref={containerRef}
-      className={`absolute inset-0 ${className}`}
+      className={`absolute inset-0 ${className} overflow-hidden`}
       onMouseMove={handleMouseMove}
       style={{ pointerEvents: 'auto' }}
     >
-      {/* Fallback visualization */}
-      <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-pink-500/20 opacity-50" />
+      {/* Animated background gradient */}
+      <div 
+        className="absolute inset-0 bg-gradient-to-r from-blue-500/20 via-purple-500/30 to-pink-500/20 transition-all duration-500"
+        style={{
+          opacity: 0.4 + mouseInfluence * 0.3,
+          transform: `scale(${1 + mouseInfluence * 0.1})`
+        }}
+      />
       
-      {/* Neural connection lines as CSS */}
-      <div className="absolute top-1/2 left-1/4 w-1/2 h-px bg-cyan-400 opacity-60 animate-pulse" 
-           style={{ transform: `rotate(${mousePosition.x * 10}deg)` }} />
-      <div className="absolute top-1/3 left-1/4 w-1/2 h-px bg-cyan-400 opacity-60 animate-pulse" 
-           style={{ transform: `rotate(${-mousePosition.x * 15}deg)`, animationDelay: '0.5s' }} />
-      <div className="absolute top-2/3 left-1/4 w-1/2 h-px bg-cyan-400 opacity-60 animate-pulse" 
-           style={{ transform: `rotate(${mousePosition.x * 8}deg)`, animationDelay: '1s' }} />
+      {/* Floating particles */}
+      <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-cyan-400 rounded-full animate-pulse opacity-60" 
+           style={{ transform: `translate(${mousePosition.x * 20}px, ${mousePosition.y * 10}px)` }} />
+      <div className="absolute top-3/4 right-1/4 w-1.5 h-1.5 bg-blue-400 rounded-full animate-pulse opacity-50" 
+           style={{ transform: `translate(${-mousePosition.x * 15}px, ${-mousePosition.y * 8}px)`, animationDelay: '0.5s' }} />
+      <div className="absolute top-1/2 left-1/3 w-1 h-1 bg-purple-400 rounded-full animate-pulse opacity-70" 
+           style={{ transform: `translate(${mousePosition.x * 25}px, ${mousePosition.y * 12}px)`, animationDelay: '1s' }} />
       
-      {/* Brain representations */}
-      <div className="absolute top-1/2 left-1/4 w-16 h-16 bg-blue-500/30 rounded-full transform -translate-x-1/2 -translate-y-1/2 animate-pulse" />
-      <div className="absolute top-1/2 right-1/4 w-16 h-16 bg-pink-500/30 rounded-full transform translate-x-1/2 -translate-y-1/2 animate-pulse" 
-           style={{ animationDelay: '0.3s' }} />
+      {/* Neural connection lines */}
+      {connections.map((connection) => (
+        <div
+          key={connection.id}
+          className="absolute top-1/2 left-1/4 w-1/2 h-0.5 bg-gradient-to-r from-cyan-400 via-blue-300 to-cyan-400 origin-left transition-all duration-300"
+          style={{
+            opacity: connectionIntensity * 0.8,
+            transform: `rotate(${connection.rotation + mousePosition.x * 10}deg) scaleX(${0.8 + mouseInfluence * 0.4})`,
+            animationDelay: `${connection.delay}s`,
+            filter: 'blur(0.5px)',
+            boxShadow: `0 0 ${4 + mouseInfluence * 8}px rgba(6, 182, 212, ${0.3 + mouseInfluence * 0.4})`
+          }}
+        />
+      ))}
       
-      {isLoaded && (
-        <Canvas camera={{ fov: 75, near: 0.1, far: 1000 }}>
-          <BrainScene mousePosition={mousePosition} />
-        </Canvas>
-      )}
+      {/* Additional connection layers for depth */}
+      {connections.slice(0, 3).map((connection) => (
+        <div
+          key={`layer2-${connection.id}`}
+          className="absolute top-1/3 left-1/4 w-1/2 h-px bg-gradient-to-r from-blue-300 via-purple-300 to-pink-300 origin-left transition-all duration-500"
+          style={{
+            opacity: connectionIntensity * 0.6,
+            transform: `rotate(${-connection.rotation + mousePosition.x * 8}deg) scaleX(${0.6 + mouseInfluence * 0.3})`,
+            animationDelay: `${connection.delay + 0.2}s`,
+            filter: 'blur(1px)'
+          }}
+        />
+      ))}
+      
+      {connections.slice(3, 6).map((connection) => (
+        <div
+          key={`layer3-${connection.id}`}
+          className="absolute top-2/3 left-1/4 w-1/2 h-px bg-gradient-to-r from-pink-300 via-purple-300 to-blue-300 origin-left transition-all duration-700"
+          style={{
+            opacity: connectionIntensity * 0.4,
+            transform: `rotate(${connection.rotation * 0.7 + mousePosition.x * 5}deg) scaleX(${0.7 + mouseInfluence * 0.2})`,
+            animationDelay: `${connection.delay + 0.4}s`,
+            filter: 'blur(1.5px)'
+          }}
+        />
+      ))}
+      
+      {/* Brain representations with pulsing effect */}
+      <div 
+        className="absolute top-1/2 left-1/4 w-20 h-20 bg-gradient-to-br from-blue-400/40 to-blue-600/60 rounded-full transform -translate-x-1/2 -translate-y-1/2 transition-all duration-300"
+        style={{
+          transform: `translate(-50%, -50%) scale(${1 + mouseInfluence * 0.2})`,
+          boxShadow: `0 0 ${20 + mouseInfluence * 20}px rgba(59, 130, 246, ${0.4 + mouseInfluence * 0.3})`,
+          filter: 'blur(2px)'
+        }}
+      >
+        <div className="absolute inset-2 bg-blue-300/30 rounded-full animate-pulse" />
+        <div className="absolute inset-4 bg-blue-200/40 rounded-full animate-pulse" style={{ animationDelay: '0.5s' }} />
+      </div>
+      
+      <div 
+        className="absolute top-1/2 right-1/4 w-20 h-20 bg-gradient-to-br from-pink-400/40 to-pink-600/60 rounded-full transform translate-x-1/2 -translate-y-1/2 transition-all duration-300"
+        style={{
+          transform: `translate(50%, -50%) scale(${1 + mouseInfluence * 0.2})`,
+          boxShadow: `0 0 ${20 + mouseInfluence * 20}px rgba(236, 72, 153, ${0.4 + mouseInfluence * 0.3})`,
+          filter: 'blur(2px)'
+        }}
+      >
+        <div className="absolute inset-2 bg-pink-300/30 rounded-full animate-pulse" style={{ animationDelay: '0.3s' }} />
+        <div className="absolute inset-4 bg-pink-200/40 rounded-full animate-pulse" style={{ animationDelay: '0.8s' }} />
+      </div>
+      
+      {/* Center connection point that responds to mouse */}
+      <div 
+        className="absolute top-1/2 left-1/2 w-4 h-4 bg-white/80 rounded-full transform -translate-x-1/2 -translate-y-1/2 transition-all duration-200"
+        style={{
+          opacity: mouseInfluence,
+          transform: `translate(-50%, -50%) scale(${mouseInfluence * 2})`,
+          boxShadow: `0 0 ${mouseInfluence * 30}px rgba(255, 255, 255, 0.8)`
+        }}
+      />
     </div>
   );
 };
