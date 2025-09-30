@@ -1,14 +1,17 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Mail, Send, MapPin, Phone, MessageCircle } from "lucide-react";
+import { ArrowLeft, Mail, Send, MapPin, Phone, MessageCircle, Linkedin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ResultCard } from "@/components/ui/result-card";
 import { useToast } from "@/hooks/use-toast";
 import Footer from "@/components/Footer";
 import { z } from "zod";
+import ceoPicture from "@/assets/team-ceo.jpg";
+import advisorPicture from "@/assets/team-advisor.jpg";
 
 const contactSchema = z.object({
   name: z.string()
@@ -123,6 +126,21 @@ const ContactUs = () => {
       title: "Address",
       value: "123 Tech Street, San Francisco, CA 94102",
       link: "https://maps.google.com"
+    }
+  ];
+
+  const teamMembers = [
+    {
+      name: "Eldhose Eldho",
+      role: "CEO",
+      image: ceoPicture,
+      linkedin: "https://www.linkedin.com/in/eldhose-eldho-a9579123b/"
+    },
+    {
+      name: "Swathi Sreekumar",
+      role: "Cognitive Science Advisor",
+      image: advisorPicture,
+      linkedin: "https://www.linkedin.com/in/swathi-sreekumar-0b3427338/"
     }
   ];
 
@@ -315,6 +333,51 @@ const ContactUs = () => {
                 </ResultCard>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Team Section */}
+      <section className="py-16 bg-muted/30">
+        <div className="container mx-auto px-6">
+          <div className="max-w-4xl mx-auto text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+              Meet Our Team
+            </h2>
+            <p className="text-lg text-muted-foreground">
+              Connect with the minds behind MindMatch
+            </p>
+          </div>
+
+          <div className="max-w-4xl mx-auto grid sm:grid-cols-2 gap-8">
+            {teamMembers.map((member, index) => (
+              <ResultCard key={index} variant="base" className="text-center group hover:shadow-card transition-all duration-300">
+                <div className="flex flex-col items-center">
+                  <Avatar className="w-32 h-32 mb-4 border-4 border-primary/20 group-hover:border-primary/40 transition-colors">
+                    <AvatarImage src={member.image} alt={member.name} />
+                    <AvatarFallback className="text-2xl">{member.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                  </Avatar>
+                  
+                  <h3 className="text-xl font-bold text-foreground mb-1">
+                    {member.name}
+                  </h3>
+                  
+                  <p className="text-sm text-muted-foreground mb-4">
+                    {member.role}
+                  </p>
+                  
+                  <a
+                    href={member.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors"
+                  >
+                    <Linkedin className="w-5 h-5" />
+                    <span className="text-sm font-medium">Connect on LinkedIn</span>
+                  </a>
+                </div>
+              </ResultCard>
+            ))}
           </div>
         </div>
       </section>
