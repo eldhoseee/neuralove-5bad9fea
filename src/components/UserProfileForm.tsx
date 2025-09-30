@@ -79,6 +79,17 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({
       return;
     }
 
+    // Validate against test names
+    const testNamePattern = /^test\d*$/i;
+    if (testNamePattern.test(name.trim())) {
+      toast({
+        title: "Invalid name",
+        description: "Please enter your real name to continue.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       const { error } = await supabase
