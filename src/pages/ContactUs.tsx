@@ -11,7 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import Footer from "@/components/Footer";
 import { z } from "zod";
 import ceoPicture from "@/assets/team-ceo.jpg";
-import advisorPicture from "@/assets/team-advisor.jpg";
+import swathiPicture from "@/assets/team-swathi.png";
 
 const contactSchema = z.object({
   name: z.string()
@@ -139,7 +139,7 @@ const ContactUs = () => {
     {
       name: "Swathi Sreekumar",
       role: "Cognitive Science Advisor",
-      image: advisorPicture,
+      image: swathiPicture,
       linkedin: "https://www.linkedin.com/in/swathi-sreekumar-0b3427338/"
     }
   ];
