@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ResultCard } from "@/components/ui/result-card";
 import { LoadingIndicator } from "@/components/ui/loading-indicator";
-import { Brain, Heart, Sparkles, Share2, ArrowRight, CheckCircle, Users, MessageCircle, Compass, ToggleLeft, ToggleRight } from "lucide-react";
+import { Brain, Heart, Sparkles, Share2, ArrowRight, CheckCircle, Users, MessageCircle, Compass, ToggleLeft, ToggleRight, ThumbsUp, ThumbsDown } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -21,7 +21,8 @@ interface CognitiveInsights {
   keyStrengths: string[];
   idealMatches: string[];
   relationshipDynamics: string[];
-  validationStatements: string[];
+  relationshipLikes: string[];
+  relationshipHates: string[];
 }
 
 const QuizResult = ({ cognitiveType, explanation, motivation, onClose, onFindMatches, isForCouple = false, coupleNames }: QuizResultProps) => {
@@ -136,20 +137,40 @@ const QuizResult = ({ cognitiveType, explanation, motivation, onClose, onFindMat
             {/* Detailed Mode Only Sections */}
             {!isSimpleMode && (
               <>
-                {/* Validation Statements */}
+                {/* What They Like in Relationships */}
                 <ResultCard variant="accent">
                   <h3 className="text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
-                    <Heart className="w-5 h-5 text-accent" />
-                    What Makes You Special
+                    <ThumbsUp className="w-5 h-5 text-accent" />
+                    What You Value in Relationships
                   </h3>
                   {isLoadingInsights ? (
-                    <LoadingIndicator message="Generating personalized insights..." />
+                    <LoadingIndicator message="Analyzing relationship preferences..." />
                   ) : (
                     <div className="space-y-3">
-                      {insights?.validationStatements?.map((validation, index) => (
+                      {insights?.relationshipLikes?.map((like, index) => (
                         <div key={index} className="flex items-start gap-3 p-4 bg-background/50 rounded-lg">
                           <CheckCircle className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                          <p className="text-foreground">{validation}</p>
+                          <p className="text-foreground">{like}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </ResultCard>
+
+                {/* What They Hate in Relationships */}
+                <ResultCard variant="secondary">
+                  <h3 className="text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
+                    <ThumbsDown className="w-5 h-5 text-secondary" />
+                    Your Relationship Dealbreakers
+                  </h3>
+                  {isLoadingInsights ? (
+                    <LoadingIndicator message="Identifying dealbreakers..." />
+                  ) : (
+                    <div className="space-y-3">
+                      {insights?.relationshipHates?.map((hate, index) => (
+                        <div key={index} className="flex items-start gap-3 p-4 bg-background/50 rounded-lg">
+                          <div className="w-5 h-5 text-destructive mt-0.5 flex-shrink-0">⚠️</div>
+                          <p className="text-foreground">{hate}</p>
                         </div>
                       ))}
                     </div>
@@ -157,9 +178,9 @@ const QuizResult = ({ cognitiveType, explanation, motivation, onClose, onFindMat
                 </ResultCard>
 
                 {/* Ideal Matches */}
-                <ResultCard variant="secondary">
+                <ResultCard variant="primary">
                   <h3 className="text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
-                    <Users className="w-5 h-5 text-secondary" />
+                    <Users className="w-5 h-5 text-primary" />
                     Your Ideal Mind Matches
                   </h3>
                   {isLoadingInsights ? (
@@ -176,7 +197,7 @@ const QuizResult = ({ cognitiveType, explanation, motivation, onClose, onFindMat
                 </ResultCard>
 
                 {/* Relationship Dynamics */}
-                <ResultCard variant="primary">
+                <ResultCard variant="base">
                   <h3 className="text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
                     <MessageCircle className="w-5 h-5 text-primary" />
                     Your Relationship Style

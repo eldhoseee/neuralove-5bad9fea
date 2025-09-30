@@ -49,14 +49,19 @@ Provide comprehensive insights in the following JSON format:
     "Communication style - insight 2", 
     "Partnership style - insight 3"
   ],
-  "validationStatements": [
-    "Validating statement about their thinking style",
-    "Acknowledgment of their unique cognitive approach",
-    "Affirmation of their intellectual strengths"
+  "relationshipLikes": [
+    "First thing they appreciate and value in relationships",
+    "Second thing they seek and enjoy in partnerships",
+    "Third thing that makes them feel connected and fulfilled"
+  ],
+  "relationshipHates": [
+    "First thing that frustrates or drains them in relationships",
+    "Second behavior or dynamic they cannot tolerate",
+    "Third dealbreaker or major relationship concern"
   ]
 }
 
-Keep each array item to 1-2 sentences. Focus on positive, actionable insights that help them understand their cognitive patterns and relationship compatibility.`;
+Keep each array item to 1-2 sentences. Focus on authentic insights about their relationship preferences and dealbreakers based on their cognitive type.`;
 
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
@@ -107,7 +112,7 @@ Keep each array item to 1-2 sentences. Focus on positive, actionable insights th
       const result = JSON.parse(cleanContent);
       
       // Validate the response structure
-      if (!result.keyStrengths || !result.idealMatches || !result.relationshipDynamics || !result.validationStatements) {
+      if (!result.keyStrengths || !result.idealMatches || !result.relationshipDynamics || !result.relationshipLikes || !result.relationshipHates) {
         throw new Error('Invalid AI response structure');
       }
 
@@ -138,10 +143,15 @@ Keep each array item to 1-2 sentences. Focus on positive, actionable insights th
           "Your communication style creates meaningful connections.",
           "You value authentic and intellectually stimulating partnerships."
         ],
-        validationStatements: [
-          "Your way of processing information is a genuine strength.",
-          "Your cognitive style adds unique value to any relationship.",
-          "You think in ways that can inspire and support others."
+        relationshipLikes: [
+          "Partners who respect your unique way of thinking and processing.",
+          "Genuine intellectual connection and meaningful conversations.",
+          "Emotional authenticity and mutual understanding."
+        ],
+        relationshipHates: [
+          "Being misunderstood or having your perspective dismissed.",
+          "Superficial interactions that lack depth or authenticity.",
+          "Rigid expectations that don't allow for your natural cognitive style."
         ]
       };
       
