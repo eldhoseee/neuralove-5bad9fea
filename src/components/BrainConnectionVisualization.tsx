@@ -1,236 +1,232 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useState } from 'react';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { Sphere, Line } from '@react-three/drei';
 import * as THREE from 'three';
+
+interface BrainProps {
+  position: [number, number, number];
+  color: string;
+  mousePosition: { x: number; y: number };
+}
+
+const Brain: React.FC<BrainProps> = ({ position, color, mousePosition }) => {
+  const meshRef = useRef<THREE.Mesh>(null);
+  const groupRef = useRef<THREE.Group>(null);
+
+  useFrame((state, delta) => {
+    if (groupRef.current) {
+      groupRef.current.rotation.y += delta * 0.1;
+      
+      // Respond to mouse position
+      const mouseInfluence = 1 - Math.abs(mousePosition.x);
+      groupRef.current.rotation.x = Math.sin(state.clock.elapsedTime) * 0.1 * mouseInfluence;
+    }
+  });
+
+  // Create brain nodes
+  const nodes = Array.from({ length: 12 }, (_, i) => {
+    const phi = Math.acos(-1 + (2 * i) / 12);
+    const theta = Math.sqrt(12 * Math.PI) * phi;
+    
+    return [
+      1.3 * Math.cos(theta) * Math.sin(phi),
+      1.3 * Math.sin(theta) * Math.sin(phi),
+      1.3 * Math.cos(phi)
+    ] as [number, number, number];
+  });
+
+  return (
+    <group ref={groupRef} position={position}>
+      {/* Main brain body */}
+      <Sphere ref={meshRef} args={[1, 16, 12]}>
+        <meshPhongMaterial 
+          color={color} 
+          transparent 
+          opacity={0.7} 
+          emissive={color}
+          emissiveIntensity={0.1}
+        />
+      </Sphere>
+      
+      {/* Neural nodes */}
+      {nodes.map((nodePos, index) => (
+        <Sphere key={index} position={nodePos} args={[0.05, 8, 6]}>
+          <meshPhongMaterial 
+            color="#ffffff" 
+            emissive={color}
+            emissiveIntensity={0.3}
+          />
+        </Sphere>
+      ))}
+    </group>
+  );
+};
+
+interface ConnectionProps {
+  start: [number, number, number];
+  end: [number, number, number];
+  mousePosition: { x: number; y: number };
+}
+
+const Connection: React.FC<ConnectionProps> = ({ start, end, mousePosition }) => {
+  const materialRef = useRef<THREE.LineBasicMaterial>(null);
+
+  useFrame((state) => {
+    if (materialRef.current) {
+      const mouseInfluence = 1 - Math.abs(mousePosition.x);
+      materialRef.current.opacity = 0.3 + Math.sin(state.clock.elapsedTime * 2) * 0.2 + mouseInfluence * 0.4;
+    }
+  });
+
+  // Create curved path
+  const midPoint: [number, number, number] = [
+    (start[0] + end[0]) / 2,
+    (start[1] + end[1]) / 2 + (Math.random() - 0.5) * 2,
+    (start[2] + end[2]) / 2 + (Math.random() - 0.5) * 1
+  ];
+
+  const curve = new THREE.QuadraticBezierCurve3(
+    new THREE.Vector3(...start),
+    new THREE.Vector3(...midPoint),
+    new THREE.Vector3(...end)
+  );
+
+  const points = curve.getPoints(20);
+
+  return (
+    <line>
+      <bufferGeometry>
+        <bufferAttribute
+          attach="attributes-position"
+          count={points.length}
+          array={new Float32Array(points.flatMap(p => [p.x, p.y, p.z]))}
+          itemSize={3}
+        />
+      </bufferGeometry>
+      <lineBasicMaterial 
+        ref={materialRef}
+        color="#00ffff" 
+        transparent 
+        opacity={0.6}
+      />
+    </line>
+  );
+};
+
+const BrainScene: React.FC<{ mousePosition: { x: number; y: number } }> = ({ mousePosition }) => {
+  const { camera } = useThree();
+  
+  React.useEffect(() => {
+    camera.position.set(0, 2, 8);
+    camera.lookAt(0, 0, 0);
+  }, [camera]);
+
+  // Generate connections based on mouse position
+  const connections = React.useMemo(() => {
+    const connectionCount = 3 + Math.floor(Math.abs(mousePosition.x) * 5);
+    return Array.from({ length: connectionCount }, (_, i) => {
+      const startAngle = (i / connectionCount) * Math.PI * 2;
+      const endAngle = ((i + Math.random() - 0.5) / connectionCount) * Math.PI * 2;
+      
+      return {
+        start: [
+          -3 + Math.cos(startAngle) * 1.2,
+          Math.sin(startAngle) * 1.2,
+          (Math.random() - 0.5) * 2
+        ] as [number, number, number],
+        end: [
+          3 + Math.cos(endAngle) * 1.2,
+          Math.sin(endAngle) * 1.2,
+          (Math.random() - 0.5) * 2
+        ] as [number, number, number]
+      };
+    });
+  }, [mousePosition.x]);
+
+  return (
+    <>
+      <ambientLight intensity={0.6} />
+      <directionalLight position={[5, 5, 5]} intensity={0.8} />
+      
+      <Brain 
+        position={[-3, 0, 0]} 
+        color="#6366f1" 
+        mousePosition={mousePosition}
+      />
+      <Brain 
+        position={[3, 0, 0]} 
+        color="#ec4899" 
+        mousePosition={mousePosition}
+      />
+      
+      {connections.map((connection, index) => (
+        <Connection
+          key={index}
+          start={connection.start}
+          end={connection.end}
+          mousePosition={mousePosition}
+        />
+      ))}
+    </>
+  );
+};
 
 interface BrainConnectionVisualizationProps {
   className?: string;
 }
 
 const BrainConnectionVisualization: React.FC<BrainConnectionVisualizationProps> = ({ className = "" }) => {
-  const mountRef = useRef<HTMLDivElement>(null);
-  const sceneRef = useRef<THREE.Scene | null>(null);
-  const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
-  const mouseRef = useRef({ x: 0, y: 0 });
-  const connectionsRef = useRef<THREE.Line[]>([]);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [isLoaded, setIsLoaded] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (!mountRef.current) return;
+  console.log("BrainConnectionVisualization mounting");
 
-    // Scene setup
-    const scene = new THREE.Scene();
-    sceneRef.current = scene;
-    
-    const camera = new THREE.PerspectiveCamera(75, mountRef.current.clientWidth / mountRef.current.clientHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-    rendererRef.current = renderer;
-    
-    renderer.setSize(mountRef.current.clientWidth, mountRef.current.clientHeight);
-    renderer.setClearColor(0x000000, 0);
-    mountRef.current.appendChild(renderer.domElement);
-
-    // Lighting
-    const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
-    scene.add(ambientLight);
-    
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-    directionalLight.position.set(5, 5, 5);
-    scene.add(directionalLight);
-
-    // Create brain-like structures using spheres with some deformation
-    const createBrainShape = (position: THREE.Vector3, color: number) => {
-      const group = new THREE.Group();
-      
-      // Main brain body
-      const brainGeometry = new THREE.SphereGeometry(1, 16, 12);
-      const brainMaterial = new THREE.MeshPhongMaterial({ 
-        color: color,
-        transparent: true,
-        opacity: 0.7,
-        wireframe: false
-      });
-      const brainMesh = new THREE.Mesh(brainGeometry, brainMaterial);
-      
-      // Add some bumps to make it more brain-like
-      const vertices = brainGeometry.attributes.position.array;
-      for (let i = 0; i < vertices.length; i += 3) {
-        const noise = (Math.random() - 0.5) * 0.2;
-        vertices[i] += noise;
-        vertices[i + 1] += noise;
-        vertices[i + 2] += noise;
-      }
-      brainGeometry.attributes.position.needsUpdate = true;
-      brainGeometry.computeVertexNormals();
-      
-      group.add(brainMesh);
-      
-      // Add neural nodes
-      for (let i = 0; i < 20; i++) {
-        const nodeGeometry = new THREE.SphereGeometry(0.05, 8, 6);
-        const nodeMaterial = new THREE.MeshPhongMaterial({ 
-          color: 0xffffff,
-          emissive: color,
-          emissiveIntensity: 0.3
-        });
-        const node = new THREE.Mesh(nodeGeometry, nodeMaterial);
-        
-        // Position nodes on surface of brain
-        const phi = Math.acos(-1 + (2 * i) / 20);
-        const theta = Math.sqrt(20 * Math.PI) * phi;
-        
-        node.position.x = 1.2 * Math.cos(theta) * Math.sin(phi);
-        node.position.y = 1.2 * Math.sin(theta) * Math.sin(phi);
-        node.position.z = 1.2 * Math.cos(phi);
-        
-        group.add(node);
-      }
-      
-      group.position.copy(position);
-      return group;
-    };
-
-    // Create two brains
-    const leftBrain = createBrainShape(new THREE.Vector3(-3, 0, 0), 0x6366f1);
-    const rightBrain = createBrainShape(new THREE.Vector3(3, 0, 0), 0xec4899);
-    
-    scene.add(leftBrain);
-    scene.add(rightBrain);
-
-    // Create connection lines
-    const createConnections = () => {
-      // Clear existing connections
-      connectionsRef.current.forEach(line => scene.remove(line));
-      connectionsRef.current = [];
-
-      const connectionCount = 5 + Math.floor(Math.random() * 10);
-      
-      for (let i = 0; i < connectionCount; i++) {
-        const points = [];
-        
-        // Start point on left brain
-        const startAngle = (i / connectionCount) * Math.PI * 2;
-        const startPoint = new THREE.Vector3(
-          -3 + Math.cos(startAngle) * 1.2,
-          Math.sin(startAngle) * 1.2,
-          (Math.random() - 0.5) * 2
-        );
-        
-        // End point on right brain
-        const endAngle = ((i + Math.random() - 0.5) / connectionCount) * Math.PI * 2;
-        const endPoint = new THREE.Vector3(
-          3 + Math.cos(endAngle) * 1.2,
-          Math.sin(endAngle) * 1.2,
-          (Math.random() - 0.5) * 2
-        );
-        
-        // Create curved path
-        const midPoint = new THREE.Vector3().lerpVectors(startPoint, endPoint, 0.5);
-        midPoint.y += (Math.random() - 0.5) * 2;
-        midPoint.z += (Math.random() - 0.5) * 1;
-        
-        // Create curve
-        const curve = new THREE.QuadraticBezierCurve3(startPoint, midPoint, endPoint);
-        const curvePoints = curve.getPoints(20);
-        
-        const geometry = new THREE.BufferGeometry().setFromPoints(curvePoints);
-        const material = new THREE.LineBasicMaterial({
-          color: 0x00ffff,
-          transparent: true,
-          opacity: 0.6 + Math.random() * 0.4
-        });
-        
-        const line = new THREE.Line(geometry, material);
-        scene.add(line);
-        connectionsRef.current.push(line);
-      }
-    };
-
-    // Mouse interaction
-    const handleMouseMove = (event: MouseEvent) => {
-      const rect = mountRef.current?.getBoundingClientRect();
-      if (!rect) return;
-      
-      mouseRef.current.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-      mouseRef.current.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-      
-      // Trigger new connections when mouse is in the middle area
-      if (Math.abs(mouseRef.current.x) < 0.3) {
-        createConnections();
-      }
-    };
-
-    // Initial connections
-    createConnections();
-
-    // Position camera
-    camera.position.z = 8;
-    camera.position.y = 2;
-    camera.lookAt(0, 0, 0);
-
-    // Animation loop
-    let animationId: number;
-    const animate = () => {
-      animationId = requestAnimationFrame(animate);
-
-      // Rotate brains slowly
-      leftBrain.rotation.y += 0.005;
-      rightBrain.rotation.y -= 0.005;
-      
-      // Animate connections
-      connectionsRef.current.forEach((line, index) => {
-        const material = line.material as THREE.LineBasicMaterial;
-        material.opacity = 0.3 + Math.sin(Date.now() * 0.003 + index) * 0.3;
-      });
-
-      // Mouse influence on connections
-      const mouseIntensity = 1 - Math.abs(mouseRef.current.x);
-      connectionsRef.current.forEach(line => {
-        const material = line.material as THREE.LineBasicMaterial;
-        material.opacity *= 0.5 + mouseIntensity * 0.5;
-      });
-
-      renderer.render(scene, camera);
-    };
-
-    animate();
-
-    // Event listeners
-    mountRef.current.addEventListener('mousemove', handleMouseMove);
-
-    // Handle resize
-    const handleResize = () => {
-      if (!mountRef.current || !rendererRef.current) return;
-      
-      const width = mountRef.current.clientWidth;
-      const height = mountRef.current.clientHeight;
-      
-      camera.aspect = width / height;
-      camera.updateProjectionMatrix();
-      rendererRef.current.setSize(width, height);
-    };
-
-    window.addEventListener('resize', handleResize);
-
-    // Cleanup
-    return () => {
-      if (animationId) {
-        cancelAnimationFrame(animationId);
-      }
-      if (mountRef.current && renderer.domElement) {
-        mountRef.current.removeChild(renderer.domElement);
-      }
-      if (mountRef.current) {
-        mountRef.current.removeEventListener('mousemove', handleMouseMove);
-      }
-      window.removeEventListener('resize', handleResize);
-      renderer.dispose();
-    };
+  React.useEffect(() => {
+    console.log("BrainConnectionVisualization mounted");
+    setIsLoaded(true);
   }, []);
+
+  const handleMouseMove = (event: React.MouseEvent) => {
+    if (!containerRef.current) return;
+    
+    const rect = containerRef.current.getBoundingClientRect();
+    const x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+    const y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+    
+    setMousePosition({ x, y });
+    console.log("Mouse position:", { x, y });
+  };
 
   return (
     <div 
-      ref={mountRef} 
+      ref={containerRef}
       className={`absolute inset-0 ${className}`}
-      style={{ pointerEvents: 'none' }}
-    />
+      onMouseMove={handleMouseMove}
+      style={{ pointerEvents: 'auto' }}
+    >
+      {/* Fallback visualization */}
+      <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-pink-500/20 opacity-50" />
+      
+      {/* Neural connection lines as CSS */}
+      <div className="absolute top-1/2 left-1/4 w-1/2 h-px bg-cyan-400 opacity-60 animate-pulse" 
+           style={{ transform: `rotate(${mousePosition.x * 10}deg)` }} />
+      <div className="absolute top-1/3 left-1/4 w-1/2 h-px bg-cyan-400 opacity-60 animate-pulse" 
+           style={{ transform: `rotate(${-mousePosition.x * 15}deg)`, animationDelay: '0.5s' }} />
+      <div className="absolute top-2/3 left-1/4 w-1/2 h-px bg-cyan-400 opacity-60 animate-pulse" 
+           style={{ transform: `rotate(${mousePosition.x * 8}deg)`, animationDelay: '1s' }} />
+      
+      {/* Brain representations */}
+      <div className="absolute top-1/2 left-1/4 w-16 h-16 bg-blue-500/30 rounded-full transform -translate-x-1/2 -translate-y-1/2 animate-pulse" />
+      <div className="absolute top-1/2 right-1/4 w-16 h-16 bg-pink-500/30 rounded-full transform translate-x-1/2 -translate-y-1/2 animate-pulse" 
+           style={{ animationDelay: '0.3s' }} />
+      
+      {isLoaded && (
+        <Canvas camera={{ fov: 75, near: 0.1, far: 1000 }}>
+          <BrainScene mousePosition={mousePosition} />
+        </Canvas>
+      )}
+    </div>
   );
 };
 
