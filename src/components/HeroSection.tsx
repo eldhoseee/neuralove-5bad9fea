@@ -18,6 +18,7 @@ const HeroSection = () => {
   const [showCoupleNamesForm, setShowCoupleNamesForm] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [profileData, setProfileData] = useState<{
+    id: string;
     name: string;
     age: number;
     gender: string;
@@ -60,12 +61,17 @@ const HeroSection = () => {
         const { error: updateError } = await supabase
           .from('profiles')
           .update({ cognitive_type: data.cognitiveType })
-          .eq('name', profileData.name)
-          .eq('age', profileData.age)
-          .eq('gender', profileData.gender);
+          .eq('id', profileData.id);
           
         if (updateError) {
           console.error('Error updating profile with cognitive type:', updateError);
+          toast({
+            title: "Update Warning",
+            description: "Profile analyzed but cognitive type wasn't saved. Please retake the quiz.",
+            variant: "destructive"
+          });
+        } else {
+          console.log('Successfully updated profile with cognitive type:', data.cognitiveType);
         }
       }
       
@@ -120,7 +126,7 @@ const HeroSection = () => {
     setQuizResult(null);
   };
 
-  const handleProfileComplete = (userData: { name: string; age: number; gender: string }) => {
+  const handleProfileComplete = (userData: { id: string; name: string; age: number; gender: string }) => {
     setProfileData(userData);
     setShowProfileForm(false);
     setShowQuiz(true);

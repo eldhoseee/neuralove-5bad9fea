@@ -12,7 +12,7 @@ import { Brain, Sparkles, Users, Heart } from 'lucide-react';
 interface UserProfileFormProps {
   cognitiveType?: string;
   isForCouple?: boolean;
-  onComplete?: (userData: { name: string; age: number; gender: string }) => void;
+  onComplete?: (userData: { id: string; name: string; age: number; gender: string }) => void;
   onClose?: () => void;
 }
 
@@ -92,14 +92,16 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({
 
     setIsSubmitting(true);
     try {
-      const { error } = await supabase
+      const { data: insertedProfile, error } = await supabase
         .from('profiles')
         .insert({
           name: name.trim(),
           age: age[0],
           gender,
           cognitive_type: cognitiveType
-        });
+        })
+        .select()
+        .single();
 
       if (error) throw error;
 
@@ -109,6 +111,7 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({
       });
 
       onComplete?.({
+        id: insertedProfile.id,
         name: name.trim(),
         age: age[0],
         gender
