@@ -161,8 +161,8 @@ const HeroSection = () => {
             </div>
             
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-primary-foreground leading-tight">
-              Find someone who{" "}
-              <span className="inline-block bg-gradient-accent bg-clip-text text-transparent">
+              <span className="lg:whitespace-nowrap">Find someone who</span>
+              <span className="block bg-gradient-accent bg-clip-text text-transparent">
                 *thinks* like you
               </span>
             </h1>
