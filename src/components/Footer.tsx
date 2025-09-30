@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { Link } from "react-router-dom";
 import { 
   Brain, 
   Heart, 
@@ -129,10 +130,10 @@ const Footer = () => {
           <div className="flex flex-col sm:flex-row items-center gap-4 text-sm text-slate-400">
             <span>© {currentYear} NeuraLove. All rights reserved.</span>
             <div className="flex items-center gap-4">
-              <a href="#" className="hover:text-neural-blue transition-colors flex items-center gap-1">
+              <Link to="/privacy-policy" className="hover:text-neural-blue transition-colors flex items-center gap-1">
                 <Shield className="w-4 h-4" />
                 Privacy Policy
-              </a>
+              </Link>
               <a href="#" className="hover:text-neural-blue transition-colors flex items-center gap-1">
                 <FileText className="w-4 h-4" />
                 Terms of Service
