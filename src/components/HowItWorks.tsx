@@ -83,18 +83,6 @@ const HowItWorks = () => {
           ))}
         </div>
 
-        <div className="text-center mt-16 space-y-6">
-          <div className="bg-gradient-primary rounded-2xl p-8 max-w-3xl mx-auto text-white">
-            <h3 className="text-2xl font-bold mb-4">Why Cognitive Compatibility Matters</h3>
-            <p className="text-lg leading-relaxed opacity-90">
-              Research shows that couples with compatible thinking styles have 73% longer-lasting relationships. 
-              When your minds sync up, everything else follows - from communication to shared goals to genuine understanding.
-            </p>
-          </div>
-          <p className="text-lg text-muted-foreground">
-            Ready to find someone who truly gets how your mind works? 🧠💕
-          </p>
-        </div>
       </div>
     </section>
   );
