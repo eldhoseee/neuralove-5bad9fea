@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import Psychology from "./pages/Psychology";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import ContactUs from "./pages/ContactUs";
+import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 import FeedbackButton from "./components/FeedbackButton";
 
@@ -23,6 +24,7 @@ const App = () => (
           <Route path="/psychology" element={<Psychology />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/contact" element={<ContactUs />} />
+          <Route path="/admin" element={<Admin />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
