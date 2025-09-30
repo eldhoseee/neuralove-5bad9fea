@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Mail, Send, MapPin, Phone, MessageCircle, Linkedin } from "lucide-react";
+import { ArrowLeft, Mail, Send, MapPin, MessageCircle, Linkedin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -112,19 +112,13 @@ const ContactUs = () => {
     {
       icon: Mail,
       title: "Email",
-      value: "support@mindmatch.com",
-      link: "mailto:support@mindmatch.com"
-    },
-    {
-      icon: Phone,
-      title: "Phone",
-      value: "+1 (555) 123-4567",
-      link: "tel:+15551234567"
+      value: "eldhose.unfiltered@gmail.com",
+      link: "mailto:eldhose.unfiltered@gmail.com"
     },
     {
       icon: MapPin,
       title: "Address",
-      value: "123 Tech Street, San Francisco, CA 94102",
+      value: "Berlin, Germany",
       link: "https://maps.google.com"
     }
   ];
