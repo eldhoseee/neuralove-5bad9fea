@@ -5,7 +5,9 @@ import { ProfileTable } from "@/components/admin/ProfileTable";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { LoadingIndicator } from "@/components/ui/loading-indicator";
-import { AlertCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
+import { AlertCircle, Heart } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const Admin = () => {
@@ -15,13 +17,21 @@ const Admin = () => {
     <div className="min-h-screen flex flex-col">
       <Header />
       <main className="flex-1 container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold bg-gradient-hero bg-clip-text text-transparent mb-2">
-            Admin Dashboard
-          </h1>
-          <p className="text-muted-foreground">
-            Monitor and analyze user profile data in real-time
-          </p>
+        <div className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-4xl font-bold bg-gradient-hero bg-clip-text text-transparent mb-2">
+              Admin Dashboard
+            </h1>
+            <p className="text-muted-foreground">
+              Monitor and analyze user profile data in real-time
+            </p>
+          </div>
+          <Button variant="outline" asChild>
+            <Link to="/" className="flex items-center gap-2">
+              <Heart className="w-4 h-4" />
+              Back to Home
+            </Link>
+          </Button>
         </div>
 
         {isLoading && (
