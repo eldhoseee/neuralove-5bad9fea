@@ -43,398 +43,390 @@ const BrainConnectionVisualization: React.FC<BrainConnectionVisualizationProps> 
 
   // Calculate dynamic values
   const mouseDistance = Math.sqrt(mousePosition.x ** 2 + mousePosition.y ** 2);
-  const connectionIntensity = Math.max(0.1, 1 - mouseDistance / 2);
-  const rotationX = mousePosition.y * 15;
-  const rotationY = mousePosition.x * 20;
+  const connectionIntensity = Math.max(0.2, 1 - mouseDistance / 3);
+  const rotationX = mousePosition.y * 8;
+  const rotationY = mousePosition.x * 12;
 
-  // Generate dynamic neural pathways
-  const generatePathways = () => {
-    const pathways = [];
-    const pathCount = isHovering ? 12 : 6;
+  // Generate orbital particles around hearts
+  const generateOrbitingParticles = () => {
+    const particles = [];
+    const particleCount = isHovering ? 36 : 24;
     
-    for (let i = 0; i < pathCount; i++) {
-      const angle = (i / pathCount) * Math.PI * 2;
-      const radius = 40 + Math.sin(time * 0.01 + i) * 20;
-      const offsetX = mousePosition.x * 30;
-      const offsetY = mousePosition.y * 20;
+    for (let i = 0; i < particleCount; i++) {
+      const orbitRadius = 80 + (i % 3) * 40 + connectionIntensity * 60;
+      const orbitSpeed = 0.001 + (i % 5) * 0.0002;
+      const verticalOffset = Math.sin(time * orbitSpeed * 3 + i) * 30;
       
-      pathways.push({
+      // Create orbital motion influenced by cursor
+      const baseAngle = time * orbitSpeed + i * (Math.PI * 2 / particleCount);
+      const cursorInfluence = {
+        x: mousePosition.x * 40,
+        y: mousePosition.y * 25
+      };
+      
+      const x = 50 + Math.cos(baseAngle) * (orbitRadius / 6) + cursorInfluence.x;
+      const y = 50 + Math.sin(baseAngle) * (orbitRadius / 8) + cursorInfluence.y + verticalOffset / 8;
+      const z = Math.sin(baseAngle * 2) * 50 + connectionIntensity * 30;
+      
+      particles.push({
         id: i,
-        startX: 25 + Math.cos(angle) * radius * 0.3 + offsetX,
-        startY: 50 + Math.sin(angle) * radius * 0.2 + offsetY,
-        endX: 75 - Math.cos(angle + Math.PI) * radius * 0.3 + offsetX,
-        endY: 50 - Math.sin(angle + Math.PI) * radius * 0.2 + offsetY,
-        controlX: 50 + Math.sin(time * 0.005 + i) * 30 + offsetX,
-        controlY: 50 + Math.cos(time * 0.007 + i) * 15 + offsetY,
-        opacity: 0.3 + connectionIntensity * 0.7,
-        delay: i * 0.1
+        x,
+        y,
+        z,
+        size: 1 + (i % 4) * 0.5 + connectionIntensity * 2,
+        opacity: 0.4 + Math.sin(time * 0.002 + i) * 0.3 + connectionIntensity * 0.4,
+        color: i % 3 === 0 ? '6, 182, 212' : i % 3 === 1 ? '139, 92, 246' : '236, 72, 153',
+        trail: Math.sin(baseAngle - Math.PI / 4) * 20
       });
     }
-    return pathways;
+    return particles;
   };
 
-  const pathways = generatePathways();
+  const particles = generateOrbitingParticles();
 
   return (
     <div 
       ref={containerRef}
-      className={`absolute inset-0 ${className} overflow-hidden`}
+      className={`absolute inset-0 ${className} overflow-hidden cursor-none`}
       onMouseMove={handleMouseMove}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       style={{
-        perspective: '1500px',
+        perspective: '2000px',
         transformStyle: 'preserve-3d'
       }}
     >
-      {/* Dynamic Environment Lighting */}
+      {/* Dynamic Environment with Cursor-Following Lighting */}
       <div 
-        className="absolute inset-0 opacity-60"
+        className="absolute inset-0 opacity-70 transition-all duration-500"
         style={{
           background: `
-            radial-gradient(ellipse at ${40 + mousePosition.x * 20}% ${30 + mousePosition.y * 20}%, 
-              rgba(99, 102, 241, ${0.4 + connectionIntensity * 0.3}) 0%, 
-              transparent 50%),
-            radial-gradient(ellipse at ${70 + mousePosition.x * 15}% ${70 + mousePosition.y * 15}%, 
-              rgba(236, 72, 153, ${0.3 + connectionIntensity * 0.4}) 0%, 
-              transparent 60%),
-            radial-gradient(ellipse 150% 100% at 50% 0%, 
-              rgba(139, 92, 246, ${0.1 + connectionIntensity * 0.2}) 0%, 
+            radial-gradient(ellipse 400px 300px at ${50 + mousePosition.x * 25}% ${50 + mousePosition.y * 20}%, 
+              rgba(99, 102, 241, ${0.3 + connectionIntensity * 0.4}) 0%, 
+              rgba(139, 92, 246, ${0.2 + connectionIntensity * 0.3}) 30%,
+              rgba(236, 72, 153, ${0.2 + connectionIntensity * 0.3}) 60%,
+              transparent 80%),
+            radial-gradient(ellipse 600px 400px at ${30 + mousePosition.x * 20}% ${70 + mousePosition.y * 15}%, 
+              rgba(6, 182, 212, ${0.15 + connectionIntensity * 0.25}) 0%, 
               transparent 70%)
           `,
-          transform: `rotateX(${rotationX * 0.5}deg) rotateY(${rotationY * 0.3}deg)`,
-          transition: 'transform 0.3s ease-out'
+          transform: `rotateX(${rotationX * 0.3}deg) rotateY(${rotationY * 0.2}deg) translateZ(50px)`
         }}
       />
 
-      {/* Ambient Particles System */}
-      {Array.from({ length: 24 }, (_, i) => {
-        const orbitRadius = 100 + i * 15;
-        const orbitSpeed = 0.002 + i * 0.0001;
-        const x = 50 + Math.cos(time * orbitSpeed + i) * (orbitRadius / 8);
-        const y = 50 + Math.sin(time * orbitSpeed + i) * (orbitRadius / 12);
-        const z = Math.sin(time * orbitSpeed * 2 + i) * 50;
-        
-        return (
+      {/* Seamless Orbital Particle System */}
+      {particles.map((particle) => (
+        <div key={`particle-${particle.id}`}>
+          {/* Main particle */}
           <div
-            key={`particle-${i}`}
-            className="absolute transition-all duration-300 ease-out"
+            className="absolute transition-all duration-200 ease-out pointer-events-none"
             style={{
-              left: `${x + mousePosition.x * 10}%`,
-              top: `${y + mousePosition.y * 8}%`,
+              left: `${particle.x}%`,
+              top: `${particle.y}%`,
               transform: `
-                translateZ(${z}px) 
-                scale(${0.3 + connectionIntensity * 0.7})
-                rotateX(${rotationX}deg) 
-                rotateY(${rotationY}deg)
+                translateZ(${particle.z}px) 
+                translateX(-50%) translateY(-50%)
+                scale(${particle.size})
+                rotateX(${rotationX * 0.5}deg) 
+                rotateY(${rotationY * 0.5}deg)
               `,
-              opacity: 0.4 + Math.sin(time * 0.003 + i) * 0.3
+              opacity: particle.opacity
+            }}
+          >
+            <div 
+              className="w-3 h-3 rounded-full"
+              style={{
+                background: `radial-gradient(circle, 
+                  rgba(${particle.color}, 0.9) 0%, 
+                  rgba(${particle.color}, 0.4) 60%,
+                  transparent 100%)`,
+                boxShadow: `
+                  0 0 ${8 + connectionIntensity * 15}px rgba(${particle.color}, 0.7),
+                  0 0 ${15 + connectionIntensity * 25}px rgba(${particle.color}, 0.3)
+                `
+              }}
+            />
+          </div>
+          
+          {/* Particle trail effect */}
+          <div
+            className="absolute transition-all duration-300 ease-out pointer-events-none"
+            style={{
+              left: `${particle.x - Math.cos(time * 0.001 + particle.id) * 2}%`,
+              top: `${particle.y - Math.sin(time * 0.001 + particle.id) * 2}%`,
+              transform: `
+                translateZ(${particle.z - 20}px) 
+                translateX(-50%) translateY(-50%)
+                scale(${particle.size * 0.6})
+              `,
+              opacity: particle.opacity * 0.5
             }}
           >
             <div 
               className="w-2 h-2 rounded-full"
               style={{
-                background: `radial-gradient(circle, 
-                  rgba(${i % 3 === 0 ? '6, 182, 212' : i % 3 === 1 ? '139, 92, 246' : '236, 72, 153'}, 0.8) 0%, 
-                  transparent 70%)`,
-                boxShadow: `0 0 ${8 + connectionIntensity * 12}px rgba(6, 182, 212, 0.6)`
+                background: `radial-gradient(circle, rgba(${particle.color}, 0.4) 0%, transparent 70%)`,
+                filter: 'blur(1px)'
               }}
             />
           </div>
-        );
-      })}
+        </div>
+      ))}
 
-      {/* Neural Connection Network */}
-      <svg 
-        className="absolute inset-0 w-full h-full pointer-events-none"
-        style={{
-          transform: `rotateX(${rotationX * 0.8}deg) rotateY(${rotationY * 0.6}deg)`,
-          transformStyle: 'preserve-3d',
-          transition: 'transform 0.3s ease-out'
-        }}
-      >
-        <defs>
-          <linearGradient id="neuralGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="rgba(6, 182, 212, 0.8)" />
-            <stop offset="30%" stopColor="rgba(139, 92, 246, 0.9)" />
-            <stop offset="70%" stopColor="rgba(236, 72, 153, 0.8)" />
-            <stop offset="100%" stopColor="rgba(6, 182, 212, 0.6)" />
-          </linearGradient>
-          
-          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-            <feMerge> 
-              <feMergeNode in="coloredBlur"/>
-              <feMergeNode in="SourceGraphic"/>
-            </feMerge>
-          </filter>
-        </defs>
-        
-        {pathways.map((pathway) => (
-          <g key={pathway.id}>
-            <path
-              d={`M ${pathway.startX} ${pathway.startY} Q ${pathway.controlX} ${pathway.controlY} ${pathway.endX} ${pathway.endY}`}
-              stroke="url(#neuralGradient)"
-              strokeWidth={2 + connectionIntensity * 3}
-              fill="none"
-              opacity={pathway.opacity}
-              filter="url(#glow)"
-              style={{
-                animation: `drawPath 2s ease-in-out infinite`,
-                animationDelay: `${pathway.delay}s`
-              }}
-            />
-            
-            {/* Energy pulse */}
-            <circle
-              r={3 + connectionIntensity * 2}
-              fill="rgba(255, 255, 255, 0.9)"
-              opacity={pathway.opacity * 1.2}
-              style={{
-                filter: 'url(#glow)'
-              }}
-            >
-              <animateMotion
-                dur={`${2 + Math.random()}s`}
-                repeatCount="indefinite"
-                begin={`${pathway.delay}s`}
-              >
-                <mpath href={`#path-${pathway.id}`} />
-              </animateMotion>
-            </circle>
-          </g>
-        ))}
-      </svg>
-
-      {/* Left Heart-Brain (Morphing 3D Structure) */}
+      {/* Central Heart-Brain Cluster */}
       <div 
-        className="absolute"
-        style={{
-          left: '20%',
-          top: '45%',
-          transform: `
-            translate(-50%, -50%) 
-            rotateX(${rotationX + Math.sin(time * 0.008) * 10}deg) 
-            rotateY(${rotationY + Math.cos(time * 0.006) * 15}deg)
-            rotateZ(${Math.sin(time * 0.004) * 5}deg)
-            scale(${1 + connectionIntensity * 0.4})
-          `,
-          transformStyle: 'preserve-3d',
-          transition: 'transform 0.3s ease-out'
-        }}
-      >
-        {/* Multi-layered heart structure */}
-        {[0, 1, 2, 3].map((layer) => (
-          <div
-            key={layer}
-            className="absolute"
-            style={{
-              width: `${80 - layer * 15}px`,
-              height: `${80 - layer * 15}px`,
-              transform: `translateZ(${layer * 20}px) rotateZ(${layer * 10}deg)`,
-              transformStyle: 'preserve-3d'
-            }}
-          >
-            {/* Heart shape with advanced lighting */}
-            <div 
-              className="relative w-full h-full"
-              style={{
-                background: `
-                  linear-gradient(135deg, 
-                    rgba(99, 102, 241, ${0.8 - layer * 0.15}) 0%,
-                    rgba(139, 92, 246, ${0.6 - layer * 0.1}) 40%,
-                    rgba(99, 102, 241, ${0.4 - layer * 0.05}) 100%
-                  )
-                `,
-                borderRadius: '50px 50px 0 0',
-                transform: 'rotate(-45deg)',
-                filter: `blur(${layer * 0.5}px) brightness(${1.2 - layer * 0.1})`,
-                boxShadow: `
-                  0 0 ${30 + connectionIntensity * 40}px rgba(99, 102, 241, ${0.6 - layer * 0.1}),
-                  inset 0 0 ${20}px rgba(255, 255, 255, ${0.2 - layer * 0.05})
-                `
-              }}
-            >
-              {/* Heart bulbs */}
-              <div 
-                className="absolute w-10 h-10 rounded-full"
-                style={{
-                  top: '-20px',
-                  left: '-20px',
-                  background: `radial-gradient(circle, 
-                    rgba(99, 102, 241, ${0.9 - layer * 0.1}) 0%, 
-                    rgba(139, 92, 246, ${0.7 - layer * 0.1}) 70%, 
-                    transparent 100%)`
-                }}
-              />
-              <div 
-                className="absolute w-10 h-10 rounded-full"
-                style={{
-                  top: '-20px',
-                  right: '-20px',
-                  background: `radial-gradient(circle, 
-                    rgba(99, 102, 241, ${0.9 - layer * 0.1}) 0%, 
-                    rgba(139, 92, 246, ${0.7 - layer * 0.1}) 70%, 
-                    transparent 100%)`
-                }}
-              />
-            </div>
-          </div>
-        ))}
-        
-        {/* Neural network nodes */}
-        {Array.from({ length: 8 }, (_, i) => (
-          <div
-            key={i}
-            className="absolute w-3 h-3 rounded-full"
-            style={{
-              left: `${40 + Math.cos(i * 45 * Math.PI / 180) * 35}px`,
-              top: `${40 + Math.sin(i * 45 * Math.PI / 180) * 35}px`,
-              transform: `translateZ(${Math.sin(time * 0.01 + i) * 30}px)`,
-              background: `radial-gradient(circle, rgba(255, 255, 255, 0.9) 0%, rgba(99, 102, 241, 0.6) 100%)`,
-              boxShadow: `0 0 ${15 + connectionIntensity * 10}px rgba(255, 255, 255, 0.8)`,
-              animation: `pulse 2s ease-in-out infinite`,
-              animationDelay: `${i * 0.2}s`
-            }}
-          />
-        ))}
-      </div>
-
-      {/* Right Heart-Brain (Mirror with Pink Gradient) */}
-      <div 
-        className="absolute"
-        style={{
-          right: '20%',
-          top: '45%',
-          transform: `
-            translate(50%, -50%) 
-            rotateX(${-rotationX + Math.sin(time * 0.008 + Math.PI) * 10}deg) 
-            rotateY(${-rotationY + Math.cos(time * 0.006 + Math.PI) * 15}deg)
-            rotateZ(${Math.sin(time * 0.004 + Math.PI) * 5}deg)
-            scale(${1 + connectionIntensity * 0.4})
-          `,
-          transformStyle: 'preserve-3d',
-          transition: 'transform 0.3s ease-out'
-        }}
-      >
-        {[0, 1, 2, 3].map((layer) => (
-          <div
-            key={layer}
-            className="absolute"
-            style={{
-              width: `${80 - layer * 15}px`,
-              height: `${80 - layer * 15}px`,
-              transform: `translateZ(${layer * 20}px) rotateZ(${-layer * 10}deg)`,
-              transformStyle: 'preserve-3d'
-            }}
-          >
-            <div 
-              className="relative w-full h-full"
-              style={{
-                background: `
-                  linear-gradient(135deg, 
-                    rgba(236, 72, 153, ${0.8 - layer * 0.15}) 0%,
-                    rgba(219, 39, 119, ${0.6 - layer * 0.1}) 40%,
-                    rgba(236, 72, 153, ${0.4 - layer * 0.05}) 100%
-                  )
-                `,
-                borderRadius: '50px 50px 0 0',
-                transform: 'rotate(-45deg)',
-                filter: `blur(${layer * 0.5}px) brightness(${1.2 - layer * 0.1})`,
-                boxShadow: `
-                  0 0 ${30 + connectionIntensity * 40}px rgba(236, 72, 153, ${0.6 - layer * 0.1}),
-                  inset 0 0 ${20}px rgba(255, 255, 255, ${0.2 - layer * 0.05})
-                `
-              }}
-            >
-              <div 
-                className="absolute w-10 h-10 rounded-full"
-                style={{
-                  top: '-20px',
-                  left: '-20px',
-                  background: `radial-gradient(circle, 
-                    rgba(236, 72, 153, ${0.9 - layer * 0.1}) 0%, 
-                    rgba(219, 39, 119, ${0.7 - layer * 0.1}) 70%, 
-                    transparent 100%)`
-                }}
-              />
-              <div 
-                className="absolute w-10 h-10 rounded-full"
-                style={{
-                  top: '-20px',
-                  right: '-20px',
-                  background: `radial-gradient(circle, 
-                    rgba(236, 72, 153, ${0.9 - layer * 0.1}) 0%, 
-                    rgba(219, 39, 119, ${0.7 - layer * 0.1}) 70%, 
-                    transparent 100%)`
-                }}
-              />
-            </div>
-          </div>
-        ))}
-        
-        {Array.from({ length: 8 }, (_, i) => (
-          <div
-            key={i}
-            className="absolute w-3 h-3 rounded-full"
-            style={{
-              left: `${40 + Math.cos(i * 45 * Math.PI / 180) * 35}px`,
-              top: `${40 + Math.sin(i * 45 * Math.PI / 180) * 35}px`,
-              transform: `translateZ(${Math.sin(time * 0.01 + i + Math.PI) * 30}px)`,
-              background: `radial-gradient(circle, rgba(255, 255, 255, 0.9) 0%, rgba(236, 72, 153, 0.6) 100%)`,
-              boxShadow: `0 0 ${15 + connectionIntensity * 10}px rgba(255, 255, 255, 0.8)`,
-              animation: `pulse 2s ease-in-out infinite`,
-              animationDelay: `${i * 0.2 + 1}s`
-            }}
-          />
-        ))}
-      </div>
-
-      {/* Central Connection Nexus */}
-      <div 
-        className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2"
+        className="absolute left-1/2 top-1/2"
         style={{
           transform: `
             translate(-50%, -50%) 
-            translateZ(${connectionIntensity * 100}px)
-            rotateX(${rotationX}deg) 
-            rotateY(${rotationY}deg)
-            scale(${0.5 + connectionIntensity * 1.5})
+            translateZ(${connectionIntensity * 80}px)
+            rotateX(${rotationX + Math.sin(time * 0.005) * 8}deg) 
+            rotateY(${rotationY + Math.cos(time * 0.004) * 10}deg)
+            scale(${0.9 + connectionIntensity * 0.5})
           `,
           transformStyle: 'preserve-3d',
-          transition: 'transform 0.2s ease-out'
+          transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
         }}
       >
+        {/* Left Heart-Brain (Blue) */}
         <div 
-          className="w-8 h-8 rounded-full"
+          className="absolute"
           style={{
-            background: `
-              radial-gradient(circle, 
-                rgba(255, 255, 255, ${0.9 + connectionIntensity * 0.1}) 0%, 
-                rgba(6, 182, 212, ${0.7 + connectionIntensity * 0.3}) 30%,
-                rgba(139, 92, 246, ${0.5 + connectionIntensity * 0.3}) 60%,
-                transparent 100%
-              )
+            left: '-60px',
+            top: '-40px',
+            transform: `
+              rotateZ(${Math.sin(time * 0.003) * 5}deg)
+              translateZ(${Math.sin(time * 0.006) * 20}px)
             `,
-            boxShadow: `
-              0 0 ${40 + connectionIntensity * 60}px rgba(255, 255, 255, 0.8),
-              0 0 ${60 + connectionIntensity * 80}px rgba(6, 182, 212, 0.6),
-              0 0 ${80 + connectionIntensity * 100}px rgba(139, 92, 246, 0.4)
-            `
+            transformStyle: 'preserve-3d'
           }}
-        />
+        >
+          {/* Multi-layered heart structure */}
+          {[0, 1, 2, 3, 4].map((layer) => (
+            <div
+              key={layer}
+              className="absolute"
+              style={{
+                width: `${90 - layer * 12}px`,
+                height: `${90 - layer * 12}px`,
+                transform: `translateZ(${layer * 15}px) rotateZ(${layer * 8}deg)`,
+                transformStyle: 'preserve-3d'
+              }}
+            >
+              <div 
+                className="relative w-full h-full"
+                style={{
+                  background: `
+                    linear-gradient(135deg, 
+                      rgba(99, 102, 241, ${0.9 - layer * 0.12}) 0%,
+                      rgba(139, 92, 246, ${0.7 - layer * 0.1}) 50%,
+                      rgba(99, 102, 241, ${0.5 - layer * 0.08}) 100%
+                    )
+                  `,
+                  borderRadius: '50px 50px 0 0',
+                  transform: 'rotate(-45deg)',
+                  filter: `blur(${layer * 0.3}px) brightness(${1.3 - layer * 0.08})`,
+                  boxShadow: `
+                    0 0 ${40 + connectionIntensity * 50}px rgba(99, 102, 241, ${0.7 - layer * 0.1}),
+                    inset 0 0 ${25}px rgba(255, 255, 255, ${0.25 - layer * 0.04}),
+                    0 ${layer * 5}px ${20 + layer * 10}px rgba(99, 102, 241, ${0.3 - layer * 0.05})
+                  `
+                }}
+              >
+                {/* Heart bulbs with enhanced depth */}
+                <div 
+                  className="absolute w-12 h-12 rounded-full"
+                  style={{
+                    top: '-24px',
+                    left: '-24px',
+                    background: `radial-gradient(circle, 
+                      rgba(99, 102, 241, ${1 - layer * 0.1}) 0%, 
+                      rgba(139, 92, 246, ${0.8 - layer * 0.1}) 50%,
+                      rgba(99, 102, 241, ${0.4 - layer * 0.05}) 80%,
+                      transparent 100%)`,
+                    transform: `translateZ(${layer * 5}px)`
+                  }}
+                />
+                <div 
+                  className="absolute w-12 h-12 rounded-full"
+                  style={{
+                    top: '-24px',
+                    right: '-24px',
+                    background: `radial-gradient(circle, 
+                      rgba(99, 102, 241, ${1 - layer * 0.1}) 0%, 
+                      rgba(139, 92, 246, ${0.8 - layer * 0.1}) 50%,
+                      rgba(99, 102, 241, ${0.4 - layer * 0.05}) 80%,
+                      transparent 100%)`,
+                    transform: `translateZ(${layer * 5}px)`
+                  }}
+                />
+              </div>
+            </div>
+          ))}
+          
+          {/* Neural synapses */}
+          {Array.from({ length: 10 }, (_, i) => (
+            <div
+              key={i}
+              className="absolute w-2 h-2 rounded-full"
+              style={{
+                left: `${45 + Math.cos(i * 36 * Math.PI / 180) * 40}px`,
+                top: `${45 + Math.sin(i * 36 * Math.PI / 180) * 40}px`,
+                transform: `translateZ(${Math.sin(time * 0.008 + i) * 40}px)`,
+                background: `radial-gradient(circle, rgba(255, 255, 255, 0.95) 0%, rgba(99, 102, 241, 0.7) 100%)`,
+                boxShadow: `0 0 ${12 + connectionIntensity * 18}px rgba(255, 255, 255, 0.9)`,
+                animation: `pulse 3s ease-in-out infinite`,
+                animationDelay: `${i * 0.3}s`
+              }}
+            />
+          ))}
+        </div>
+
+        {/* Right Heart-Brain (Pink) */}
+        <div 
+          className="absolute"
+          style={{
+            right: '-60px',
+            top: '-40px',
+            transform: `
+              rotateZ(${Math.sin(time * 0.003 + Math.PI) * 5}deg)
+              translateZ(${Math.sin(time * 0.006 + Math.PI) * 20}px)
+            `,
+            transformStyle: 'preserve-3d'
+          }}
+        >
+          {[0, 1, 2, 3, 4].map((layer) => (
+            <div
+              key={layer}
+              className="absolute"
+              style={{
+                width: `${90 - layer * 12}px`,
+                height: `${90 - layer * 12}px`,
+                transform: `translateZ(${layer * 15}px) rotateZ(${-layer * 8}deg)`,
+                transformStyle: 'preserve-3d'
+              }}
+            >
+              <div 
+                className="relative w-full h-full"
+                style={{
+                  background: `
+                    linear-gradient(135deg, 
+                      rgba(236, 72, 153, ${0.9 - layer * 0.12}) 0%,
+                      rgba(219, 39, 119, ${0.7 - layer * 0.1}) 50%,
+                      rgba(236, 72, 153, ${0.5 - layer * 0.08}) 100%
+                    )
+                  `,
+                  borderRadius: '50px 50px 0 0',
+                  transform: 'rotate(-45deg)',
+                  filter: `blur(${layer * 0.3}px) brightness(${1.3 - layer * 0.08})`,
+                  boxShadow: `
+                    0 0 ${40 + connectionIntensity * 50}px rgba(236, 72, 153, ${0.7 - layer * 0.1}),
+                    inset 0 0 ${25}px rgba(255, 255, 255, ${0.25 - layer * 0.04}),
+                    0 ${layer * 5}px ${20 + layer * 10}px rgba(236, 72, 153, ${0.3 - layer * 0.05})
+                  `
+                }}
+              >
+                <div 
+                  className="absolute w-12 h-12 rounded-full"
+                  style={{
+                    top: '-24px',
+                    left: '-24px',
+                    background: `radial-gradient(circle, 
+                      rgba(236, 72, 153, ${1 - layer * 0.1}) 0%, 
+                      rgba(219, 39, 119, ${0.8 - layer * 0.1}) 50%,
+                      rgba(236, 72, 153, ${0.4 - layer * 0.05}) 80%,
+                      transparent 100%)`,
+                    transform: `translateZ(${layer * 5}px)`
+                  }}
+                />
+                <div 
+                  className="absolute w-12 h-12 rounded-full"
+                  style={{
+                    top: '-24px',
+                    right: '-24px',
+                    background: `radial-gradient(circle, 
+                      rgba(236, 72, 153, ${1 - layer * 0.1}) 0%, 
+                      rgba(219, 39, 119, ${0.8 - layer * 0.1}) 50%,
+                      rgba(236, 72, 153, ${0.4 - layer * 0.05}) 80%,
+                      transparent 100%)`,
+                    transform: `translateZ(${layer * 5}px)`
+                  }}
+                />
+              </div>
+            </div>
+          ))}
+          
+          {Array.from({ length: 10 }, (_, i) => (
+            <div
+              key={i}
+              className="absolute w-2 h-2 rounded-full"
+              style={{
+                left: `${45 + Math.cos(i * 36 * Math.PI / 180) * 40}px`,
+                top: `${45 + Math.sin(i * 36 * Math.PI / 180) * 40}px`,
+                transform: `translateZ(${Math.sin(time * 0.008 + i + Math.PI) * 40}px)`,
+                background: `radial-gradient(circle, rgba(255, 255, 255, 0.95) 0%, rgba(236, 72, 153, 0.7) 100%)`,
+                boxShadow: `0 0 ${12 + connectionIntensity * 18}px rgba(255, 255, 255, 0.9)`,
+                animation: `pulse 3s ease-in-out infinite`,
+                animationDelay: `${i * 0.3 + 1.5}s`
+              }}
+            />
+          ))}
+        </div>
+
+        {/* Central Connection Bridge */}
+        <div 
+          className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2"
+          style={{
+            width: '120px',
+            height: '4px',
+            background: `linear-gradient(90deg, 
+              rgba(99, 102, 241, ${0.8 + connectionIntensity * 0.2}) 0%,
+              rgba(6, 182, 212, ${0.9 + connectionIntensity * 0.1}) 30%,
+              rgba(255, 255, 255, ${0.95 + connectionIntensity * 0.05}) 50%,
+              rgba(6, 182, 212, ${0.9 + connectionIntensity * 0.1}) 70%,
+              rgba(236, 72, 153, ${0.8 + connectionIntensity * 0.2}) 100%
+            )`,
+            borderRadius: '2px',
+            filter: `blur(${1 - connectionIntensity}px)`,
+            boxShadow: `
+              0 0 ${20 + connectionIntensity * 40}px rgba(255, 255, 255, 0.8),
+              0 0 ${30 + connectionIntensity * 50}px rgba(6, 182, 212, 0.6)
+            `,
+            transform: `rotateY(${rotationY * 0.5}deg) rotateZ(${Math.sin(time * 0.004) * 10}deg)`
+          }}
+        >
+          {/* Energy pulse along bridge */}
+          <div
+            className="absolute w-3 h-3 bg-white rounded-full top-1/2 transform -translate-y-1/2"
+            style={{
+              left: `${45 + Math.sin(time * 0.01) * 30}%`,
+              boxShadow: `0 0 20px rgba(255, 255, 255, 0.9)`,
+              filter: 'blur(0.5px)'
+            }}
+          />
+        </div>
       </div>
+
+      {/* Cursor follower */}
+      <div 
+        className="absolute w-4 h-4 rounded-full pointer-events-none transition-all duration-75 ease-out"
+        style={{
+          left: `${(mousePosition.x + 1) * 50}%`,
+          top: `${(-mousePosition.y + 1) * 50}%`,
+          transform: 'translate(-50%, -50%)',
+          background: `radial-gradient(circle, rgba(255, 255, 255, 0.9) 0%, rgba(6, 182, 212, 0.6) 100%)`,
+          boxShadow: `
+            0 0 20px rgba(255, 255, 255, 0.8),
+            0 0 40px rgba(6, 182, 212, 0.4)
+          `,
+          opacity: isHovering ? 1 : 0
+        }}
+      />
 
       <style>{`
-        @keyframes drawPath {
-          0% { stroke-dasharray: 0 1000; }
-          50% { stroke-dasharray: 100 1000; }
-          100% { stroke-dasharray: 0 1000; }
-        }
-        
         @keyframes pulse {
           0%, 100% { opacity: 0.6; transform: scale(1); }
-          50% { opacity: 1; transform: scale(1.2); }
+          50% { opacity: 1; transform: scale(1.4); }
         }
       `}</style>
     </div>
