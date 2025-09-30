@@ -147,8 +147,9 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
-      <Card className="w-full max-w-2xl bg-gradient-card shadow-glow border-primary/20 my-8">
+    <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 overflow-y-auto">
+      <div className="flex min-h-full items-center justify-center p-2 sm:p-4 py-8">
+        <Card className="w-full max-w-2xl bg-gradient-card shadow-glow border-primary/20">
         <CardHeader className="text-center space-y-2">
           <div className="mx-auto w-12 h-12 bg-gradient-hero rounded-full flex items-center justify-center mb-2">
             <Heart className="h-6 w-6 text-primary-foreground" />
@@ -164,9 +165,9 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({
           </p>
         </CardHeader>
 
-        <CardContent className="space-y-6">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid md:grid-cols-2 gap-6">
+        <CardContent className="space-y-4 sm:space-y-6 p-4 sm:p-6">
+          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+            <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
               {/* Name Field */}
               <div className="space-y-2">
                 <Label htmlFor="name" className="text-sm font-medium flex items-center gap-2">
@@ -250,7 +251,7 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({
               </RadioGroup>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-6">
+            <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
               {/* Education */}
               <div className="space-y-2">
                 <Label className="text-sm font-medium flex items-center gap-2">
@@ -386,7 +387,7 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({
               </div>
 
               {/* Height */}
-              <div className="space-y-4 md:col-span-2">
+              <div className="space-y-4 sm:col-span-2">
                 <Label className="text-sm font-medium flex items-center gap-2">
                   Height: {height[0]} cm ({Math.floor(height[0] / 30.48 / 12)}'{Math.round((height[0] / 30.48) % 12)}")
                 </Label>
@@ -428,6 +429,7 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({
           </form>
         </CardContent>
       </Card>
+      </div>
     </div>
   );
 };
