@@ -8,7 +8,6 @@ import QuizResult from "./QuizResult";
 import UserProfileForm from "./UserProfileForm";
 import CoupleNamesForm from "./CoupleNamesForm";
 import QuizAnalyzing from "./QuizAnalyzing";
-import BrainConnectionVisualization from "./BrainConnectionVisualization";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
@@ -143,7 +142,7 @@ const HeroSection = () => {
     });
   };
   return (
-    <section className="min-h-screen flex items-center justify-center bg-gradient-hero relative z-0 overflow-hidden">
+    <section className="min-h-screen flex items-center justify-center bg-gradient-hero relative overflow-hidden">
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-20 left-10 w-4 h-4 bg-neural-pink rounded-full animate-float opacity-60"></div>
@@ -230,7 +229,7 @@ const HeroSection = () => {
           </div>
         </div>
 
-        {/* Right Image with Brain Visualization */}
+        {/* Right Image */}
         <div className="relative">
           <div className="relative rounded-3xl overflow-hidden shadow-glow">
             <img 
@@ -238,7 +237,7 @@ const HeroSection = () => {
               alt="MindMatch - Connect minds, not just hearts"
               className="w-full h-auto object-cover"
             />
-            <BrainConnectionVisualization className="opacity-80" />
+            <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent"></div>
           </div>
           
           {/* Floating elements */}
