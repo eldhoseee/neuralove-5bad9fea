@@ -63,22 +63,27 @@ const HeroSection = () => {
         return;
       }
       
-      // Update the user's profile with the cognitive type
+      // Update the user's profile with the cognitive type (skip for test profiles)
       if (profileData && data.cognitiveType) {
-        const { error: updateError } = await supabase
-          .from('profiles')
-          .update({ cognitive_type: data.cognitiveType })
-          .eq('id', profileData.id);
+        const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(profileData.id);
+        if (isUuid) {
+          const { error: updateError } = await supabase
+            .from('profiles')
+            .update({ cognitive_type: data.cognitiveType })
+            .eq('id', profileData.id);
           
-        if (updateError) {
-          console.error('Error updating profile with cognitive type:', updateError);
-          toast({
-            title: "Update Warning",
-            description: "Profile analyzed but cognitive type wasn't saved. Please retake the quiz.",
-            variant: "destructive"
-          });
+          if (updateError) {
+            console.error('Error updating profile with cognitive type:', updateError);
+            toast({
+              title: "Update Warning",
+              description: "Profile analyzed but cognitive type wasn't saved. Please retake the quiz.",
+              variant: "destructive"
+            });
+          } else {
+            console.log('Successfully updated profile with cognitive type:', data.cognitiveType);
+          }
         } else {
-          console.log('Successfully updated profile with cognitive type:', data.cognitiveType);
+          console.log('Skipping DB update for test profile id:', profileData.id);
         }
       }
       
