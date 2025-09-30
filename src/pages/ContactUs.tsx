@@ -175,6 +175,51 @@ const ContactUs = () => {
         </div>
       </section>
 
+      {/* Team Section */}
+      <section className="py-16 bg-muted/30">
+        <div className="container mx-auto px-6">
+          <div className="max-w-4xl mx-auto text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+              Meet Our Team
+            </h2>
+            <p className="text-lg text-muted-foreground">
+              Connect with the minds behind MindMatch
+            </p>
+          </div>
+
+          <div className="max-w-4xl mx-auto grid sm:grid-cols-2 gap-8">
+            {teamMembers.map((member, index) => (
+              <ResultCard key={index} variant="base" className="text-center group hover:shadow-card transition-all duration-300">
+                <div className="flex flex-col items-center">
+                  <Avatar className="w-32 h-32 mb-4 border-4 border-primary/20 group-hover:border-primary/40 transition-colors">
+                    <AvatarImage src={member.image} alt={member.name} className="object-cover" />
+                    <AvatarFallback className="text-2xl">{member.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                  </Avatar>
+                  
+                  <h3 className="text-xl font-bold text-foreground mb-1">
+                    {member.name}
+                  </h3>
+                  
+                  <p className="text-sm text-muted-foreground mb-4">
+                    {member.role}
+                  </p>
+                  
+                  <a
+                    href={member.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors"
+                  >
+                    <Linkedin className="w-5 h-5" />
+                    <span className="text-sm font-medium">Connect on LinkedIn</span>
+                  </a>
+                </div>
+              </ResultCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Main Content */}
       <section className="py-16">
         <div className="container mx-auto px-6">
@@ -306,78 +351,8 @@ const ContactUs = () => {
                     ))}
                   </div>
                 </ResultCard>
-
-                <ResultCard variant="accent">
-                  <h3 className="text-xl font-bold text-foreground mb-3">Quick Response</h3>
-                  <p className="text-muted-foreground text-sm leading-relaxed">
-                    We typically respond within 24 hours on business days. For urgent matters, please call us directly.
-                  </p>
-                </ResultCard>
-
-                <ResultCard variant="secondary">
-                  <h3 className="text-xl font-bold text-foreground mb-3">Business Hours</h3>
-                  <div className="space-y-2 text-sm text-muted-foreground">
-                    <div className="flex justify-between">
-                      <span>Monday - Friday</span>
-                      <span className="font-medium">9:00 AM - 6:00 PM</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Saturday</span>
-                      <span className="font-medium">10:00 AM - 4:00 PM</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Sunday</span>
-                      <span className="font-medium">Closed</span>
-                    </div>
-                  </div>
-                </ResultCard>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Team Section */}
-      <section className="py-16 bg-muted/30">
-        <div className="container mx-auto px-6">
-          <div className="max-w-4xl mx-auto text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Meet Our Team
-            </h2>
-            <p className="text-lg text-muted-foreground">
-              Connect with the minds behind MindMatch
-            </p>
-          </div>
-
-          <div className="max-w-4xl mx-auto grid sm:grid-cols-2 gap-8">
-            {teamMembers.map((member, index) => (
-              <ResultCard key={index} variant="base" className="text-center group hover:shadow-card transition-all duration-300">
-                <div className="flex flex-col items-center">
-                  <Avatar className="w-32 h-32 mb-4 border-4 border-primary/20 group-hover:border-primary/40 transition-colors">
-                    <AvatarImage src={member.image} alt={member.name} className="object-cover" />
-                    <AvatarFallback className="text-2xl">{member.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-                  </Avatar>
-                  
-                  <h3 className="text-xl font-bold text-foreground mb-1">
-                    {member.name}
-                  </h3>
-                  
-                  <p className="text-sm text-muted-foreground mb-4">
-                    {member.role}
-                  </p>
-                  
-                  <a
-                    href={member.linkedin}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors"
-                  >
-                    <Linkedin className="w-5 h-5" />
-                    <span className="text-sm font-medium">Connect on LinkedIn</span>
-                  </a>
-                </div>
-              </ResultCard>
-            ))}
           </div>
         </div>
       </section>
