@@ -4,6 +4,7 @@ import { ResultCard } from "@/components/ui/result-card";
 import { Brain, Heart, Users, Lightbulb, ArrowLeft, CheckCircle, TrendingUp, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import Footer from "@/components/Footer";
+import PsychologyNav from "@/components/PsychologyNav";
 
 const Psychology = () => {
   const psychologyFacts = [
@@ -52,6 +53,8 @@ const Psychology = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <PsychologyNav />
+      
       {/* Hero Section */}
       <section className="bg-gradient-hero py-20 relative overflow-hidden">
         {/* Animated background elements */}
@@ -86,7 +89,7 @@ const Psychology = () => {
       <section className="py-20">
         <div className="container mx-auto px-6">
           {/* Introduction */}
-          <div className="max-w-4xl mx-auto mb-20">
+          <div id="science-section" className="max-w-4xl mx-auto mb-20 scroll-mt-24">
             <ResultCard variant="accent" className="text-center">
               <div className="flex items-center justify-center gap-2 mb-6">
                 <Lightbulb className="w-6 h-6 text-accent" />
@@ -100,7 +103,7 @@ const Psychology = () => {
           </div>
 
           {/* Research-Backed Facts */}
-          <div className="mb-20">
+          <div id="research-section" className="mb-20 scroll-mt-24">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground text-center mb-4">
               What Research Reveals
             </h2>
@@ -124,7 +127,7 @@ const Psychology = () => {
           </div>
 
           {/* The Happiness Connection */}
-          <div className="mb-20">
+          <div id="happiness-section" className="mb-20 scroll-mt-24">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground text-center mb-12">
               Why Cognitive Compatibility Creates Happiness
             </h2>
@@ -151,7 +154,7 @@ const Psychology = () => {
           </div>
 
           {/* The Problem with Traditional Dating */}
-          <div className="mb-20">
+          <div id="problem-section" className="mb-20 scroll-mt-24">
             <ResultCard variant="base" className="max-w-4xl mx-auto">
               <h2 className="text-3xl font-bold text-foreground text-center mb-6">
                 Why Traditional Dating Falls Short
