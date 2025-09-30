@@ -176,11 +176,11 @@ const HeroSection = () => {
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 justify-start lg:max-w-xl">
             <Button 
               size="lg" 
               variant="secondary" 
-              className="group shadow-glow hover:shadow-xl transition-all duration-300"
+              className="group shadow-glow hover:shadow-xl transition-all duration-300 w-full"
               onClick={handleStartQuiz}
             >
               <span className="mr-2">Find Your MindMatch</span>
@@ -192,7 +192,7 @@ const HeroSection = () => {
             
             <Button 
               size="lg" 
-              className="group shadow-glow hover:shadow-xl transition-all duration-300 bg-accent hover:bg-accent/90"
+              className="group shadow-glow hover:shadow-xl transition-all duration-300 bg-accent hover:bg-accent/90 w-full"
               onClick={handleStartCoupleMatch}
             >
               <span className="mr-2">Relationship Compatibility Test</span>
@@ -202,11 +202,11 @@ const HeroSection = () => {
               </div>
             </Button>
             
-            <Link to="/psychology">
+            <Link to="/psychology" className="sm:col-span-2">
               <Button 
                 size="lg" 
                 variant="outline" 
-                className="border-foreground/30 text-foreground hover:bg-foreground/10"
+                className="border-foreground/30 text-foreground hover:bg-foreground/10 w-full"
               >
                 How It Works
               </Button>
