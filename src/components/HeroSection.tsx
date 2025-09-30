@@ -33,11 +33,13 @@ const HeroSection = () => {
     explanation: string;
     motivation: string;
   } | null>(null);
+  const [quizAnswers, setQuizAnswers] = useState<boolean[]>([]);
   const { toast } = useToast();
 
   const handleQuizComplete = async (answers: boolean[]) => {
     setIsAnalyzing(true);
     setShowQuiz(false);
+    setQuizAnswers(answers);
     
     try {
       const { data, error } = await supabase.functions.invoke('analyze-cognitive-quiz', {
@@ -284,6 +286,8 @@ const HeroSection = () => {
           onFindMatches={handleFindMatches}
           isForCouple={isForCouple}
           coupleNames={coupleNames}
+          quizAnswers={quizAnswers}
+          profileData={profileData || undefined}
         />
       )}
 

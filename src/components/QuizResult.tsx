@@ -15,6 +15,8 @@ interface QuizResultProps {
   onFindMatches: () => void;
   isForCouple?: boolean;
   coupleNames?: { person1Name: string; person2Name: string } | null;
+  quizAnswers?: boolean[];
+  profileData?: { name: string; age: number; gender: string };
 }
 
 interface CognitiveInsights {
@@ -25,7 +27,7 @@ interface CognitiveInsights {
   relationshipHates: string[];
 }
 
-const QuizResult = ({ cognitiveType, explanation, motivation, onClose, onFindMatches, isForCouple = false, coupleNames }: QuizResultProps) => {
+const QuizResult = ({ cognitiveType, explanation, motivation, onClose, onFindMatches, isForCouple = false, coupleNames, quizAnswers, profileData }: QuizResultProps) => {
   const [isSimpleMode, setIsSimpleMode] = useState(false);
   const [insights, setInsights] = useState<CognitiveInsights | null>(null);
   const [isLoadingInsights, setIsLoadingInsights] = useState(true);
@@ -35,7 +37,11 @@ const QuizResult = ({ cognitiveType, explanation, motivation, onClose, onFindMat
     const generateInsights = async () => {
       try {
         const { data, error } = await supabase.functions.invoke('generate-cognitive-insights', {
-          body: { cognitiveType }
+          body: { 
+            cognitiveType,
+            quizAnswers,
+            profileData
+          }
         });
         
         if (error) {
