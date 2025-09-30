@@ -8,6 +8,7 @@ import QuizResult from "./QuizResult";
 import UserProfileForm from "./UserProfileForm";
 import CoupleNamesForm from "./CoupleNamesForm";
 import QuizAnalyzing from "./QuizAnalyzing";
+import BrainConnectionVisualization from "./BrainConnectionVisualization";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
@@ -229,7 +230,7 @@ const HeroSection = () => {
           </div>
         </div>
 
-        {/* Right Image */}
+        {/* Right Image with Brain Visualization */}
         <div className="relative">
           <div className="relative rounded-3xl overflow-hidden shadow-glow">
             <img 
@@ -237,7 +238,7 @@ const HeroSection = () => {
               alt="MindMatch - Connect minds, not just hearts"
               className="w-full h-auto object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent"></div>
+            <BrainConnectionVisualization className="opacity-80" />
           </div>
           
           {/* Floating elements */}
