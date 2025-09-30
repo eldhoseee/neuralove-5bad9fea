@@ -7,7 +7,7 @@ export interface Profile {
   name: string;
   age: number;
   gender: string;
-  cognitive_type: string;
+  cognitive_type: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -22,7 +22,6 @@ export const useProfileData = () => {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      console.log("Fetched profiles:", data);
       return data as Profile[];
     },
   });

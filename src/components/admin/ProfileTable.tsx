@@ -21,7 +21,6 @@ type SortField = "name" | "age" | "gender" | "cognitive_type" | "created_at";
 type SortDirection = "asc" | "desc";
 
 export const ProfileTable = ({ profiles }: ProfileTableProps) => {
-  console.log("ProfileTable received profiles:", profiles);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortField, setSortField] = useState<SortField>("created_at");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
@@ -40,7 +39,7 @@ export const ProfileTable = ({ profiles }: ProfileTableProps) => {
       (profile) =>
         profile.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         profile.gender.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        profile.cognitive_type.toLowerCase().includes(searchTerm.toLowerCase())
+        (profile.cognitive_type && profile.cognitive_type.toLowerCase().includes(searchTerm.toLowerCase()))
     )
     .sort((a, b) => {
       const aValue = a[sortField];
@@ -53,6 +52,10 @@ export const ProfileTable = ({ profiles }: ProfileTableProps) => {
       if (typeof aValue === "number" && typeof bValue === "number") {
         return (aValue - bValue) * modifier;
       }
+      // Handle null values
+      if (aValue === null && bValue === null) return 0;
+      if (aValue === null) return modifier;
+      if (bValue === null) return -modifier;
       return 0;
     });
 
@@ -62,7 +65,7 @@ export const ProfileTable = ({ profiles }: ProfileTableProps) => {
       profile.name,
       profile.age,
       profile.gender,
-      profile.cognitive_type,
+      profile.cognitive_type || "Quiz Pending",
       new Date(profile.created_at).toLocaleDateString(),
     ]);
 
@@ -171,7 +174,13 @@ export const ProfileTable = ({ profiles }: ProfileTableProps) => {
                     <TableCell className="font-medium">{profile.name}</TableCell>
                     <TableCell>{profile.age}</TableCell>
                     <TableCell className="capitalize">{profile.gender}</TableCell>
-                    <TableCell>{profile.cognitive_type}</TableCell>
+                    <TableCell>
+                      {profile.cognitive_type ? (
+                        <span className="text-foreground">{profile.cognitive_type}</span>
+                      ) : (
+                        <span className="text-muted-foreground italic">Quiz Pending</span>
+                      )}
+                    </TableCell>
                     <TableCell>
                       {new Date(profile.created_at).toLocaleDateString()}
                     </TableCell>

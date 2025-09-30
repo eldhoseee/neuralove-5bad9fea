@@ -29,7 +29,8 @@ export const ProfileCharts = ({ profiles }: ProfileChartsProps) => {
   // Cognitive type distribution
   const cognitiveTypeData = Object.entries(
     profiles.reduce((acc, profile) => {
-      acc[profile.cognitive_type] = (acc[profile.cognitive_type] || 0) + 1;
+      const type = profile.cognitive_type || "Quiz Pending";
+      acc[type] = (acc[type] || 0) + 1;
       return acc;
     }, {} as Record<string, number>)
   ).map(([name, value]) => ({
