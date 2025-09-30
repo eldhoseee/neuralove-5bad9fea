@@ -22,7 +22,14 @@ export const useProfileData = () => {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data as Profile[];
+      
+      // Filter out test names
+      const filteredData = (data as Profile[]).filter(profile => {
+        const testNamePattern = /^test\d*$/i;
+        return !testNamePattern.test(profile.name.trim());
+      });
+      
+      return filteredData;
     },
   });
 
