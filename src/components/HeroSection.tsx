@@ -161,7 +161,7 @@ const HeroSection = () => {
         {/* Left Content */}
         <div className="text-center lg:text-left space-y-8 max-w-xl mx-auto lg:mx-0">
           <div className="space-y-4">
-            <div className="flex items-center justify-center lg:justify-start gap-2 text-primary-foreground/80">
+            <div className="flex items-center justify-center lg:justify-start gap-2 text-primary-foreground/80 mt-12">
               <Brain className="w-5 h-5" />
               <span className="text-sm font-medium tracking-wide">POWERED BY PSYCHOLOGY</span>
             </div>
