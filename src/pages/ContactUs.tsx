@@ -11,7 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import Footer from "@/components/Footer";
 import { z } from "zod";
 import ceoPicture from "@/assets/team-ceo.jpg";
-import swathiPicture from "@/assets/team-swathi.png";
+import swathiPicture from "@/assets/team-swathi.jpg";
 
 const contactSchema = z.object({
   name: z.string()
