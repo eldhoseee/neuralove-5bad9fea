@@ -93,6 +93,7 @@ const Footer = () => {
               <li><Link to="/contact" className="text-slate-300 hover:text-neural-blue transition-colors">Contact Us</Link></li>
               <li><a href="#" className="text-slate-300 hover:text-neural-blue transition-colors">Community Guidelines</a></li>
               <li><a href="#" className="text-slate-300 hover:text-neural-blue transition-colors">Report Issues</a></li>
+              <li><Link to="/admin" className="text-slate-300 hover:text-neural-blue transition-colors">System Status</Link></li>
             </ul>
           </div>
 
