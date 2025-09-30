@@ -32,10 +32,10 @@ const Footer = () => {
 
       <div className="container mx-auto px-6 relative z-10">
         {/* Main footer content */}
-        <div className="py-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
+        <div className="py-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
           
           {/* Brand section */}
-          <div className="sm:col-span-2 lg:col-span-1 space-y-6">
+          <div className="md:col-span-2 lg:col-span-1 space-y-6">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-gradient-to-br from-neural-blue to-neural-purple rounded-xl">
                 <Brain className="w-6 h-6 text-white" />
