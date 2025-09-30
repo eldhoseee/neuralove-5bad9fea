@@ -90,7 +90,7 @@ const Footer = () => {
             <ul className="space-y-3">
               <li><a href="#" className="text-slate-300 hover:text-neural-blue transition-colors">Help Center</a></li>
               <li><a href="#" className="text-slate-300 hover:text-neural-blue transition-colors">Safety Tips</a></li>
-              <li><a href="#" className="text-slate-300 hover:text-neural-blue transition-colors">Contact Us</a></li>
+              <li><Link to="/contact" className="text-slate-300 hover:text-neural-blue transition-colors">Contact Us</Link></li>
               <li><a href="#" className="text-slate-300 hover:text-neural-blue transition-colors">Community Guidelines</a></li>
               <li><a href="#" className="text-slate-300 hover:text-neural-blue transition-colors">Report Issues</a></li>
             </ul>
