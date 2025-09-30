@@ -41,7 +41,12 @@ const HeroSection = () => {
     
     try {
       const { data, error } = await supabase.functions.invoke('analyze-cognitive-quiz', {
-        body: { answers }
+        body: { 
+          answers,
+          isForCouple,
+          coupleNames,
+          profileData
+        }
       });
       
       if (error) {

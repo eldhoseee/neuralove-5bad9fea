@@ -39,11 +39,13 @@ serve(async (req) => {
   }
 
   try {
-    const { answers } = await req.json();
+    const { answers, isForCouple, coupleNames, profileData } = await req.json();
     
-    if (!answers || !Array.isArray(answers) || answers.length !== 24) {
+    // Validate answers length based on mode
+    const expectedLength = isForCouple ? 48 : 24;
+    if (!answers || !Array.isArray(answers) || answers.length !== expectedLength) {
       return new Response(
-        JSON.stringify({ error: 'Invalid answers format. Expected array of 24 boolean values.' }),
+        JSON.stringify({ error: `Invalid answers format. Expected array of ${expectedLength} boolean values.` }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -57,14 +59,39 @@ serve(async (req) => {
       );
     }
 
+    // Split answers for couple mode
+    let person1Answers = answers;
+    let person2Answers: boolean[] = [];
+    
+    if (isForCouple) {
+      person1Answers = answers.slice(0, 24);
+      person2Answers = answers.slice(24, 48);
+    }
+
     // Format the quiz responses for AI analysis
-    const quizResponses = QUIZ_QUESTIONS.map((question, index) => 
-      `${index + 1}. ${question}: ${answers[index] ? 'Yes' : 'No'}`
-    ).join('\n');
+    const formatResponses = (personAnswers: boolean[], personName?: string) => {
+      const header = personName ? `${personName}'s responses:\n` : '';
+      return header + QUIZ_QUESTIONS.map((question, index) => 
+        `${index + 1}. ${question}: ${personAnswers[index] ? 'Yes' : 'No'}`
+      ).join('\n');
+    };
 
-    const systemPrompt = `You are an expert cognitive psychologist specializing in personality assessment. Analyze the quiz responses to determine the person's primary cognitive type and provide insights.
+    const quizResponses = isForCouple 
+      ? `${formatResponses(person1Answers, coupleNames?.person1Name)}\n\n${formatResponses(person2Answers, coupleNames?.person2Name)}`
+      : formatResponses(person1Answers);
 
-Based on the responses, categorize the person into ONE of these cognitive types:
+    // Build profile context
+    const profileContext = profileData 
+      ? `\n\nProfile Information:\nName: ${profileData.name}\nAge: ${profileData.age}\nGender: ${profileData.gender}`
+      : '';
+
+    const coupleContext = isForCouple && coupleNames
+      ? `\n\nThis is a couple compatibility analysis for ${coupleNames.person1Name} and ${coupleNames.person2Name}. Analyze both individuals' cognitive profiles based on their quiz responses and their profile information.`
+      : '';
+
+    const systemPrompt = `You are an expert cognitive psychologist specializing in personality assessment. Analyze the quiz responses${isForCouple ? ' for both people' : ''} to determine ${isForCouple ? 'their' : 'the person\'s'} primary cognitive type${isForCouple ? 's' : ''} and provide insights.
+
+Based on the responses and profile information, categorize ${isForCouple ? 'each person' : 'the person'} into ONE of these cognitive types:
 - Analytical Thinker: Logic-driven, systematic, detail-oriented
 - Creative Innovator: Imaginative, intuitive, big-picture focused  
 - Systematic Organizer: Structured, methodical, planning-oriented
@@ -72,12 +99,16 @@ Based on the responses, categorize the person into ONE of these cognitive types:
 - Strategic Visionary: Future-oriented, risk-taking, pattern-recognizing
 - Practical Implementer: Action-oriented, concrete, results-focused
 
+${isForCouple ? 'For couple analysis, consider how their cognitive types complement or contrast with each other.' : ''}
+
 Respond with a JSON object containing:
 {
-  "cognitiveType": "one of the types above",
-  "explanation": "2-3 sentence explanation of why this type fits based on their responses",
-  "motivation": "An inspiring 1-2 sentence message about their cognitive strengths"
+  "cognitiveType": "one of the types above${isForCouple ? ' for person 1' : ''}",
+  "explanation": "2-3 sentence explanation of why this type fits based on their responses AND profile information",
+  "motivation": "An inspiring 1-2 sentence message about their cognitive strengths"${isForCouple ? ',\n  "person2CognitiveType": "one of the types above for person 2",\n  "compatibilityScore": "percentage as number (0-100)",\n  "compatibilityInsight": "2-3 sentences about how their cognitive types work together"' : ''}
 }`;
+
+    const userPrompt = `Please analyze these quiz responses${profileContext}${coupleContext}:\n\n${quizResponses}`;
 
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
@@ -89,10 +120,10 @@ Respond with a JSON object containing:
         model: 'google/gemini-2.5-flash',
         messages: [
           { role: 'system', content: systemPrompt },
-          { role: 'user', content: `Please analyze these quiz responses:\n\n${quizResponses}` }
+          { role: 'user', content: userPrompt }
         ],
         temperature: 0.7,
-        max_tokens: 500
+        max_tokens: 800
       }),
     });
 
