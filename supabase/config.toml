@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.generate-cognitive-insights]
 verify_jwt = false
+
+[functions.create-profile]
+verify_jwt = false

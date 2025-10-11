@@ -104,16 +104,14 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({
     }
 
     try {
-      const { data: insertedProfile, error } = await supabase
-        .from('profiles')
-        .insert({
+      const { data: insertedProfile, error } = await supabase.functions.invoke('create-profile', {
+        body: {
           name: name.trim(),
           age: age[0],
           gender,
           cognitive_type: cognitiveType,
-        })
-        .select()
-        .single();
+        }
+      });
 
       if (error) throw error;
 
@@ -123,7 +121,7 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({
       });
 
       onComplete?.({
-        id: insertedProfile.id,
+        id: (insertedProfile as any).id,
         name: name.trim(),
         age: age[0],
         gender
