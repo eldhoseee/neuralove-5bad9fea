@@ -16,7 +16,7 @@ interface QuizResultProps {
   isForCouple?: boolean;
   coupleNames?: { person1Name: string; person2Name: string } | null;
   quizAnswers?: boolean[];
-  profileData?: { name: string; age: number; gender: string };
+  profileData?: { id: string; name: string; age: number; gender: string };
 }
 
 interface CognitiveInsights {
