@@ -10,6 +10,7 @@ import CoupleNamesForm from "./CoupleNamesForm";
 import QuizAnalyzing from "./QuizAnalyzing";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { analyzeLocally } from "@/utils/localCognitiveAnalyzer";
 
 const HeroSection = () => {
   const [showQuiz, setShowQuiz] = useState(false);
@@ -42,25 +43,35 @@ const HeroSection = () => {
     setQuizAnswers(answers);
     
     try {
-      const { data, error } = await supabase.functions.invoke('analyze-cognitive-quiz', {
-        body: { 
-          answers,
-          isForCouple,
-          coupleNames,
-          profileData
-        }
-      });
+      let data;
+      let backendFailed = false;
       
-      if (error) {
-        console.error('Error analyzing quiz:', error);
-        toast({
-          title: "Analysis Failed",
-          description: "We couldn't analyze your quiz results. Please try again.",
-          variant: "destructive"
+      try {
+        const result = await supabase.functions.invoke('analyze-cognitive-quiz', {
+          body: { 
+            answers,
+            isForCouple,
+            coupleNames,
+            profileData
+          }
         });
-        setIsAnalyzing(false);
-        setShowQuiz(true);
-        return;
+        
+        if (result.error) {
+          throw result.error;
+        }
+        
+        data = result.data;
+      } catch (backendError) {
+        console.error('Backend analysis failed, using local analyzer:', backendError);
+        backendFailed = true;
+        
+        // Use local fallback
+        data = analyzeLocally(answers, isForCouple);
+        
+        toast({
+          title: "Analysis Complete (Local)",
+          description: "Generated results locally - backend unavailable.",
+        });
       }
       
       // Update the user's profile with the cognitive type (skip for test profiles)
@@ -91,20 +102,27 @@ const HeroSection = () => {
       setIsAnalyzing(false);
       setShowResult(true);
       
-      toast({
-        title: "Analysis Complete!",
-        description: "Your cognitive profile has been successfully analyzed.",
-      });
+      if (!backendFailed) {
+        toast({
+          title: "Analysis Complete!",
+          description: "Your cognitive profile has been successfully analyzed.",
+        });
+      }
       
     } catch (error) {
-      console.error('Error calling quiz analysis function:', error);
-      toast({
-        title: "Analysis Failed",
-        description: "We couldn't analyze your quiz results. Please try again.",
-        variant: "destructive"
-      });
+      console.error('Unexpected error in quiz analysis, using local fallback:', error);
+      
+      // Use local analyzer as final fallback
+      const data = analyzeLocally(answers, isForCouple);
+      
+      setQuizResult(data);
       setIsAnalyzing(false);
-      setShowQuiz(true);
+      setShowResult(true);
+      
+      toast({
+        title: "Analysis Complete (Local)",
+        description: "Generated results locally - backend unavailable.",
+      });
     }
   };
 
