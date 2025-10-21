@@ -24,13 +24,13 @@ export const analyzeLocally = (answers: boolean[], isForCouple: boolean = false)
 };
 
 const analyzeSinglePerson = (answers: boolean[]) => {
-  // Count patterns in responses
+  // Count patterns in responses (all indices 0-23)
   const logicalThinking = [0, 6, 13, 23].reduce((sum, i) => sum + (answers[i] ? 1 : 0), 0);
-  const creativity = [1, 7, 17, 21].reduce((sum, i) => sum + (answers[i] ? 1 : 0), 0);
-  const structure = [2, 8, 18, 22].reduce((sum, i) => sum + (answers[i] ? 1 : 0), 0);
-  const empathy = [15, 20, 24, 28].reduce((sum, i) => sum + (answers[i] ? 1 : 0), 0);
-  const vision = [3, 11, 17, 21].reduce((sum, i) => sum + (answers[i] ? 1 : 0), 0);
-  const practical = [4, 14, 16, 20].reduce((sum, i) => sum + (answers[i] ? 1 : 0), 0);
+  const creativity = [1, 7, 11, 17].reduce((sum, i) => sum + (answers[i] ? 1 : 0), 0);
+  const structure = [2, 8, 12, 18].reduce((sum, i) => sum + (answers[i] ? 1 : 0), 0);
+  const empathy = [5, 9, 15, 19].reduce((sum, i) => sum + (answers[i] ? 1 : 0), 0);
+  const vision = [3, 10, 14, 21].reduce((sum, i) => sum + (answers[i] ? 1 : 0), 0);
+  const practical = [4, 16, 20, 22].reduce((sum, i) => sum + (answers[i] ? 1 : 0), 0);
   
   const scores = {
     'Analytical Thinker': logicalThinking,
