@@ -127,10 +127,17 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({
         gender
       });
     } catch (error: any) {
+      console.error("create-profile failed, proceeding without backend:", error);
       toast({
-        title: "Error creating profile",
-        description: error.message || "Please try again later.",
-        variant: "destructive"
+        title: "Proceeding without saving",
+        description: "We couldn't save your profile, but you can continue the quiz.",
+      });
+
+      onComplete?.({
+        id: `local-${Date.now()}`,
+        name: name.trim(),
+        age: age[0],
+        gender
       });
     } finally {
       setIsSubmitting(false);
