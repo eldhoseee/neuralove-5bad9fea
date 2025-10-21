@@ -6,6 +6,7 @@ import { Brain, Heart, Sparkles, Share2, ArrowRight, CheckCircle, Users, Message
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { getInsightsForType } from "@/utils/cognitiveInsightsData";
 
 interface QuizResultProps {
   cognitiveType: string;
@@ -45,45 +46,32 @@ const QuizResult = ({ cognitiveType, explanation, motivation, onClose, onFindMat
         });
         
         const ensureArray = (v: any): string[] => Array.isArray(v) ? v.map((x) => String(x)) : [];
-        const fallbackLikes = [
-          `Partners who respect your ${cognitiveType.toLowerCase()} thinking style`,
-          "Clear, honest communication and shared long-term goals",
-          "Space for deep, meaningful conversations and mutual growth"
-        ];
-        const fallbackHates = [
-          "Dismissive attitudes toward your ideas or perspective",
-          "Inconsistency, unreliability, or avoidant communication",
-          "Unnecessary drama, manipulation, or rigid control dynamics"
-        ];
+        const localFallback = getInsightsForType(cognitiveType);
         
         if (error) {
-          console.error('Error generating insights:', error);
-          toast({
-            title: "Insights Loading Failed",
-            description: "Using default insights instead.",
-            variant: "destructive"
-          });
-          setInsights({
-            keyStrengths: [],
-            idealMatches: [],
-            relationshipDynamics: [],
-            relationshipLikes: fallbackLikes,
-            relationshipHates: fallbackHates,
-          });
+          console.error('Error generating insights, using local data:', error);
+          setInsights(localFallback);
         } else {
-          const likes = ensureArray((data as any)?.relationshipLikes);
-          const hates = ensureArray((data as any)?.relationshipHates);
           const normalized = {
             keyStrengths: ensureArray((data as any)?.keyStrengths),
             idealMatches: ensureArray((data as any)?.idealMatches),
             relationshipDynamics: ensureArray((data as any)?.relationshipDynamics),
-            relationshipLikes: likes.length ? likes : fallbackLikes,
-            relationshipHates: hates.length ? hates : fallbackHates,
+            relationshipLikes: ensureArray((data as any)?.relationshipLikes),
+            relationshipHates: ensureArray((data as any)?.relationshipHates),
           } as CognitiveInsights;
-          setInsights(normalized);
+          
+          // Use local fallback for any empty arrays
+          setInsights({
+            keyStrengths: normalized.keyStrengths.length ? normalized.keyStrengths : localFallback.keyStrengths,
+            idealMatches: normalized.idealMatches.length ? normalized.idealMatches : localFallback.idealMatches,
+            relationshipDynamics: normalized.relationshipDynamics.length ? normalized.relationshipDynamics : localFallback.relationshipDynamics,
+            relationshipLikes: normalized.relationshipLikes.length ? normalized.relationshipLikes : localFallback.relationshipLikes,
+            relationshipHates: normalized.relationshipHates.length ? normalized.relationshipHates : localFallback.relationshipHates,
+          });
         }
       } catch (error) {
-        console.error('Error calling insights function:', error);
+        console.error('Error calling insights function, using local data:', error);
+        setInsights(getInsightsForType(cognitiveType));
       } finally {
         setIsLoadingInsights(false);
       }
