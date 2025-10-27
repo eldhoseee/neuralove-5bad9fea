@@ -5,6 +5,7 @@ import { Heart, Brain, Sparkles, Users } from "lucide-react";
 import heroImage from "@/assets/hero-mindmatch.jpg";
 import CognitiveQuiz from "./CognitiveQuiz";
 import QuizResult from "./QuizResult";
+import { CoupleCompatibilityResult } from "./CoupleCompatibilityResult";
 import UserProfileForm from "./UserProfileForm";
 import CoupleNamesForm from "./CoupleNamesForm";
 import QuizAnalyzing from "./QuizAnalyzing";
@@ -33,6 +34,10 @@ const HeroSection = () => {
     cognitiveType: string;
     explanation: string;
     motivation: string;
+  } | null>(null);
+  const [coupleResult, setCoupleResult] = useState<{
+    person1Type: string;
+    person2Type: string;
   } | null>(null);
   const [quizAnswers, setQuizAnswers] = useState<boolean[]>([]);
   const { toast } = useToast();
@@ -74,8 +79,8 @@ const HeroSection = () => {
         });
       }
       
-      // Update the user's profile with the cognitive type (skip for test profiles)
-      if (profileData && data.cognitiveType) {
+      // Update the user's profile with the cognitive type (skip for test profiles and couple tests)
+      if (profileData && data.cognitiveType && !isForCouple) {
         const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(profileData.id);
         if (isUuid) {
           const { error: updateError } = await supabase
@@ -98,7 +103,16 @@ const HeroSection = () => {
         }
       }
       
-      setQuizResult(data);
+      // Store results based on quiz type
+      if (isForCouple && data.cognitiveType && data.person2CognitiveType) {
+        setCoupleResult({
+          person1Type: data.cognitiveType,
+          person2Type: data.person2CognitiveType
+        });
+      } else {
+        setQuizResult(data);
+      }
+      
       setIsAnalyzing(false);
       setShowResult(true);
       
@@ -154,6 +168,7 @@ const HeroSection = () => {
   const handleCloseResult = () => {
     setShowResult(false);
     setQuizResult(null);
+    setCoupleResult(null);
   };
 
   const handleProfileComplete = (userData: { id: string; name: string; age: number; gender: string }) => {
@@ -300,7 +315,19 @@ const HeroSection = () => {
       {isAnalyzing && <QuizAnalyzing />}
 
       {/* Result Modal */}
-      {showResult && quizResult && (
+      {showResult && isForCouple && coupleResult && coupleNames && (
+        <CoupleCompatibilityResult
+          person1Name={coupleNames.person1Name}
+          person2Name={coupleNames.person2Name}
+          person1Type={coupleResult.person1Type}
+          person2Type={coupleResult.person2Type}
+          person1Answers={quizAnswers.slice(0, 24)}
+          person2Answers={quizAnswers.slice(24, 48)}
+          onClose={handleCloseResult}
+        />
+      )}
+      
+      {showResult && !isForCouple && quizResult && (
         <QuizResult
           cognitiveType={quizResult.cognitiveType}
           explanation={quizResult.explanation}

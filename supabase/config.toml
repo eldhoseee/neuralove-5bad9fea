@@ -6,5 +6,8 @@ verify_jwt = false
 [functions.generate-cognitive-insights]
 verify_jwt = false
 
+[functions.analyze-couple-compatibility]
+verify_jwt = false
+
 [functions.create-profile]
 verify_jwt = false
