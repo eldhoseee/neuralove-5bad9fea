@@ -126,19 +126,46 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({
         age: age[0],
         gender
       });
-    } catch (error: any) {
-      console.error("create-profile failed, proceeding without backend:", error);
-      toast({
-        title: "Proceeding without saving",
-        description: "We couldn't save your profile, but you can continue the quiz.",
-      });
+} catch (error: any) {
+      console.error("create-profile failed, trying direct DB insert:", error);
+      try {
+        const { data: row, error: dbError } = await supabase
+          .from('profiles')
+          .insert({
+            name: name.trim(),
+            age: age[0],
+            gender,
+            cognitive_type: cognitiveType ?? null,
+          })
+          .select('*')
+          .maybeSingle();
 
-      onComplete?.({
-        id: `local-${Date.now()}`,
-        name: name.trim(),
-        age: age[0],
-        gender
-      });
+        if (dbError) throw dbError;
+
+        toast({
+          title: isForCouple ? "Couple profile saved! 💾" : "Profile saved! 💾",
+          description: "Saved directly to database.",
+        });
+
+        onComplete?.({
+          id: (row as any).id,
+          name: name.trim(),
+          age: age[0],
+          gender,
+        });
+      } catch (finalErr) {
+        console.error("Direct DB insert failed, proceeding without backend:", finalErr);
+        toast({
+          title: "Proceeding without saving",
+          description: "We couldn't save your profile, but you can continue the quiz.",
+        });
+        onComplete?.({
+          id: `local-${Date.now()}`,
+          name: name.trim(),
+          age: age[0],
+          gender,
+        });
+      }
     } finally {
       setIsSubmitting(false);
     }
