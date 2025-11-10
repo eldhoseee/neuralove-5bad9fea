@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Heart, Sparkles, AlertCircle, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+import { ResultFeedbackForm } from "@/components/ResultFeedbackForm";
 
 interface CoupleCompatibilityResultProps {
   person1Name: string;
@@ -38,10 +39,28 @@ export const CoupleCompatibilityResult = ({
 }: CoupleCompatibilityResultProps) => {
   const [analysis, setAnalysis] = useState<CompatibilityAnalysis | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [sessionId] = useState(() => `couple_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
+  const [savedResponseId, setSavedResponseId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchAnalysis = async () => {
       try {
+        // Save couple response to database
+        const { data: savedData, error: saveError } = await supabase.from('couple_responses').insert({
+          session_id: sessionId,
+          person1_name: person1Name,
+          person1_type: person1Type,
+          person1_answers: person1Answers,
+          person2_name: person2Name,
+          person2_type: person2Type,
+          person2_answers: person2Answers,
+          user_agent: navigator.userAgent,
+        } as any).select('id').single();
+
+        if (!saveError && savedData) {
+          setSavedResponseId(savedData.id);
+        }
+
         const { data, error } = await supabase.functions.invoke(
           "analyze-couple-compatibility",
           {
@@ -57,6 +76,15 @@ export const CoupleCompatibilityResult = ({
         );
 
         if (error) throw error;
+        
+        // Update the saved response with compatibility results
+        if (savedData?.id) {
+          await supabase.from('couple_responses').update({
+            compatibility_score: data.matchScore,
+            match_quality: data.matchQuality,
+          } as any).eq('id', savedData.id);
+        }
+        
         setAnalysis(data);
       } catch (error) {
         console.error("Failed to fetch compatibility analysis:", error);
@@ -96,7 +124,7 @@ export const CoupleCompatibilityResult = ({
     };
 
     fetchAnalysis();
-  }, [person1Type, person2Type, person1Name, person2Name, person1Answers, person2Answers]);
+  }, [person1Type, person2Type, person1Name, person2Name, person1Answers, person2Answers, sessionId]);
 
   const getMatchColor = (quality: string) => {
     switch (quality) {
@@ -266,6 +294,15 @@ export const CoupleCompatibilityResult = ({
             >
               Share Result
             </Button>
+          </div>
+
+          {/* Feedback Form */}
+          <div className="mt-8 md:mt-12 pt-6 md:pt-8 border-t border-border/50">
+            <ResultFeedbackForm 
+              sessionId={sessionId}
+              feedbackType="couple"
+              relatedResponseId={savedResponseId || undefined}
+            />
           </div>
         </Card>
       </div>

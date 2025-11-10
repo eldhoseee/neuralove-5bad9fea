@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { getInsightsForType } from "@/utils/cognitiveInsightsData";
+import { ResultFeedbackForm } from "@/components/ResultFeedbackForm";
 
 interface QuizResultProps {
   cognitiveType: string;
@@ -32,7 +33,33 @@ const QuizResult = ({ cognitiveType, explanation, motivation, onClose, onFindMat
   const [isSimpleMode, setIsSimpleMode] = useState(false);
   const [insights, setInsights] = useState<CognitiveInsights | null>(null);
   const [isLoadingInsights, setIsLoadingInsights] = useState(true);
+  const [sessionId] = useState(() => `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
+  const [savedResponseId, setSavedResponseId] = useState<string | null>(null);
   const { toast } = useToast();
+
+  // Save quiz response to database
+  useEffect(() => {
+    const saveQuizResponse = async () => {
+      try {
+        const { data, error } = await supabase.from('quiz_responses').insert({
+          session_id: sessionId,
+          user_name: profileData?.name || null,
+          cognitive_type: cognitiveType,
+          answers: quizAnswers || [],
+          motivation,
+          explanations: { explanation },
+          user_agent: navigator.userAgent,
+        } as any).select('id').single();
+
+        if (error) throw error;
+        if (data) setSavedResponseId(data.id);
+      } catch (error) {
+        console.error('Error saving quiz response:', error);
+      }
+    };
+
+    saveQuizResponse();
+  }, [sessionId, cognitiveType, quizAnswers, motivation, explanation, profileData]);
 
   useEffect(() => {
     const generateInsights = async () => {
@@ -274,6 +301,15 @@ const QuizResult = ({ cognitiveType, explanation, motivation, onClose, onFindMat
               <Share2 className="w-4 h-4 mr-2" />
               Share Result
             </Button>
+          </div>
+
+          {/* Feedback Form */}
+          <div className="mt-12 pt-8 border-t border-border/50">
+            <ResultFeedbackForm 
+              sessionId={sessionId}
+              feedbackType="quiz"
+              relatedResponseId={savedResponseId || undefined}
+            />
           </div>
         </Card>
       </div>
