@@ -46,7 +46,7 @@ export const CoupleCompatibilityResult = ({
     const fetchAnalysis = async () => {
       try {
         // Save couple response to database
-        const { data: savedData, error: saveError } = await supabase.from('couple_responses').insert({
+        const { data: savedData, error: saveError } = await (supabase as any).from('couple_responses').insert({
           session_id: sessionId,
           person1_name: person1Name,
           person1_type: person1Type,
@@ -55,7 +55,7 @@ export const CoupleCompatibilityResult = ({
           person2_type: person2Type,
           person2_answers: person2Answers,
           user_agent: navigator.userAgent,
-        } as any).select('id').single();
+        }).select('id').single();
 
         if (!saveError && savedData) {
           setSavedResponseId(savedData.id);
@@ -79,10 +79,10 @@ export const CoupleCompatibilityResult = ({
         
         // Update the saved response with compatibility results
         if (savedData?.id) {
-          await supabase.from('couple_responses').update({
+          await (supabase as any).from('couple_responses').update({
             compatibility_score: data.matchScore,
             match_quality: data.matchQuality,
-          } as any).eq('id', savedData.id);
+          }).eq('id', savedData.id);
         }
         
         setAnalysis(data);

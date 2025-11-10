@@ -38,7 +38,7 @@ export const ResultFeedbackForm = ({ sessionId, feedbackType, relatedResponseId 
     setIsSubmitting(true);
 
     try {
-      const { error } = await supabase.from('user_feedback').insert({
+      const { error } = await (supabase as any).from('user_feedback').insert({
         session_id: sessionId,
         related_response_id: relatedResponseId || null,
         feedback_type: feedbackType,
@@ -47,7 +47,7 @@ export const ResultFeedbackForm = ({ sessionId, feedbackType, relatedResponseId 
         would_recommend: wouldRecommend,
         improvement_suggestions: improvements.trim() || null,
         user_agent: navigator.userAgent,
-      } as any);
+      });
 
       if (error) throw error;
 

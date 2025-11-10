@@ -41,7 +41,7 @@ const QuizResult = ({ cognitiveType, explanation, motivation, onClose, onFindMat
   useEffect(() => {
     const saveQuizResponse = async () => {
       try {
-        const { data, error } = await supabase.from('quiz_responses').insert({
+        const { data, error } = await (supabase as any).from('quiz_responses').insert({
           session_id: sessionId,
           user_name: profileData?.name || null,
           cognitive_type: cognitiveType,
@@ -49,7 +49,7 @@ const QuizResult = ({ cognitiveType, explanation, motivation, onClose, onFindMat
           motivation,
           explanations: { explanation },
           user_agent: navigator.userAgent,
-        } as any).select('id').single();
+        }).select('id').single();
 
         if (error) throw error;
         if (data) setSavedResponseId(data.id);
