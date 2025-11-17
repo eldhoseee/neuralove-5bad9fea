@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Flame, RefreshCw, Share2, Instagram } from "lucide-react";
 import { Button } from "./ui/button";
 import { useRoastReactions } from "@/hooks/useRoastReactions";
+import html2canvas from "html2canvas";
 
 const roasts = [
   "bestie your entire love life is just main character energy with zero character development 💀",
@@ -57,7 +58,9 @@ const RoastOfTheDay = () => {
   const [isTyping, setIsTyping] = useState(false);
   const [floatingEmojis, setFloatingEmojis] = useState<{ id: number; emoji: string; x: number }[]>([]);
   const [showBurst, setShowBurst] = useState(false);
+  const [isGeneratingImage, setIsGeneratingImage] = useState(false);
   const typewriterRef = useRef<NodeJS.Timeout | null>(null);
+  const roastCardRef = useRef<HTMLDivElement>(null);
   
   const getRandomRoast = () => {
     const randomIndex = Math.floor(Math.random() * roasts.length);
@@ -124,19 +127,81 @@ const RoastOfTheDay = () => {
     }, 1500);
   };
 
-  const handleShare = (platform: 'instagram' | 'copy') => {
+  const handleShare = async (platform: 'instagram' | 'copy') => {
     const shareText = `I just got roasted by Neuralove 💀\n\n"${currentRoast}"\n\nGet your own roast at`;
     const url = 'https://neuralove.app';
     
     if (platform === 'instagram') {
-      // Copy to clipboard for Instagram (Instagram doesn't have web share intent)
-      navigator.clipboard.writeText(`${shareText} ${url}`);
-      // Open Instagram in a new tab - user can paste in stories/posts
-      window.open('https://www.instagram.com/', '_blank');
+      await generateAndShareImage();
     } else {
       navigator.clipboard.writeText(`${shareText} ${url}`);
       // Could add a toast notification here
     }
+  };
+
+  const generateAndShareImage = async () => {
+    if (!roastCardRef.current || isGeneratingImage) return;
+    
+    try {
+      setIsGeneratingImage(true);
+      
+      // Capture the roast card as an image
+      const canvas = await html2canvas(roastCardRef.current, {
+        backgroundColor: '#fdf6f6',
+        scale: 2, // Higher quality
+        logging: false,
+        useCORS: true,
+        windowWidth: 1080,
+        windowHeight: 1920,
+      });
+      
+      // Convert canvas to blob
+      canvas.toBlob(async (blob) => {
+        if (!blob) return;
+        
+        // Create a file from the blob
+        const file = new File([blob], 'neuralove-roast.png', { type: 'image/png' });
+        
+        // Try to use Web Share API for mobile devices
+        if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+          try {
+            await navigator.share({
+              files: [file],
+              title: 'Neuralove Roast',
+              text: 'I just got roasted by Neuralove 💀',
+            });
+          } catch (err) {
+            console.log('Share cancelled or failed:', err);
+            fallbackDownload(blob);
+          }
+        } else {
+          // Fallback: Download the image
+          fallbackDownload(blob);
+        }
+      }, 'image/png');
+      
+    } catch (error) {
+      console.error('Error generating image:', error);
+    } finally {
+      setIsGeneratingImage(false);
+    }
+  };
+
+  const fallbackDownload = (blob: Blob) => {
+    // Create download link
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'neuralove-roast.png';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    
+    // Also open Instagram
+    setTimeout(() => {
+      window.open('https://www.instagram.com/', '_blank');
+    }, 500);
   };
 
   return (
@@ -163,7 +228,7 @@ const RoastOfTheDay = () => {
           <div className="relative">
             {/* Animated flame border */}
             <div className="hidden md:block absolute -inset-1 bg-gradient-to-r from-destructive via-orange-500 to-yellow-500 rounded-2xl blur-md opacity-30 animate-flame-border"></div>
-            <div className="relative bg-card/95 backdrop-blur-sm border-2 border-destructive/30 rounded-xl md:rounded-2xl p-4 md:p-8 shadow-lg">
+            <div ref={roastCardRef} className="relative bg-card/95 backdrop-blur-sm border-2 border-destructive/30 rounded-xl md:rounded-2xl p-4 md:p-8 shadow-lg">
               
               {/* Quote marks - desktop only */}
               <div className="hidden md:block absolute top-3 left-3 text-3xl text-destructive/15 font-serif leading-none">"</div>
@@ -233,9 +298,10 @@ const RoastOfTheDay = () => {
                   variant="ghost"
                   size="sm"
                   className="group text-xs hover:bg-gradient-to-r hover:from-purple-500 hover:via-pink-500 hover:to-orange-500 hover:text-white transition-all duration-300"
+                  disabled={isGeneratingImage}
                 >
-                  <Instagram className="w-3 h-3 mr-1.5 group-hover:scale-110 transition-transform" />
-                  Share to Instagram
+                  <Instagram className={`w-3 h-3 mr-1.5 ${isGeneratingImage ? 'animate-spin' : 'group-hover:scale-110'} transition-transform`} />
+                  {isGeneratingImage ? 'Generating...' : 'Share to Instagram'}
                 </Button>
                 
                 <Button
