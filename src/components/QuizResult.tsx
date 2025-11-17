@@ -51,10 +51,19 @@ const QuizResult = ({ cognitiveType, explanation, motivation, onClose, onFindMat
           user_agent: navigator.userAgent,
         }).select('id').single();
 
-        if (error) throw error;
+        if (error) {
+          // Silently fail if table doesn't exist yet
+          if (!error?.message?.includes('Could not find the table')) {
+            console.error('Error saving quiz response:', error);
+          }
+          return;
+        }
         if (data) setSavedResponseId(data.id);
-      } catch (error) {
-        console.error('Error saving quiz response:', error);
+      } catch (error: any) {
+        // Silently fail if table doesn't exist yet
+        if (!error?.message?.includes('Could not find the table')) {
+          console.error('Error saving quiz response:', error);
+        }
       }
     };
 
@@ -303,11 +312,11 @@ const QuizResult = ({ cognitiveType, explanation, motivation, onClose, onFindMat
             </Button>
           </div>
 
-          {/* Blurred Potential Matches Preview - Banner Style */}
-          <div className="mt-8 space-y-3">
+          {/* Blurred Potential Matches Preview - Compact Banner */}
+          <div className="mt-6 space-y-2">
             <div className="text-center">
-              <h3 className="text-lg font-semibold text-foreground mb-1">Your Potential Matches</h3>
-              <p className="text-xs text-muted-foreground">See who's waiting to connect with you</p>
+              <h3 className="text-sm font-semibold text-foreground">Your Potential Matches</h3>
+              <p className="text-[10px] text-muted-foreground">See who's waiting to connect</p>
             </div>
             
             <div 
@@ -322,57 +331,50 @@ const QuizResult = ({ cognitiveType, explanation, motivation, onClose, onFindMat
             >
               {/* Blur overlay with lock icon */}
               <div className="absolute inset-0 z-10 backdrop-blur-md bg-background/30 rounded-lg flex items-center justify-center group-hover:bg-background/40 transition-all">
-                <div className="text-center space-y-2">
-                  <div className="w-12 h-12 mx-auto bg-primary/20 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <Heart className="w-6 h-6 text-primary" />
+                <div className="text-center space-y-1">
+                  <div className="w-10 h-10 mx-auto bg-primary/20 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Heart className="w-5 h-5 text-primary" />
                   </div>
-                  <p className="text-xs font-semibold text-foreground">Tap to Unlock</p>
-                  <p className="text-[10px] text-muted-foreground">See your matches</p>
+                  <p className="text-[10px] font-semibold text-foreground">Tap to Unlock</p>
                 </div>
               </div>
 
-              {/* Compact Profile Cards - 6x2 Grid */}
-              <div className="grid grid-cols-3 md:grid-cols-6 gap-2 p-3">
+              {/* Mini Profile Cards - 6x2 Grid */}
+              <div className="grid grid-cols-3 md:grid-cols-6 gap-1.5 p-2">
                 {[
-                  { name: "Sarah M.", age: 28, type: "Analytical", match: "95%" },
-                  { name: "James K.", age: 31, type: "Creative", match: "92%" },
-                  { name: "Emma L.", age: 26, type: "Strategic", match: "89%" },
-                  { name: "Alex P.", age: 29, type: "Intuitive", match: "87%" },
-                  { name: "Maya R.", age: 27, type: "Social", match: "85%" },
-                  { name: "Ryan T.", age: 30, type: "Logical", match: "83%" },
-                  { name: "Lisa H.", age: 25, type: "Empathetic", match: "92%" },
-                  { name: "David S.", age: 32, type: "Analytical", match: "88%" },
-                  { name: "Sofia C.", age: 28, type: "Creative", match: "86%" },
-                  { name: "Michael B.", age: 29, type: "Strategic", match: "84%" },
-                  { name: "Nina P.", age: 26, type: "Intuitive", match: "90%" },
-                  { name: "Chris L.", age: 30, type: "Visionary", match: "87%" },
+                  { name: "Sarah", age: 28, match: "95%" },
+                  { name: "James", age: 31, match: "92%" },
+                  { name: "Emma", age: 26, match: "89%" },
+                  { name: "Alex", age: 29, match: "87%" },
+                  { name: "Maya", age: 27, match: "85%" },
+                  { name: "Ryan", age: 30, match: "83%" },
+                  { name: "Lisa", age: 25, match: "92%" },
+                  { name: "David", age: 32, match: "88%" },
+                  { name: "Sofia", age: 28, match: "86%" },
+                  { name: "Mike", age: 29, match: "84%" },
+                  { name: "Nina", age: 26, match: "90%" },
+                  { name: "Chris", age: 30, match: "87%" },
                 ].map((profile, index) => (
-                  <Card key={index} className="p-2 space-y-1.5 hover:shadow-md transition-shadow">
-                    {/* Compact Profile Image */}
-                    <div className="aspect-square bg-gradient-to-br from-primary/20 to-accent/20 rounded-md flex items-center justify-center">
-                      <div className="w-8 h-8 bg-gradient-to-br from-primary/40 to-accent/40 rounded-full flex items-center justify-center">
-                        <Users className="w-4 h-4 text-primary" />
+                  <Card key={index} className="p-1.5 space-y-1">
+                    {/* Mini Profile Image */}
+                    <div className="aspect-square bg-gradient-to-br from-primary/20 to-accent/20 rounded flex items-center justify-center">
+                      <div className="w-6 h-6 bg-gradient-to-br from-primary/40 to-accent/40 rounded-full flex items-center justify-center">
+                        <Users className="w-3 h-3 text-primary" />
                       </div>
                     </div>
                     
-                    {/* Compact Profile Info */}
-                    <div className="space-y-0.5">
-                      <h4 className="font-semibold text-foreground text-[10px] truncate">{profile.name}</h4>
-                      <p className="text-[9px] text-muted-foreground">{profile.age}y</p>
-                      <div className="inline-block px-1.5 py-0.5 bg-primary/10 rounded-full">
-                        <p className="text-[8px] font-medium text-primary truncate">{profile.type}</p>
-                      </div>
+                    {/* Mini Info */}
+                    <div>
+                      <h4 className="font-semibold text-foreground text-[9px] truncate">{profile.name}</h4>
+                      <p className="text-[8px] text-muted-foreground">{profile.age}y</p>
                     </div>
 
-                    {/* Compact Match Indicator */}
-                    <div className="flex items-center gap-1">
-                      <div className="flex-1 h-1 bg-muted rounded-full overflow-hidden">
-                        <div 
-                          className="h-full bg-gradient-to-r from-primary to-accent rounded-full"
-                          style={{ width: profile.match }}
-                        />
-                      </div>
-                      <span className="text-[8px] font-medium text-primary">{profile.match}</span>
+                    {/* Mini Match Bar */}
+                    <div className="h-0.5 bg-muted rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-gradient-to-r from-primary to-accent"
+                        style={{ width: profile.match }}
+                      />
                     </div>
                   </Card>
                 ))}
