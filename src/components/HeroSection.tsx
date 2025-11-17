@@ -297,83 +297,23 @@ const HeroSection = ({ onModalStateChange }: HeroSectionProps) => {
           </div>
         </div>
 
-        {/* Right Visual - Abstract Brain/Neural Network */}
-        <div className="relative lg:ml-8 hidden lg:block">
-          <div className="relative w-full h-[500px] rounded-3xl overflow-hidden bg-gradient-to-br from-primary/10 via-primary-glow/5 to-accent/10 shadow-glow">
-            {/* Animated neural network visualization */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              {/* Center brain icon */}
-              <div className="relative z-10">
-                <div className="w-32 h-32 bg-gradient-to-br from-primary to-primary-glow rounded-full flex items-center justify-center shadow-2xl animate-pulse-slow">
-                  <Brain className="w-16 h-16 text-white" />
-                </div>
-              </div>
-
-              {/* Orbiting connection nodes */}
-              <div className="absolute inset-0 animate-spin-slow">
-                <div className="absolute top-1/4 left-1/4 w-16 h-16 bg-gradient-to-br from-accent/80 to-accent rounded-full flex items-center justify-center shadow-lg">
-                  <Heart className="w-8 h-8 text-white" />
-                </div>
-                <div className="absolute top-1/4 right-1/4 w-12 h-12 bg-gradient-to-br from-primary-glow/80 to-primary-glow rounded-full flex items-center justify-center shadow-lg">
-                  <Users className="w-6 h-6 text-white" />
-                </div>
-                <div className="absolute bottom-1/4 left-1/3 w-14 h-14 bg-gradient-to-br from-primary/80 to-primary rounded-full flex items-center justify-center shadow-lg">
-                  <Sparkles className="w-7 h-7 text-white" />
-                </div>
-                <div className="absolute bottom-1/3 right-1/4 w-10 h-10 bg-gradient-to-br from-accent/60 to-accent rounded-full shadow-lg"></div>
-              </div>
-
-              {/* Connection lines */}
-              <svg className="absolute inset-0 w-full h-full opacity-20">
-                <line x1="25%" y1="25%" x2="50%" y2="50%" stroke="url(#gradient1)" strokeWidth="2" className="animate-pulse" />
-                <line x1="75%" y1="25%" x2="50%" y2="50%" stroke="url(#gradient2)" strokeWidth="2" className="animate-pulse" style={{ animationDelay: '0.5s' }} />
-                <line x1="33%" y1="75%" x2="50%" y2="50%" stroke="url(#gradient3)" strokeWidth="2" className="animate-pulse" style={{ animationDelay: '1s' }} />
-                <defs>
-                  <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="hsl(var(--accent))" />
-                    <stop offset="100%" stopColor="hsl(var(--primary))" />
-                  </linearGradient>
-                  <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="hsl(var(--primary-glow))" />
-                    <stop offset="100%" stopColor="hsl(var(--primary))" />
-                  </linearGradient>
-                  <linearGradient id="gradient3" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="hsl(var(--primary))" />
-                    <stop offset="100%" stopColor="hsl(var(--accent))" />
-                  </linearGradient>
-                </defs>
-              </svg>
-
-              {/* Floating particles */}
-              <div className="absolute top-10 left-10 w-2 h-2 bg-accent rounded-full animate-float opacity-60"></div>
-              <div className="absolute top-20 right-16 w-3 h-3 bg-primary-glow rounded-full animate-float opacity-70" style={{ animationDelay: '0.8s' }}></div>
-              <div className="absolute bottom-16 left-20 w-2.5 h-2.5 bg-primary rounded-full animate-float opacity-50" style={{ animationDelay: '1.5s' }}></div>
-              <div className="absolute bottom-20 right-12 w-2 h-2 bg-accent rounded-full animate-float opacity-60" style={{ animationDelay: '0.3s' }}></div>
-            </div>
+        {/* Right Image */}
+        <div className="relative lg:ml-8">
+          <div className="relative rounded-3xl overflow-hidden shadow-glow">
+            <img
+              src={heroImage}
+              alt="MindMatch - Connect minds, not just hearts"
+              className="w-full h-auto object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent"></div>
           </div>
-          
-          {/* Floating stat cards */}
-          <div className="absolute -top-4 -right-4 bg-white/90 backdrop-blur-sm p-4 rounded-2xl shadow-glow animate-float border border-primary/10">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-primary to-primary-glow rounded-full flex items-center justify-center">
-                <Heart className="w-5 h-5 text-white" />
-              </div>
-              <div>
-                <div className="text-xs text-muted-foreground">Match Rate</div>
-                <div className="text-lg font-bold text-foreground">94%</div>
-              </div>
-            </div>
+
+          {/* Floating elements */}
+          <div className="absolute -top-4 -right-4 bg-secondary p-3 rounded-full shadow-card animate-float">
+            <Heart className="w-6 h-6 text-secondary-foreground" />
           </div>
-          <div className="absolute -bottom-4 -left-4 bg-white/90 backdrop-blur-sm p-4 rounded-2xl shadow-glow animate-float border border-accent/10" style={{ animationDelay: '1.5s' }}>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-accent to-primary-glow rounded-full flex items-center justify-center">
-                <Brain className="w-5 h-5 text-white" />
-              </div>
-              <div>
-                <div className="text-xs text-muted-foreground">Avg Time</div>
-                <div className="text-lg font-bold text-foreground">5 min</div>
-              </div>
-            </div>
+          <div className="absolute -bottom-4 -left-4 bg-secondary p-3 rounded-full shadow-card animate-float" style={{ animationDelay: '1.5s' }}>
+            <Brain className="w-6 h-6 text-secondary-foreground" />
           </div>
         </div>
       </div>

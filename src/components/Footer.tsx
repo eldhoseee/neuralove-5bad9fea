@@ -2,6 +2,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Link } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
 import { 
   Brain, 
   Heart, 
@@ -15,11 +17,43 @@ import {
   FileText,
   HelpCircle,
   Users,
-  Sparkles
+  Sparkles,
+  CheckCircle2,
+  TrendingUp
 } from "lucide-react";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const { toast } = useToast();
+  const [email, setEmail] = useState("");
+  const [isSubscribing, setIsSubscribing] = useState(false);
+
+  const handleNewsletterSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      toast({
+        title: "Invalid email",
+        description: "Please enter a valid email address.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSubscribing(true);
+    
+    // Simulate API call - replace with actual newsletter service
+    setTimeout(() => {
+      toast({
+        title: "Successfully subscribed! 🎉",
+        description: "Check your inbox for a confirmation email.",
+      });
+      setEmail("");
+      setIsSubscribing(false);
+    }, 1000);
+  };
 
   return (
     <footer className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white relative overflow-hidden">
@@ -51,18 +85,30 @@ const Footer = () => {
             
             {/* Social links */}
             <div className="flex items-center gap-4">
-              <a href="#" className="p-2 bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors group">
+              <a href="https://twitter.com/neuralove" target="_blank" rel="noopener noreferrer" aria-label="Follow us on Twitter" className="p-2 bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors group">
                 <Twitter className="w-5 h-5 text-slate-400 group-hover:text-neural-blue transition-colors" />
               </a>
-              <a href="#" className="p-2 bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors group">
+              <a href="https://instagram.com/neuralove" target="_blank" rel="noopener noreferrer" aria-label="Follow us on Instagram" className="p-2 bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors group">
                 <Instagram className="w-5 h-5 text-slate-400 group-hover:text-neural-pink transition-colors" />
               </a>
-              <a href="#" className="p-2 bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors group">
+              <a href="https://linkedin.com/company/neuralove" target="_blank" rel="noopener noreferrer" aria-label="Follow us on LinkedIn" className="p-2 bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors group">
                 <Linkedin className="w-5 h-5 text-slate-400 group-hover:text-neural-blue transition-colors" />
               </a>
-              <a href="#" className="p-2 bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors group">
+              <a href="https://facebook.com/neuralove" target="_blank" rel="noopener noreferrer" aria-label="Follow us on Facebook" className="p-2 bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors group">
                 <Facebook className="w-5 h-5 text-slate-400 group-hover:text-neural-purple transition-colors" />
               </a>
+            </div>
+            
+            {/* Trust signals */}
+            <div className="flex items-center gap-4 pt-4 border-t border-slate-700">
+              <div className="flex items-center gap-2 text-xs text-slate-400">
+                <CheckCircle2 className="w-4 h-4 text-green-400" />
+                <span>SSL Secured</span>
+              </div>
+              <div className="flex items-center gap-2 text-xs text-slate-400">
+                <TrendingUp className="w-4 h-4 text-neural-blue" />
+                <span>10k+ Matches</span>
+              </div>
             </div>
           </div>
 
@@ -73,11 +119,11 @@ const Footer = () => {
               Product
             </h3>
             <ul className="space-y-3">
-              <li><a href="#" className="text-slate-300 hover:text-neural-blue transition-colors">How It Works</a></li>
-              <li><a href="#" className="text-slate-300 hover:text-neural-blue transition-colors">Cognitive Types</a></li>
-              <li><a href="#" className="text-slate-300 hover:text-neural-blue transition-colors">Matching Algorithm</a></li>
-              <li><a href="#" className="text-slate-300 hover:text-neural-blue transition-colors">Success Stories</a></li>
-              <li><a href="#" className="text-slate-300 hover:text-neural-blue transition-colors">Premium Features</a></li>
+              <li><a href="#how-it-works" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-slate-300 hover:text-neural-blue transition-colors">How It Works</a></li>
+              <li><a href="#cognitive-types" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-slate-300 hover:text-neural-blue transition-colors">Cognitive Types</a></li>
+              <li><Link to="/psychology" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-slate-300 hover:text-neural-blue transition-colors">Matching Algorithm</Link></li>
+              <li><a href="#testimonials" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-slate-300 hover:text-neural-blue transition-colors">Success Stories</a></li>
+              <li><a href="#features" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-slate-300 hover:text-neural-blue transition-colors">Premium Features</a></li>
             </ul>
           </div>
 
@@ -88,11 +134,11 @@ const Footer = () => {
               Support
             </h3>
             <ul className="space-y-3">
-              <li><a href="#" className="text-slate-300 hover:text-neural-blue transition-colors">Help Center</a></li>
-              <li><a href="#" className="text-slate-300 hover:text-neural-blue transition-colors">Safety Tips</a></li>
+              <li><Link to="/contact" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-slate-300 hover:text-neural-blue transition-colors">Help Center</Link></li>
+              <li><a href="https://blog.neuralove.com/safety-tips" target="_blank" rel="noopener noreferrer" className="text-slate-300 hover:text-neural-blue transition-colors">Safety Tips</a></li>
               <li><Link to="/contact" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-slate-300 hover:text-neural-blue transition-colors">Contact Us</Link></li>
-              <li><a href="#" className="text-slate-300 hover:text-neural-blue transition-colors">Community Guidelines</a></li>
-              <li><a href="#" className="text-slate-300 hover:text-neural-blue transition-colors">Report Issues</a></li>
+              <li><a href="https://blog.neuralove.com/community-guidelines" target="_blank" rel="noopener noreferrer" className="text-slate-300 hover:text-neural-blue transition-colors">Community Guidelines</a></li>
+              <li><Link to="/contact" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-slate-300 hover:text-neural-blue transition-colors">Report Issues</Link></li>
               <li><Link to="/admin" className="text-slate-300 hover:text-neural-blue transition-colors">System Status</Link></li>
             </ul>
           </div>
@@ -106,21 +152,31 @@ const Footer = () => {
             <p className="text-slate-300 text-sm">
               Get insights on cognitive compatibility and dating tips delivered to your inbox.
             </p>
-            <div className="space-y-3">
-              <div className="flex gap-2">
+            <form onSubmit={handleNewsletterSubmit} className="space-y-3">
+              <div className="flex flex-col sm:flex-row gap-2">
                 <Input 
                   type="email" 
-                  placeholder="Enter your mail" 
-                  className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-400 focus:border-neural-blue"
+                  placeholder="Enter your email" 
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  disabled={isSubscribing}
+                  required
+                  className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-400 focus:border-neural-blue flex-1"
                 />
-                <Button size="sm" className="bg-gradient-to-r from-neural-blue to-neural-purple hover:from-neural-blue/80 hover:to-neural-purple/80">
-                  <ArrowRight className="w-4 h-4" />
+                <Button 
+                  type="submit" 
+                  size="sm" 
+                  disabled={isSubscribing}
+                  className="bg-gradient-to-r from-neural-blue to-neural-purple hover:from-neural-blue/80 hover:to-neural-purple/80 w-full sm:w-auto"
+                >
+                  {isSubscribing ? "Subscribing..." : "Subscribe"}
+                  <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </div>
               <p className="text-xs text-slate-400">
-                No spam. Unsubscribe anytime.
+                No spam. Unsubscribe anytime. By subscribing, you agree to our Privacy Policy.
               </p>
-            </div>
+            </form>
           </div>
         </div>
 
@@ -131,27 +187,19 @@ const Footer = () => {
           <div className="flex flex-col sm:flex-row items-center gap-4 text-sm text-slate-400">
             <span>© {currentYear} NeuraLove. All rights reserved.</span>
             <div className="flex items-center gap-4">
-              <Link to="/privacy-policy" className="hover:text-neural-blue transition-colors flex items-center gap-1">
+              <Link to="/privacy-policy" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="hover:text-neural-blue transition-colors flex items-center gap-1">
                 <Shield className="w-4 h-4" />
                 Privacy Policy
               </Link>
-              <a href="#" className="hover:text-neural-blue transition-colors flex items-center gap-1">
+              <a href="https://neuralove.com/terms" target="_blank" rel="noopener noreferrer" className="hover:text-neural-blue transition-colors flex items-center gap-1">
                 <FileText className="w-4 h-4" />
                 Terms of Service
               </a>
-              <a href="#" className="hover:text-neural-blue transition-colors flex items-center gap-1">
+              <a href="https://neuralove.com/cookies" target="_blank" rel="noopener noreferrer" className="hover:text-neural-blue transition-colors flex items-center gap-1">
                 <Users className="w-4 h-4" />
                 Cookie Policy
               </a>
             </div>
-          </div>
-          
-          <div className="flex items-center gap-2 text-sm text-slate-400">
-            <span>Made with</span>
-            <Heart className="w-4 h-4 text-neural-pink animate-pulse" />
-            <span>and</span>
-            <Brain className="w-4 h-4 text-neural-blue" />
-            <span>for deeper connections</span>
           </div>
         </div>
       </div>

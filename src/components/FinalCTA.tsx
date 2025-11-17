@@ -89,19 +89,6 @@ const FinalCTA = () => {
             </p>
           </div>
         </div>
-
-        {/* Bottom decorative element */}
-        <div className="mt-8 flex justify-center">
-          <div className="flex items-center gap-2 opacity-50">
-            <div className="w-1.5 h-1.5 bg-gradient-to-r from-neural-blue to-neural-purple rounded-full animate-pulse"></div>
-            <div className="w-12 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
-            <div className="p-2 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm rounded-lg border border-white/20">
-              <Heart className="w-4 h-4 text-neural-pink animate-pulse" />
-            </div>
-            <div className="w-12 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
-            <div className="w-1.5 h-1.5 bg-gradient-to-r from-neural-purple to-neural-pink rounded-full animate-pulse" style={{ animationDelay: '0.5s' }}></div>
-          </div>
-        </div>
       </div>
     </section>
   );

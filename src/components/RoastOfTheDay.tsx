@@ -303,16 +303,6 @@ const RoastOfTheDay = () => {
                   <Instagram className={`w-3 h-3 mr-1.5 ${isGeneratingImage ? 'animate-spin' : 'group-hover:scale-110'} transition-transform`} />
                   {isGeneratingImage ? 'Generating...' : 'Share to Instagram'}
                 </Button>
-                
-                <Button
-                  onClick={() => handleShare('copy')}
-                  variant="ghost"
-                  size="sm"
-                  className="group text-xs hover:bg-accent/10 hover:text-accent transition-all duration-300"
-                >
-                  <Share2 className="w-3 h-3 mr-1.5 group-hover:scale-110 transition-transform" />
-                  Copy Link
-                </Button>
               </div>
             </div>
           </div>
