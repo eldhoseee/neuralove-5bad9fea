@@ -36,6 +36,7 @@ const Index = () => {
       
       <HowItWorks />
       <Features />
+      <RoastOfTheDay />
       <CognitiveTypes />
       <TestimonialsSection />
       <FinalCTA />

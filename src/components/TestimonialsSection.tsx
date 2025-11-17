@@ -66,37 +66,37 @@ const TestimonialsSection = () => {
   ];
 
   return (
-    <section className="py-20 bg-gradient-to-br from-slate-50 via-white to-slate-50 relative overflow-hidden">
+    <section className="py-12 md:py-20 bg-gradient-to-br from-slate-50 via-white to-slate-50 relative overflow-hidden">
       {/* Background decorations */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-20 left-10 w-64 h-64 bg-neural-blue/5 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 right-10 w-80 h-80 bg-neural-purple/5 rounded-full blur-3xl"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-neural-pink/3 rounded-full blur-3xl"></div>
+        <div className="absolute top-20 left-10 w-48 md:w-64 h-48 md:h-64 bg-neural-blue/5 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 right-10 w-56 md:w-80 h-56 md:h-80 bg-neural-purple/5 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 md:w-96 h-64 md:h-96 bg-neural-pink/3 rounded-full blur-3xl"></div>
       </div>
 
-      <div className="container mx-auto px-6 relative z-10">
+      <div className="container mx-auto px-4 md:px-6 relative z-10">
         {/* Enhanced header */}
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-neural-blue/10 to-neural-purple/10 rounded-full mb-6">
-            <Heart className="w-4 h-4 text-neural-pink" />
-            <span className="text-sm font-medium text-slate-700">SUCCESS STORIES</span>
-            <Sparkles className="w-4 h-4 text-neural-blue" />
+        <div className="text-center mb-8 md:mb-16">
+          <div className="inline-flex items-center gap-2 px-3 md:px-4 py-1.5 md:py-2 bg-gradient-to-r from-neural-blue/10 to-neural-purple/10 rounded-full mb-4 md:mb-6">
+            <Heart className="w-3 h-3 md:w-4 md:h-4 text-neural-pink" />
+            <span className="text-xs md:text-sm font-medium text-slate-700">SUCCESS STORIES</span>
+            <Sparkles className="w-3 h-3 md:w-4 md:h-4 text-neural-blue" />
           </div>
           
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 mb-6 leading-tight">
+          <h2 className="text-2xl md:text-4xl lg:text-6xl font-bold text-slate-900 mb-4 md:mb-6 leading-tight">
             Real Students,
             <span className="block bg-gradient-to-r from-neural-blue via-neural-purple to-neural-pink bg-clip-text text-transparent">
               Real Connections
             </span>
           </h2>
           
-          <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-sm md:text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed px-4">
             From campus to careers, see how Indian GenZ is finding meaningful connections through MindMatch.
           </p>
         </div>
 
         {/* Testimonial cards grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto mb-16">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 max-w-7xl mx-auto mb-8 md:mb-16">
           {testimonials.map((testimonial, index) => (
             <TestimonialCard
               key={index}
@@ -113,54 +113,54 @@ const TestimonialsSection = () => {
         </div>
 
         {/* Enhanced success stats for Indian context */}
-        <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 rounded-3xl p-12 text-white relative overflow-hidden">
+        <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 rounded-2xl md:rounded-3xl p-6 md:p-12 text-white relative overflow-hidden">
           {/* Background decorations */}
           <div className="absolute inset-0 overflow-hidden">
-            <div className="absolute top-0 left-1/4 w-32 h-32 bg-neural-blue/10 rounded-full blur-2xl"></div>
-            <div className="absolute bottom-0 right-1/4 w-40 h-40 bg-neural-purple/10 rounded-full blur-2xl"></div>
+            <div className="absolute top-0 left-1/4 w-24 md:w-32 h-24 md:h-32 bg-neural-blue/10 rounded-full blur-2xl"></div>
+            <div className="absolute bottom-0 right-1/4 w-28 md:w-40 h-28 md:h-40 bg-neural-purple/10 rounded-full blur-2xl"></div>
           </div>
           
           <div className="relative z-10">
-            <div className="text-center mb-12">
-              <h3 className="text-3xl md:text-4xl font-bold mb-4">
+            <div className="text-center mb-6 md:mb-12">
+              <h3 className="text-xl md:text-3xl lg:text-4xl font-bold mb-2 md:mb-4">
                 Building India's Future, One Connection at a Time
               </h3>
-              <p className="text-white/80 text-lg">
+              <p className="text-white/80 text-sm md:text-lg">
                 Trusted by students across India's top colleges and universities
               </p>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-              <div className="text-center space-y-3 p-6 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 hover:bg-white/10 transition-all duration-300">
-                <div className="p-3 bg-gradient-to-br from-neural-blue/20 to-neural-blue/10 rounded-xl w-fit mx-auto">
-                  <Users className="w-8 h-8 text-neural-blue" />
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
+              <div className="text-center space-y-2 md:space-y-3 p-4 md:p-6 bg-white/5 backdrop-blur-sm rounded-xl md:rounded-2xl border border-white/10 hover:bg-white/10 transition-all duration-300">
+                <div className="p-2 md:p-3 bg-gradient-to-br from-neural-blue/20 to-neural-blue/10 rounded-lg md:rounded-xl w-fit mx-auto">
+                  <Users className="w-5 h-5 md:w-8 md:h-8 text-neural-blue" />
                 </div>
-                <div className="text-4xl font-bold text-white">5,000+</div>
-                <div className="text-white/70">Students connected</div>
+                <div className="text-2xl md:text-4xl font-bold text-white">5,000+</div>
+                <div className="text-white/70 text-xs md:text-base">Students connected</div>
               </div>
               
-              <div className="text-center space-y-3 p-6 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 hover:bg-white/10 transition-all duration-300">
-                <div className="p-3 bg-gradient-to-br from-neural-pink/20 to-neural-pink/10 rounded-xl w-fit mx-auto">
-                  <Star className="w-8 h-8 text-neural-pink" />
+              <div className="text-center space-y-2 md:space-y-3 p-4 md:p-6 bg-white/5 backdrop-blur-sm rounded-xl md:rounded-2xl border border-white/10 hover:bg-white/10 transition-all duration-300">
+                <div className="p-2 md:p-3 bg-gradient-to-br from-neural-pink/20 to-neural-pink/10 rounded-lg md:rounded-xl w-fit mx-auto">
+                  <Star className="w-5 h-5 md:w-8 md:h-8 text-neural-pink" />
                 </div>
-                <div className="text-4xl font-bold text-white">4.8/5</div>
-                <div className="text-white/70">Student satisfaction</div>
+                <div className="text-2xl md:text-4xl font-bold text-white">4.8/5</div>
+                <div className="text-white/70 text-xs md:text-base">Student satisfaction</div>
               </div>
               
-              <div className="text-center space-y-3 p-6 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 hover:bg-white/10 transition-all duration-300">
-                <div className="p-3 bg-gradient-to-br from-neural-purple/20 to-neural-purple/10 rounded-xl w-fit mx-auto">
-                  <Calendar className="w-8 h-8 text-neural-purple" />
+              <div className="text-center space-y-2 md:space-y-3 p-4 md:p-6 bg-white/5 backdrop-blur-sm rounded-xl md:rounded-2xl border border-white/10 hover:bg-white/10 transition-all duration-300">
+                <div className="p-2 md:p-3 bg-gradient-to-br from-neural-purple/20 to-neural-purple/10 rounded-lg md:rounded-xl w-fit mx-auto">
+                  <Calendar className="w-5 h-5 md:w-8 md:h-8 text-neural-purple" />
                 </div>
-                <div className="text-4xl font-bold text-white">82%</div>
-                <div className="text-white/70">Lead to study partnerships</div>
+                <div className="text-2xl md:text-4xl font-bold text-white">82%</div>
+                <div className="text-white/70 text-xs md:text-base">Lead to study partnerships</div>
               </div>
               
-              <div className="text-center space-y-3 p-6 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 hover:bg-white/10 transition-all duration-300">
-                <div className="p-3 bg-gradient-to-br from-neural-blue/20 to-neural-purple/10 rounded-xl w-fit mx-auto">
-                  <MessageCircle className="w-8 h-8 text-neural-blue" />
+              <div className="text-center space-y-2 md:space-y-3 p-4 md:p-6 bg-white/5 backdrop-blur-sm rounded-xl md:rounded-2xl border border-white/10 hover:bg-white/10 transition-all duration-300">
+                <div className="p-2 md:p-3 bg-gradient-to-br from-neural-blue/20 to-neural-purple/10 rounded-lg md:rounded-xl w-fit mx-auto">
+                  <MessageCircle className="w-5 h-5 md:w-8 md:h-8 text-neural-blue" />
                 </div>
-                <div className="text-4xl font-bold text-white">3hrs</div>
-                <div className="text-white/70">Average first conversation</div>
+                <div className="text-2xl md:text-4xl font-bold text-white">3hrs</div>
+                <div className="text-white/70 text-xs md:text-base">Average first conversation</div>
               </div>
             </div>
           </div>

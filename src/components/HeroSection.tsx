@@ -201,6 +201,7 @@ const HeroSection = ({ onModalStateChange }: HeroSectionProps) => {
       description: message,
     });
   };
+
   return (
     <section className="min-h-screen flex items-center justify-center bg-gradient-hero relative z-20 overflow-hidden">
       {/* Animated background elements */}
@@ -211,66 +212,73 @@ const HeroSection = ({ onModalStateChange }: HeroSectionProps) => {
         <div className="absolute bottom-40 right-10 w-3 h-3 bg-accent rounded-full animate-float opacity-70" style={{ animationDelay: '0.5s' }}></div>
       </div>
 
-      <div className="container mx-auto px-6 grid lg:grid-cols-2 gap-12 lg:gap-20 items-center relative z-30">
+      <div className="container mx-auto px-4 md:px-6 grid lg:grid-cols-2 gap-8 lg:gap-20 items-center relative z-30">
         {/* Left Content */}
-        <div className="text-center lg:text-left space-y-8 max-w-xl mx-auto lg:mx-0">
-          <div className="space-y-4">
-            <div className="flex items-center justify-center lg:justify-start gap-2 text-primary-foreground/80 mt-12">
+        <div className="text-center lg:text-left space-y-8 md:space-y-10 max-w-xl mx-auto lg:mx-0">
+          <div className="space-y-4 md:space-y-6">
+            {/* Desktop: Full badge, Mobile: Hidden */}
+            <div className="hidden md:flex items-center justify-center lg:justify-start gap-2 text-primary-foreground/80 mt-12">
               <Brain className="w-5 h-5" />
               <span className="text-sm font-medium tracking-wide">POWERED BY PSYCHOLOGY</span>
             </div>
             
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-primary-foreground leading-tight">
-              <span className="lg:whitespace-nowrap">Find someone who</span>
+            {/* Mobile: Shorter, Desktop: Full */}
+            <h1 className="text-3xl md:text-6xl lg:text-7xl font-bold text-primary-foreground leading-tight mt-4 md:mt-0">
+              <span className="block md:inline lg:whitespace-nowrap">Date someone who</span>
               <span className="block bg-gradient-accent bg-clip-text text-transparent">
-                *thinks* like you
+                gets your brain
               </span>
             </h1>
             
-            <p className="text-xl md:text-2xl text-primary-foreground/90 leading-relaxed max-w-2xl">
-              MindMatch helps you discover people who vibe with your thoughts, not just your looks.
+            {/* Mobile: Single line, Desktop: Two paragraphs */}
+            <p className="text-base md:text-xl lg:text-2xl text-primary-foreground/90 leading-relaxed max-w-2xl mt-4 md:mt-6">
+              <span className="md:hidden">Where minds match first, not just looks.</span>
+              <span className="hidden md:inline">MindMatch helps you discover people who vibe with your thoughts, not just your looks.</span>
             </p>
             
-            <p className="text-lg md:text-xl text-primary-foreground/80 leading-relaxed max-w-2xl font-medium">
+            <p className="hidden md:block text-lg md:text-xl text-primary-foreground/80 leading-relaxed max-w-2xl font-medium">
               From late-night deep conversations to building dreams together — it starts with your mind.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 justify-start lg:max-w-xl">
+          {/* Mobile: Stack buttons, Desktop: Grid */}
+          <div className="flex flex-col gap-4 md:gap-4 justify-start lg:max-w-xl">
+            {/* Primary CTA - Most prominent */}
             <Button 
               size="lg" 
               variant="secondary" 
-              className="group shadow-glow hover:shadow-xl transition-all duration-300 w-full"
+              className="group shadow-glow hover:shadow-xl transition-all duration-300 w-full py-7 md:py-4 text-base md:text-lg font-semibold"
               onClick={handleStartQuiz}
             >
               <span className="mr-2">Find Your MindMatch</span>
               <div className="flex items-center gap-1">
-                <Brain className="w-4 h-4" />
-                <Heart className="w-4 h-4 text-secondary-foreground group-hover:animate-pulse" />
+                <Brain className="w-4 h-4 md:w-5 md:h-5" />
+                <Heart className="w-4 h-4 md:w-5 md:h-5 text-secondary-foreground group-hover:animate-pulse" />
               </div>
             </Button>
             
-            <Button 
-              size="lg" 
-              className="group shadow-glow hover:shadow-xl transition-all duration-300 bg-accent hover:bg-accent/90 w-full"
-              onClick={handleStartCoupleMatch}
-            >
-              <span className="mr-2">Relationship Compatibility Test</span>
-              <div className="flex items-center gap-1">
-                <Users className="w-4 h-4" />
-                <Heart className="w-4 h-4 group-hover:animate-pulse" />
-              </div>
-            </Button>
-            
-            <Link to="/psychology" className="sm:col-span-2">
+            {/* Secondary CTAs - Side by side on mobile too */}
+            <div className="grid grid-cols-2 gap-3 md:gap-4">
               <Button 
                 size="lg" 
-                variant="outline" 
-                className="border-foreground/30 text-foreground hover:bg-foreground/10 w-full"
+                variant="outline"
+                className="group border-2 border-accent/40 hover:border-accent hover:bg-accent/10 w-full py-6 md:py-3"
+                onClick={handleStartCoupleMatch}
               >
-                How It Works
+                <span className="mr-1 text-xs md:text-base"><span className="md:hidden">Couple</span><span className="hidden md:inline">Couple Test</span></span>
+                <Users className="w-3 h-3 md:w-4 md:h-4" />
               </Button>
-            </Link>
+              
+              <Link to="/psychology" className="w-full">
+                <Button 
+                  size="lg" 
+                  variant="outline" 
+                  className="border-foreground/30 text-foreground hover:bg-foreground/10 w-full py-6 md:py-3 text-xs md:text-base"
+                >
+                  How It Works
+                </Button>
+              </Link>
+            </div>
           </div>
 
           <div className="flex items-center justify-center lg:justify-start gap-6 pt-4">
@@ -289,23 +297,83 @@ const HeroSection = ({ onModalStateChange }: HeroSectionProps) => {
           </div>
         </div>
 
-        {/* Right Image */}
-        <div className="relative lg:ml-8">
-          <div className="relative rounded-3xl overflow-hidden shadow-glow">
-            <img 
-              src={heroImage} 
-              alt="MindMatch - Connect minds, not just hearts"
-              className="w-full h-auto object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent"></div>
+        {/* Right Visual - Abstract Brain/Neural Network */}
+        <div className="relative lg:ml-8 hidden lg:block">
+          <div className="relative w-full h-[500px] rounded-3xl overflow-hidden bg-gradient-to-br from-primary/10 via-primary-glow/5 to-accent/10 shadow-glow">
+            {/* Animated neural network visualization */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              {/* Center brain icon */}
+              <div className="relative z-10">
+                <div className="w-32 h-32 bg-gradient-to-br from-primary to-primary-glow rounded-full flex items-center justify-center shadow-2xl animate-pulse-slow">
+                  <Brain className="w-16 h-16 text-white" />
+                </div>
+              </div>
+
+              {/* Orbiting connection nodes */}
+              <div className="absolute inset-0 animate-spin-slow">
+                <div className="absolute top-1/4 left-1/4 w-16 h-16 bg-gradient-to-br from-accent/80 to-accent rounded-full flex items-center justify-center shadow-lg">
+                  <Heart className="w-8 h-8 text-white" />
+                </div>
+                <div className="absolute top-1/4 right-1/4 w-12 h-12 bg-gradient-to-br from-primary-glow/80 to-primary-glow rounded-full flex items-center justify-center shadow-lg">
+                  <Users className="w-6 h-6 text-white" />
+                </div>
+                <div className="absolute bottom-1/4 left-1/3 w-14 h-14 bg-gradient-to-br from-primary/80 to-primary rounded-full flex items-center justify-center shadow-lg">
+                  <Sparkles className="w-7 h-7 text-white" />
+                </div>
+                <div className="absolute bottom-1/3 right-1/4 w-10 h-10 bg-gradient-to-br from-accent/60 to-accent rounded-full shadow-lg"></div>
+              </div>
+
+              {/* Connection lines */}
+              <svg className="absolute inset-0 w-full h-full opacity-20">
+                <line x1="25%" y1="25%" x2="50%" y2="50%" stroke="url(#gradient1)" strokeWidth="2" className="animate-pulse" />
+                <line x1="75%" y1="25%" x2="50%" y2="50%" stroke="url(#gradient2)" strokeWidth="2" className="animate-pulse" style={{ animationDelay: '0.5s' }} />
+                <line x1="33%" y1="75%" x2="50%" y2="50%" stroke="url(#gradient3)" strokeWidth="2" className="animate-pulse" style={{ animationDelay: '1s' }} />
+                <defs>
+                  <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="hsl(var(--accent))" />
+                    <stop offset="100%" stopColor="hsl(var(--primary))" />
+                  </linearGradient>
+                  <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="hsl(var(--primary-glow))" />
+                    <stop offset="100%" stopColor="hsl(var(--primary))" />
+                  </linearGradient>
+                  <linearGradient id="gradient3" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="hsl(var(--primary))" />
+                    <stop offset="100%" stopColor="hsl(var(--accent))" />
+                  </linearGradient>
+                </defs>
+              </svg>
+
+              {/* Floating particles */}
+              <div className="absolute top-10 left-10 w-2 h-2 bg-accent rounded-full animate-float opacity-60"></div>
+              <div className="absolute top-20 right-16 w-3 h-3 bg-primary-glow rounded-full animate-float opacity-70" style={{ animationDelay: '0.8s' }}></div>
+              <div className="absolute bottom-16 left-20 w-2.5 h-2.5 bg-primary rounded-full animate-float opacity-50" style={{ animationDelay: '1.5s' }}></div>
+              <div className="absolute bottom-20 right-12 w-2 h-2 bg-accent rounded-full animate-float opacity-60" style={{ animationDelay: '0.3s' }}></div>
+            </div>
           </div>
           
-          {/* Floating elements */}
-          <div className="absolute -top-4 -right-4 bg-secondary p-3 rounded-full shadow-card animate-float">
-            <Heart className="w-6 h-6 text-secondary-foreground" />
+          {/* Floating stat cards */}
+          <div className="absolute -top-4 -right-4 bg-white/90 backdrop-blur-sm p-4 rounded-2xl shadow-glow animate-float border border-primary/10">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gradient-to-br from-primary to-primary-glow rounded-full flex items-center justify-center">
+                <Heart className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <div className="text-xs text-muted-foreground">Match Rate</div>
+                <div className="text-lg font-bold text-foreground">94%</div>
+              </div>
+            </div>
           </div>
-          <div className="absolute -bottom-4 -left-4 bg-secondary p-3 rounded-full shadow-card animate-float" style={{ animationDelay: '1.5s' }}>
-            <Brain className="w-6 h-6 text-secondary-foreground" />
+          <div className="absolute -bottom-4 -left-4 bg-white/90 backdrop-blur-sm p-4 rounded-2xl shadow-glow animate-float border border-accent/10" style={{ animationDelay: '1.5s' }}>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gradient-to-br from-accent to-primary-glow rounded-full flex items-center justify-center">
+                <Brain className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <div className="text-xs text-muted-foreground">Avg Time</div>
+                <div className="text-lg font-bold text-foreground">5 min</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
