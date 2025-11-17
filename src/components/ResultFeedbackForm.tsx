@@ -68,13 +68,24 @@ export const ResultFeedbackForm = ({ sessionId, feedbackType, relatedResponseId 
         setImprovements("");
         setIsSubmitted(false);
       }, 2000);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error submitting feedback:', error);
-      toast({
-        title: "Submission failed",
-        description: "Please try again later.",
-        variant: "destructive",
-      });
+      
+      // Check if it's a table not found error
+      if (error?.message?.includes('Could not find the table') || error?.code === 'PGRST205') {
+        toast({
+          title: "Database Setup Required",
+          description: "Please run the SQL script in Cloud → Database → SQL Editor to create feedback tables.",
+          variant: "destructive",
+          duration: 6000,
+        });
+      } else {
+        toast({
+          title: "Submission failed",
+          description: "Please try again later.",
+          variant: "destructive",
+        });
+      }
     } finally {
       setIsSubmitting(false);
     }
