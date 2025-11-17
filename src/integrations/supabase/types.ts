@@ -14,6 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      couple_responses: {
+        Row: {
+          compatibility_score: number | null
+          created_at: string
+          id: string
+          match_quality: string | null
+          person1_answers: Json
+          person1_name: string
+          person1_type: string
+          person2_answers: Json
+          person2_name: string
+          person2_type: string
+          session_id: string
+        }
+        Insert: {
+          compatibility_score?: number | null
+          created_at?: string
+          id?: string
+          match_quality?: string | null
+          person1_answers: Json
+          person1_name: string
+          person1_type: string
+          person2_answers: Json
+          person2_name: string
+          person2_type: string
+          session_id: string
+        }
+        Update: {
+          compatibility_score?: number | null
+          created_at?: string
+          id?: string
+          match_quality?: string | null
+          person1_answers?: Json
+          person1_name?: string
+          person1_type?: string
+          person2_answers?: Json
+          person2_name?: string
+          person2_type?: string
+          session_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           age: number
@@ -41,6 +83,66 @@ export type Database = {
           id?: string
           name?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      quiz_responses: {
+        Row: {
+          answers: Json
+          cognitive_type: string
+          created_at: string
+          id: string
+          session_id: string
+        }
+        Insert: {
+          answers: Json
+          cognitive_type: string
+          created_at?: string
+          id?: string
+          session_id: string
+        }
+        Update: {
+          answers?: Json
+          cognitive_type?: string
+          created_at?: string
+          id?: string
+          session_id?: string
+        }
+        Relationships: []
+      }
+      user_feedback: {
+        Row: {
+          comments: string | null
+          created_at: string
+          feedback_type: string
+          id: string
+          rating: number
+          related_response_id: string | null
+          session_id: string
+          suggestions: string | null
+          would_recommend: boolean | null
+        }
+        Insert: {
+          comments?: string | null
+          created_at?: string
+          feedback_type: string
+          id?: string
+          rating: number
+          related_response_id?: string | null
+          session_id: string
+          suggestions?: string | null
+          would_recommend?: boolean | null
+        }
+        Update: {
+          comments?: string | null
+          created_at?: string
+          feedback_type?: string
+          id?: string
+          rating?: number
+          related_response_id?: string | null
+          session_id?: string
+          suggestions?: string | null
+          would_recommend?: boolean | null
         }
         Relationships: []
       }
