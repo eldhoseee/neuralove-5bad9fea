@@ -49,7 +49,10 @@ export const ResultFeedbackForm = ({ sessionId, feedbackType, relatedResponseId 
         user_agent: navigator.userAgent,
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Feedback submission error:', error);
+        throw error;
+      }
 
       setIsSubmitted(true);
       toast({
