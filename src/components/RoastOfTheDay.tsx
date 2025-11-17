@@ -59,15 +59,15 @@ const RoastOfTheDay = () => {
   const [showBurst, setShowBurst] = useState(false);
   const typewriterRef = useRef<NodeJS.Timeout | null>(null);
   
-  // Use the persistent reaction hook
-  const { reactions, incrementReaction } = useRoastReactions();
-
   const getRandomRoast = () => {
     const randomIndex = Math.floor(Math.random() * roasts.length);
     return roasts[randomIndex];
   };
 
   const [currentRoast, setCurrentRoast] = useState(getRandomRoast());
+  
+  // Use the persistent reaction hook with current roast
+  const { reactions, incrementReaction } = useRoastReactions(currentRoast);
 
   // Typewriter effect
   useEffect(() => {

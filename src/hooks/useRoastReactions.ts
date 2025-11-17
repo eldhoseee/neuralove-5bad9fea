@@ -14,7 +14,19 @@ const REACTION_EMOJIS = [
   { emoji: '😭', label: 'Brutal' },
 ];
 
-export const useRoastReactions = () => {
+// Simple hash function to create a unique ID for each roast
+const hashRoast = (roast: string): string => {
+  let hash = 0;
+  for (let i = 0; i < roast.length; i++) {
+    const char = roast.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash; // Convert to 32bit integer
+  }
+  return Math.abs(hash).toString();
+};
+
+export const useRoastReactions = (roastText: string) => {
+  const roastId = hashRoast(roastText);
   const [reactions, setReactions] = useState<ReactionData[]>(
     REACTION_EMOJIS.map(r => ({ ...r, count: 0 }))
   );
@@ -24,15 +36,16 @@ export const useRoastReactions = () => {
   useEffect(() => {
     fetchReactions();
     
-    // Subscribe to real-time updates
+    // Subscribe to real-time updates for this specific roast
     const channel = supabase
-      .channel('roast_reactions_changes')
+      .channel(`roast_reactions_${roastId}`)
       .on(
         'postgres_changes',
         {
           event: '*',
           schema: 'public',
-          table: 'roast_reactions'
+          table: 'roast_reactions',
+          filter: `roast_id=eq.${roastId}`
         },
         () => {
           // Refetch when any change occurs
@@ -44,13 +57,14 @@ export const useRoastReactions = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, [roastId]);
 
   const fetchReactions = async () => {
     try {
-      const { data, error } = await supabase
-        .from('roast_reactions' as any)
+      const { data, error } = await (supabase as any)
+        .from('roast_reactions')
         .select('emoji, count')
+        .eq('roast_id', roastId)
         .order('emoji');
 
       if (error) {
@@ -58,7 +72,7 @@ export const useRoastReactions = () => {
         return;
       }
 
-      if (data) {
+      if (data && Array.isArray(data)) {
         // Merge fetched data with emoji definitions
         const updatedReactions = REACTION_EMOJIS.map(reactionDef => {
           const found = data.find((d: any) => d.emoji === reactionDef.emoji);
@@ -83,9 +97,10 @@ export const useRoastReactions = () => {
     );
 
     try {
-      // Use the database function for atomic increment
-      const { data, error } = await supabase.rpc('increment_reaction' as any, {
-        reaction_emoji: emoji
+      // Use the database function for atomic increment with roast_id
+      const { data, error } = await (supabase as any).rpc('increment_roast_reaction', {
+        p_roast_id: roastId,
+        p_emoji: emoji
       });
 
       if (error) {

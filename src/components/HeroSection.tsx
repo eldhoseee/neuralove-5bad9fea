@@ -224,9 +224,9 @@ const HeroSection = ({ onModalStateChange }: HeroSectionProps) => {
             
             {/* Mobile: Shorter, Desktop: Full */}
             <h1 className="text-3xl md:text-6xl lg:text-7xl font-bold text-primary-foreground leading-tight mt-4 md:mt-0">
-              <span className="block md:inline lg:whitespace-nowrap">Date someone who</span>
+              <span className="block md:inline lg:whitespace-nowrap">Find someone who</span>
               <span className="block bg-gradient-accent bg-clip-text text-transparent">
-                gets your brain
+                thinks like you
               </span>
             </h1>
             
