@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Heart, Brain, Sparkles, Users } from "lucide-react";
@@ -13,7 +13,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { analyzeLocally } from "@/utils/localCognitiveAnalyzer";
 
-const HeroSection = () => {
+interface HeroSectionProps {
+  onModalStateChange?: (isOpen: boolean) => void;
+}
+
+const HeroSection = ({ onModalStateChange }: HeroSectionProps) => {
   const [showQuiz, setShowQuiz] = useState(false);
   const [showResult, setShowResult] = useState(false);
   const [showProfileForm, setShowProfileForm] = useState(false);
@@ -41,6 +45,11 @@ const HeroSection = () => {
   } | null>(null);
   const [quizAnswers, setQuizAnswers] = useState<boolean[]>([]);
   const { toast } = useToast();
+
+  useEffect(() => {
+    const isAnyModalOpen = showQuiz || showResult || showProfileForm || showCoupleNamesForm || isAnalyzing;
+    onModalStateChange?.(isAnyModalOpen);
+  }, [showQuiz, showResult, showProfileForm, showCoupleNamesForm, isAnalyzing, onModalStateChange]);
 
   const handleQuizComplete = async (answers: boolean[]) => {
     setIsAnalyzing(true);

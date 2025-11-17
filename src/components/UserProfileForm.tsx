@@ -8,7 +8,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Brain, Sparkles, Users, Heart } from 'lucide-react';
+import { Brain, Sparkles, Users, Heart, User, Calendar, Check, X, ArrowRight, Smartphone, Monitor, TrendingUp, Tv, Radio } from 'lucide-react';
 
 interface UserProfileFormProps {
   cognitiveType?: string;
@@ -20,38 +20,53 @@ interface UserProfileFormProps {
 const getGenerationInfo = (age: number) => {
   if (age >= 18 && age <= 27) return { 
     label: 'Gen Z', 
+    icon: Smartphone,
     emoji: '📱', 
-    bgColor: 'bg-neural-blue/10', 
-    borderColor: 'border-neural-blue/20',
-    textColor: 'text-neural-blue'
+    gradient: 'from-primary to-primary-glow',
+    bgColor: 'bg-primary/5', 
+    borderColor: 'border-primary/20',
+    textColor: 'text-primary',
+    description: 'Digital native, socially conscious'
   };
   if (age >= 28 && age <= 43) return { 
     label: 'Millennial', 
+    icon: Monitor,
     emoji: '💻', 
-    bgColor: 'bg-neural-purple/10', 
-    borderColor: 'border-neural-purple/20',
-    textColor: 'text-neural-purple'
+    gradient: 'from-primary-glow to-accent',
+    bgColor: 'bg-primary-glow/5', 
+    borderColor: 'border-primary-glow/20',
+    textColor: 'text-primary-glow',
+    description: 'Tech-savvy, value experiences'
   };
   if (age >= 44 && age <= 59) return { 
     label: 'Gen X', 
-    emoji: '📼', 
-    bgColor: 'bg-neural-pink/10', 
-    borderColor: 'border-neural-pink/20',
-    textColor: 'text-neural-pink'
+    icon: TrendingUp,
+    emoji: '📈', 
+    gradient: 'from-accent to-primary',
+    bgColor: 'bg-accent/5', 
+    borderColor: 'border-accent/20',
+    textColor: 'text-accent',
+    description: 'Independent, adaptable'
   };
   if (age >= 60 && age <= 78) return { 
     label: 'Boomer', 
+    icon: Tv,
     emoji: '📺', 
-    bgColor: 'bg-primary/10', 
-    borderColor: 'border-primary/20',
-    textColor: 'text-primary'
+    gradient: 'from-primary to-accent',
+    bgColor: 'bg-secondary/5', 
+    borderColor: 'border-secondary/20',
+    textColor: 'text-foreground',
+    description: 'Hardworking, optimistic'
   };
   return { 
     label: 'Silent Generation', 
+    icon: Radio,
     emoji: '📻', 
-    bgColor: 'bg-accent/10', 
-    borderColor: 'border-accent/20',
-    textColor: 'text-accent'
+    gradient: 'from-secondary to-primary',
+    bgColor: 'bg-muted/30', 
+    borderColor: 'border-muted',
+    textColor: 'text-muted-foreground',
+    description: 'Traditional, loyal'
   };
 };
 
@@ -172,50 +187,88 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 overflow-y-auto">
+    <div className="fixed inset-0 bg-background/95 backdrop-blur-md z-50 overflow-y-auto">
       <div className="flex min-h-full items-center justify-center p-2 sm:p-4 py-8">
-        <Card className="w-full max-w-2xl bg-gradient-card shadow-glow border-primary/20">
-        <CardHeader className="text-center space-y-2">
-          <div className="mx-auto w-12 h-12 bg-gradient-hero rounded-full flex items-center justify-center mb-2">
-            <Heart className="h-6 w-6 text-primary-foreground" />
+        {/* Decorative background elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-20 left-10 w-64 h-64 bg-primary/5 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-20 right-10 w-96 h-96 bg-accent/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+        </div>
+
+        <Card className="w-full max-w-3xl bg-card/95 backdrop-blur-sm shadow-2xl border-primary/20 relative">
+        <CardHeader className="text-center space-y-3 pb-6">
+          <div className="mx-auto w-16 h-16 bg-gradient-to-br from-primary to-primary-glow rounded-2xl flex items-center justify-center mb-2 animate-bounce shadow-lg">
+            <Heart className="h-8 w-8 text-primary-foreground" />
           </div>
-          <CardTitle className="text-2xl bg-gradient-hero bg-clip-text text-transparent">
+          <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary via-primary-glow to-accent bg-clip-text text-transparent">
             {isForCouple ? "Couple Profile Setup" : "Create Your Profile"}
           </CardTitle>
-          <p className="text-muted-foreground text-sm">
+          <p className="text-muted-foreground text-base max-w-md mx-auto">
             {isForCouple 
               ? "Set up your profile to discover your couple compatibility" 
-              : "Tell us about yourself before we analyze your mind"
+              : "Tell us about yourself before we analyze your cognitive compatibility"
             }
           </p>
+          
+          {/* Progress Indicator */}
+          <div className="flex justify-center gap-2 pt-2">
+            <div className="h-1.5 w-12 bg-primary rounded-full"></div>
+            <div className="h-1.5 w-12 bg-primary/30 rounded-full"></div>
+            <div className="h-1.5 w-12 bg-primary/30 rounded-full"></div>
+          </div>
         </CardHeader>
 
-        <CardContent className="space-y-4 sm:space-y-6 p-4 sm:p-6">
-          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+        <CardContent className="space-y-8 p-6 sm:p-8">
+          <form onSubmit={handleSubmit} className="space-y-8">
             {/* Name Field */}
-            <div className="space-y-2">
-              <Label htmlFor="name" className="text-sm font-medium flex items-center gap-2">
-                <Users className="h-4 w-4 text-primary" />
-                Your Name <span className="text-destructive">*</span>
+            <div className="space-y-3 group">
+              <Label htmlFor="name" className="text-base font-semibold flex items-center gap-2">
+                <div className="p-1.5 bg-primary/10 rounded-lg">
+                  <User className="h-4 w-4 text-primary" />
+                </div>
+                Your Name
+                <span className="text-destructive">*</span>
               </Label>
-              <Input
-                id="name"
-                type="text"
-                placeholder="Enter your name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="transition-all duration-300 focus:shadow-glow/20"
-              />
+              <div className="relative">
+                <Input
+                  id="name"
+                  type="text"
+                  placeholder="Enter your full name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="text-lg h-14 pl-4 pr-12 transition-all duration-300 focus:shadow-lg focus:shadow-primary/20 border-2 focus:border-primary"
+                />
+                {name.trim() && (
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                    <div className="bg-green-500 rounded-full p-1">
+                      <Check className="h-4 w-4 text-white" />
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Age Slider */}
-            <div className="space-y-4">
-              <Label className="text-sm font-medium flex items-center gap-2">
-                <Sparkles className="h-4 w-4 text-primary" />
-                Age: {age[0]} <span className="text-destructive">*</span>
+            <div className="space-y-5">
+              <Label className="text-base font-semibold flex items-center gap-2">
+                <div className="p-1.5 bg-primary/10 rounded-lg">
+                  <Calendar className="h-4 w-4 text-primary" />
+                </div>
+                Your Age
+                <span className="text-destructive">*</span>
               </Label>
               
-              <div className="relative px-4">
+              <div className="relative px-2">
+                {/* Large Age Display */}
+                <div className="text-center mb-6">
+                  <div className="inline-block relative">
+                    <span className="text-7xl font-bold bg-gradient-to-br from-primary via-primary-glow to-accent bg-clip-text text-transparent">
+                      {age[0]}
+                    </span>
+                    <span className="text-2xl text-muted-foreground ml-2">years</span>
+                  </div>
+                </div>
+
                 <Slider
                   value={age}
                   onValueChange={setAge}
@@ -225,61 +278,97 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({
                   className="w-full"
                 />
                 
-                {/* Generation Display */}
-                <div className="mt-4 text-center">
-                  <div className={`inline-block px-4 py-2 rounded-full ${generationInfo.bgColor} border ${generationInfo.borderColor}`}>
-                    <span className="text-lg mr-2">{generationInfo.emoji}</span>
-                    <span className={`font-semibold ${generationInfo.textColor}`}>
-                      {generationInfo.label}
-                    </span>
+                {/* Generation Badge */}
+                <div className="mt-6 text-center">
+                  <div className={`inline-flex items-center gap-3 px-6 py-4 rounded-2xl ${generationInfo.bgColor} border-2 ${generationInfo.borderColor} shadow-lg transition-all duration-500 hover:scale-105`}>
+                    <div className={`p-2 bg-gradient-to-br ${generationInfo.gradient} rounded-xl`}>
+                      <generationInfo.icon className="h-5 w-5 text-white" />
+                    </div>
+                    <div className="text-left">
+                      <div className={`font-bold text-lg ${generationInfo.textColor}`}>
+                        {generationInfo.label}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {generationInfo.description}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Gender Selection */}
-            <div className="space-y-3">
-              <Label className="text-sm font-medium flex items-center gap-2">
-                <Brain className="h-4 w-4 text-primary" />
-                Gender <span className="text-destructive">*</span>
+            <div className="space-y-4">
+              <Label className="text-base font-semibold flex items-center gap-2">
+                <div className="p-1.5 bg-primary/10 rounded-lg">
+                  <Brain className="h-4 w-4 text-primary" />
+                </div>
+                Gender
+                <span className="text-destructive">*</span>
               </Label>
-              <RadioGroup value={gender} onValueChange={setGender} className="grid grid-cols-3 gap-3">
-                {['Male', 'Female', 'Other'].map((option) => (
-                  <div key={option} className="flex items-center space-x-2">
-                    <RadioGroupItem value={option.toLowerCase()} id={option.toLowerCase()} />
-                    <Label 
-                      htmlFor={option.toLowerCase()} 
-                      className="text-sm cursor-pointer flex-1 text-center py-2 px-3 rounded-md border border-input hover:bg-accent/50 transition-colors"
-                    >
-                      {option}
-                    </Label>
-                  </div>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                {[
+                  { value: 'male', label: 'Male', emoji: '👨', gradient: 'from-blue-500 to-blue-600' },
+                  { value: 'female', label: 'Female', emoji: '👩', gradient: 'from-pink-500 to-pink-600' },
+                  { value: 'other', label: 'Other', emoji: '✨', gradient: 'from-purple-500 to-purple-600' }
+                ].map((option) => (
+                  <label
+                    key={option.value}
+                    className={`relative flex flex-col items-center justify-center p-6 rounded-2xl border-2 cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105 ${
+                      gender === option.value
+                        ? `bg-gradient-to-br ${option.gradient} border-transparent text-white shadow-xl scale-105`
+                        : 'bg-card border-input hover:border-primary/50'
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="gender"
+                      value={option.value}
+                      checked={gender === option.value}
+                      onChange={(e) => setGender(e.target.value)}
+                      className="sr-only"
+                    />
+                    <span className="text-4xl mb-2">{option.emoji}</span>
+                    <span className={`font-semibold text-lg ${gender === option.value ? 'text-white' : ''}`}>
+                      {option.label}
+                    </span>
+                    {gender === option.value && (
+                      <div className="absolute top-3 right-3 bg-white rounded-full p-1">
+                        <Check className="h-4 w-4 text-green-500" />
+                      </div>
+                    )}
+                  </label>
                 ))}
-              </RadioGroup>
+              </div>
             </div>
 
 
             {/* Action Buttons */}
-            <div className="flex gap-3 pt-4">
+            <div className="flex flex-col sm:flex-row gap-4 pt-6">
               <Button
                 type="button"
                 variant="outline"
                 onClick={onClose}
-                className="flex-1"
+                className="flex-1 h-14 text-base border-2 hover:bg-destructive/10 hover:border-destructive/50 transition-all duration-300"
                 disabled={isSubmitting}
               >
+                <X className="h-5 w-5 mr-2" />
                 Cancel
               </Button>
               <Button
                 type="submit"
-                className="flex-1 bg-gradient-hero hover:shadow-glow transition-all duration-300"
+                className="flex-1 h-14 text-base bg-gradient-to-r from-primary via-primary-glow to-accent hover:shadow-2xl hover:shadow-primary/50 transition-all duration-300 font-semibold group"
                 disabled={isSubmitting}
               >
                 {isSubmitting 
                   ? "Creating..." 
-                  : isForCouple 
-                    ? "Start Compatibility Quiz" 
-                    : "Start Quiz"
+                  : (
+                    <>
+                      {isForCouple ? "Start Compatibility Quiz" : "Start Quiz"}
+                      <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                    </>
+                  )
                 }
               </Button>
             </div>
