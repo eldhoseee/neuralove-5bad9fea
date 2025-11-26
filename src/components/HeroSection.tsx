@@ -181,6 +181,8 @@ const HeroSection = ({ onModalStateChange }: HeroSectionProps) => {
   };
 
   const handleProfileComplete = (userData: { id: string; name: string; age: number; gender: string }) => {
+    console.log('=== PROFILE COMPLETED ===');
+    console.log('User Data:', userData);
     setProfileData(userData);
     setShowProfileForm(false);
     setShowQuiz(true);
@@ -243,19 +245,51 @@ const HeroSection = ({ onModalStateChange }: HeroSectionProps) => {
 
           {/* Mobile: Stack buttons, Desktop: Grid */}
           <div className="flex flex-col gap-4 md:gap-4 justify-start lg:max-w-xl">
-            {/* Primary CTA - Most prominent */}
-            <Button 
-              size="lg" 
-              variant="secondary" 
-              className="group shadow-glow hover:shadow-xl transition-all duration-300 w-full py-7 md:py-4 text-base md:text-lg font-semibold"
-              onClick={handleStartQuiz}
-            >
-              <span className="mr-2">Find Your MindMatch</span>
-              <div className="flex items-center gap-1">
-                <Brain className="w-4 h-4 md:w-5 md:h-5" />
-                <Heart className="w-4 h-4 md:w-5 md:h-5 text-secondary-foreground group-hover:animate-pulse" />
+            {/* Primary CTA - Most prominent with floating avatars */}
+            <div className="relative">
+              {/* Floating profile avatars behind button */}
+              <div className="absolute inset-0 overflow-visible pointer-events-none">
+                {[...Array(4)].map((_, i) => (
+                  <div
+                    key={i}
+                    className="absolute bottom-0 left-1/2 -translate-x-1/2 animate-float-vapor"
+                    style={{
+                      animationDelay: `${i * 2}s`,
+                      animationDuration: `${7 + i * 0.5}s`,
+                      left: `${25 + i * 15}%`,
+                    }}
+                  >
+                    {/* Profile pic with inner circle to mimic face */}
+                    <div 
+                      className="w-8 h-8 md:w-10 md:h-10 rounded-full relative blur-[1.5px] shadow-lg"
+                      style={{
+                        background: `linear-gradient(${45 + i * 90}deg, 
+                          hsl(${315 + i * 30} 70% 60% / 0.85), 
+                          hsl(${200 + i * 40} 65% 65% / 0.75))`
+                      }}
+                    >
+                      {/* Inner face circle */}
+                      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-1/3 h-1/3 rounded-full bg-white/30" />
+                      {/* Body shape */}
+                      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-2/3 h-1/2 rounded-t-full bg-white/20" />
+                    </div>
+                  </div>
+                ))}
               </div>
-            </Button>
+              
+              <Button 
+                size="lg" 
+                variant="secondary" 
+                className="group shadow-glow hover:shadow-xl transition-all duration-300 w-full py-7 md:py-4 text-base md:text-lg font-semibold relative z-10"
+                onClick={handleStartQuiz}
+              >
+                <span className="mr-2">Find Your MindMatch</span>
+                <div className="flex items-center gap-1">
+                  <Brain className="w-4 h-4 md:w-5 md:h-5" />
+                  <Heart className="w-4 h-4 md:w-5 md:h-5 text-secondary-foreground group-hover:animate-pulse" />
+                </div>
+              </Button>
+            </div>
             
             {/* Secondary CTAs - Side by side on mobile too */}
             <div className="grid grid-cols-2 gap-3 md:gap-4">

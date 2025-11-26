@@ -2,6 +2,7 @@ import { useProfileData } from "@/hooks/useProfileData";
 import { ProfileStats } from "@/components/admin/ProfileStats";
 import { ProfileCharts } from "@/components/admin/ProfileCharts";
 import { ProfileTable } from "@/components/admin/ProfileTable";
+import { FeedbackSection } from "@/components/admin/FeedbackSection";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { LoadingIndicator } from "@/components/ui/loading-indicator";
@@ -54,6 +55,7 @@ const Admin = () => {
           <div className="space-y-8">
             <ProfileStats profiles={profiles} />
             <ProfileCharts profiles={profiles} />
+            <FeedbackSection />
             <ProfileTable profiles={profiles} />
           </div>
         )}

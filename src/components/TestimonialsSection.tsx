@@ -1,7 +1,11 @@
-import { Heart, Sparkles, Users, Star, Calendar, MessageCircle } from "lucide-react";
+import { useState } from "react";
+import { Heart, Sparkles, Users, Star, Calendar, MessageCircle, ChevronDown, ChevronUp } from "lucide-react";
 import TestimonialCard from "./TestimonialCard";
+import { Button } from "@/components/ui/button";
 
 const TestimonialsSection = () => {
+  const [showAll, setShowAll] = useState(false);
+  
   const testimonials = [
     {
       name: "Ananya",
@@ -96,8 +100,8 @@ const TestimonialsSection = () => {
         </div>
 
         {/* Testimonial cards grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 max-w-7xl mx-auto mb-8 md:mb-16">
-          {testimonials.map((testimonial, index) => (
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 max-w-7xl mx-auto mb-8 md:mb-12">
+          {(showAll ? testimonials : testimonials.slice(0, 3)).map((testimonial, index) => (
             <TestimonialCard
               key={index}
               name={testimonial.name}
@@ -110,6 +114,27 @@ const TestimonialsSection = () => {
               timeframe={testimonial.timeframe}
             />
           ))}
+        </div>
+
+        {/* Show More/Less Button */}
+        <div className="text-center mb-8 md:mb-12">
+          <Button
+            onClick={() => setShowAll(!showAll)}
+            variant="outline"
+            className="group border-2 border-neural-blue/30 hover:border-neural-blue hover:bg-neural-blue/10 px-8 py-6 text-base font-semibold transition-all duration-300"
+          >
+            {showAll ? (
+              <>
+                <span className="mr-2">Show Less Reviews</span>
+                <ChevronUp className="w-5 h-5 group-hover:-translate-y-1 transition-transform" />
+              </>
+            ) : (
+              <>
+                <span className="mr-2">Read More Success Stories</span>
+                <ChevronDown className="w-5 h-5 group-hover:translate-y-1 transition-transform" />
+              </>
+            )}
+          </Button>
         </div>
 
         {/* Enhanced success stats for Indian context */}

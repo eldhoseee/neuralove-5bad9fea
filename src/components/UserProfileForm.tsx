@@ -84,6 +84,11 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({
 
   const generationInfo = getGenerationInfo(age[0]);
 
+  const handleCancel = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    onClose?.();
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !gender) {
@@ -188,22 +193,22 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({
 
   return (
     <div className="fixed inset-0 bg-background/95 backdrop-blur-md z-50 overflow-y-auto">
-      <div className="flex min-h-full items-center justify-center p-2 sm:p-4 py-8">
+      <div className="flex min-h-screen items-center justify-center p-2 sm:p-4">
         {/* Decorative background elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-20 left-10 w-64 h-64 bg-primary/5 rounded-full blur-3xl animate-pulse"></div>
           <div className="absolute bottom-20 right-10 w-96 h-96 bg-accent/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
         </div>
 
-        <Card className="w-full max-w-3xl bg-card/95 backdrop-blur-sm shadow-2xl border-primary/20 relative">
-        <CardHeader className="text-center space-y-3 pb-6">
-          <div className="mx-auto w-16 h-16 bg-gradient-to-br from-primary to-primary-glow rounded-2xl flex items-center justify-center mb-2 animate-bounce shadow-lg">
-            <Heart className="h-8 w-8 text-primary-foreground" />
+        <Card className="w-full max-w-2xl bg-card/95 backdrop-blur-sm shadow-2xl border-primary/20 relative my-2">
+        <CardHeader className="text-center space-y-2 pb-4">
+          <div className="mx-auto w-12 h-12 bg-gradient-to-br from-primary to-primary-glow rounded-2xl flex items-center justify-center mb-1 animate-bounce shadow-lg">
+            <Heart className="h-6 w-6 text-primary-foreground" />
           </div>
-          <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary via-primary-glow to-accent bg-clip-text text-transparent">
+          <CardTitle className="text-2xl font-bold bg-gradient-to-r from-primary via-primary-glow to-accent bg-clip-text text-transparent">
             {isForCouple ? "Couple Profile Setup" : "Create Your Profile"}
           </CardTitle>
-          <p className="text-muted-foreground text-base max-w-md mx-auto">
+          <p className="text-muted-foreground text-sm max-w-md mx-auto">
             {isForCouple 
               ? "Set up your profile to discover your couple compatibility" 
               : "Tell us about yourself before we analyze your cognitive compatibility"
@@ -211,18 +216,18 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({
           </p>
           
           {/* Progress Indicator */}
-          <div className="flex justify-center gap-2 pt-2">
+          <div className="flex justify-center gap-2 pt-1">
             <div className="h-1.5 w-12 bg-primary rounded-full"></div>
             <div className="h-1.5 w-12 bg-primary/30 rounded-full"></div>
             <div className="h-1.5 w-12 bg-primary/30 rounded-full"></div>
           </div>
         </CardHeader>
 
-        <CardContent className="space-y-8 p-6 sm:p-8">
-          <form onSubmit={handleSubmit} className="space-y-8">
+        <CardContent className="space-y-4 p-4 sm:p-6">
+          <form onSubmit={handleSubmit} className="space-y-4">
             {/* Name Field */}
-            <div className="space-y-3 group">
-              <Label htmlFor="name" className="text-base font-semibold flex items-center gap-2">
+            <div className="space-y-2 group">
+              <Label htmlFor="name" className="text-sm font-semibold flex items-center gap-2">
                 <div className="p-1.5 bg-primary/10 rounded-lg">
                   <User className="h-4 w-4 text-primary" />
                 </div>
@@ -236,7 +241,7 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({
                   placeholder="Enter your full name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="text-lg h-14 pl-4 pr-12 transition-all duration-300 focus:shadow-lg focus:shadow-primary/20 border-2 focus:border-primary"
+                  className="text-base h-11 pl-4 pr-12 transition-all duration-300 focus:shadow-lg focus:shadow-primary/20 border-2 focus:border-primary"
                 />
                 {name.trim() && (
                   <div className="absolute right-4 top-1/2 -translate-y-1/2">
@@ -249,8 +254,8 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({
             </div>
 
             {/* Age Slider */}
-            <div className="space-y-5">
-              <Label className="text-base font-semibold flex items-center gap-2">
+            <div className="space-y-3">
+              <Label className="text-sm font-semibold flex items-center gap-2">
                 <div className="p-1.5 bg-primary/10 rounded-lg">
                   <Calendar className="h-4 w-4 text-primary" />
                 </div>
@@ -260,12 +265,12 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({
               
               <div className="relative px-2">
                 {/* Large Age Display */}
-                <div className="text-center mb-6">
+                <div className="text-center mb-3">
                   <div className="inline-block relative">
-                    <span className="text-7xl font-bold bg-gradient-to-br from-primary via-primary-glow to-accent bg-clip-text text-transparent">
+                    <span className="text-5xl font-bold bg-gradient-to-br from-primary via-primary-glow to-accent bg-clip-text text-transparent">
                       {age[0]}
                     </span>
-                    <span className="text-2xl text-muted-foreground ml-2">years</span>
+                    <span className="text-lg text-muted-foreground ml-2">years</span>
                   </div>
                 </div>
 
@@ -279,16 +284,16 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({
                 />
                 
                 {/* Generation Badge */}
-                <div className="mt-6 text-center">
-                  <div className={`inline-flex items-center gap-3 px-6 py-4 rounded-2xl ${generationInfo.bgColor} border-2 ${generationInfo.borderColor} shadow-lg transition-all duration-500 hover:scale-105`}>
-                    <div className={`p-2 bg-gradient-to-br ${generationInfo.gradient} rounded-xl`}>
-                      <generationInfo.icon className="h-5 w-5 text-white" />
+                <div className="mt-3 text-center">
+                  <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl ${generationInfo.bgColor} border-2 ${generationInfo.borderColor} shadow-lg transition-all duration-500 hover:scale-105`}>
+                    <div className={`p-1.5 bg-gradient-to-br ${generationInfo.gradient} rounded-lg`}>
+                      <generationInfo.icon className="h-4 w-4 text-white" />
                     </div>
                     <div className="text-left">
-                      <div className={`font-bold text-lg ${generationInfo.textColor}`}>
+                      <div className={`font-bold text-base ${generationInfo.textColor}`}>
                         {generationInfo.label}
                       </div>
-                      <div className="text-xs text-muted-foreground">
+                      <div className="text-xs text-muted-foreground hidden sm:block">
                         {generationInfo.description}
                       </div>
                     </div>
@@ -298,8 +303,8 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({
             </div>
 
             {/* Gender Selection */}
-            <div className="space-y-4">
-              <Label className="text-base font-semibold flex items-center gap-2">
+            <div className="space-y-3">
+              <Label className="text-sm font-semibold flex items-center gap-2">
                 <div className="p-1.5 bg-primary/10 rounded-lg">
                   <Brain className="h-4 w-4 text-primary" />
                 </div>
@@ -315,7 +320,7 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({
                 ].map((option) => (
                   <label
                     key={option.value}
-                    className={`relative flex flex-col items-center justify-center p-6 rounded-2xl border-2 cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105 ${
+                    className={`relative flex flex-col items-center justify-center p-4 rounded-xl border-2 cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105 ${
                       gender === option.value
                         ? `bg-gradient-to-br ${option.gradient} border-transparent text-white shadow-xl scale-105`
                         : 'bg-card border-input hover:border-primary/50'
@@ -329,8 +334,8 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({
                       onChange={(e) => setGender(e.target.value)}
                       className="sr-only"
                     />
-                    <span className="text-4xl mb-2">{option.emoji}</span>
-                    <span className={`font-semibold text-lg ${gender === option.value ? 'text-white' : ''}`}>
+                    <span className="text-3xl mb-1">{option.emoji}</span>
+                    <span className={`font-semibold text-base ${gender === option.value ? 'text-white' : ''}`}>
                       {option.label}
                     </span>
                     {gender === option.value && (
@@ -345,12 +350,12 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({
 
 
             {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 pt-6">
+            <div className="flex flex-col sm:flex-row gap-3 pt-3">
               <Button
                 type="button"
                 variant="outline"
-                onClick={onClose}
-                className="flex-1 h-14 text-base border-2 hover:bg-destructive/10 hover:border-destructive/50 transition-all duration-300"
+                onClick={handleCancel}
+                className="flex-1 h-11 text-sm border-2 hover:bg-destructive/10 hover:border-destructive/50 transition-all duration-300"
                 disabled={isSubmitting}
               >
                 <X className="h-5 w-5 mr-2" />
@@ -358,7 +363,7 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({
               </Button>
               <Button
                 type="submit"
-                className="flex-1 h-14 text-base bg-gradient-to-r from-primary via-primary-glow to-accent hover:shadow-2xl hover:shadow-primary/50 transition-all duration-300 font-semibold group"
+                className="flex-1 h-11 text-sm bg-gradient-to-r from-primary via-primary-glow to-accent hover:shadow-2xl hover:shadow-primary/50 transition-all duration-300 font-semibold group"
                 disabled={isSubmitting}
               >
                 {isSubmitting 
