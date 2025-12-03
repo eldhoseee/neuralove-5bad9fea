@@ -18,63 +18,63 @@ interface UserProfileFormProps {
 }
 
 const getGenerationInfo = (age: number) => {
-  if (age >= 18 && age <= 27) return { 
-    label: 'Gen Z', 
+  if (age >= 18 && age <= 27) return {
+    label: 'Gen Z',
     icon: Smartphone,
-    emoji: '📱', 
+    emoji: '📱',
     gradient: 'from-primary to-primary-glow',
-    bgColor: 'bg-primary/5', 
+    bgColor: 'bg-primary/5',
     borderColor: 'border-primary/20',
     textColor: 'text-primary',
     description: 'Digital native, socially conscious'
   };
-  if (age >= 28 && age <= 43) return { 
-    label: 'Millennial', 
+  if (age >= 28 && age <= 43) return {
+    label: 'Millennial',
     icon: Monitor,
-    emoji: '💻', 
+    emoji: '💻',
     gradient: 'from-primary-glow to-accent',
-    bgColor: 'bg-primary-glow/5', 
+    bgColor: 'bg-primary-glow/5',
     borderColor: 'border-primary-glow/20',
     textColor: 'text-primary-glow',
     description: 'Tech-savvy, value experiences'
   };
-  if (age >= 44 && age <= 59) return { 
-    label: 'Gen X', 
+  if (age >= 44 && age <= 59) return {
+    label: 'Gen X',
     icon: TrendingUp,
-    emoji: '📈', 
+    emoji: '📈',
     gradient: 'from-accent to-primary',
-    bgColor: 'bg-accent/5', 
+    bgColor: 'bg-accent/5',
     borderColor: 'border-accent/20',
     textColor: 'text-accent',
     description: 'Independent, adaptable'
   };
-  if (age >= 60 && age <= 78) return { 
-    label: 'Boomer', 
+  if (age >= 60 && age <= 78) return {
+    label: 'Boomer',
     icon: Tv,
-    emoji: '📺', 
+    emoji: '📺',
     gradient: 'from-primary to-accent',
-    bgColor: 'bg-secondary/5', 
+    bgColor: 'bg-secondary/5',
     borderColor: 'border-secondary/20',
     textColor: 'text-foreground',
     description: 'Hardworking, optimistic'
   };
-  return { 
-    label: 'Silent Generation', 
+  return {
+    label: 'Silent Generation',
     icon: Radio,
-    emoji: '📻', 
+    emoji: '📻',
     gradient: 'from-secondary to-primary',
-    bgColor: 'bg-muted/30', 
+    bgColor: 'bg-muted/30',
     borderColor: 'border-muted',
     textColor: 'text-muted-foreground',
     description: 'Traditional, loyal'
   };
 };
 
-const UserProfileForm: React.FC<UserProfileFormProps> = ({ 
-  cognitiveType, 
+const UserProfileForm: React.FC<UserProfileFormProps> = ({
+  cognitiveType,
   isForCouple = false,
-  onComplete, 
-  onClose 
+  onComplete,
+  onClose
 }) => {
   const [name, setName] = useState('');
   const [age, setAge] = useState([25]);
@@ -91,10 +91,51 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim() || !gender) {
+
+    // Enhanced validation
+    if (!name.trim()) {
       toast({
-        title: "Please complete required fields",
-        description: "Name and gender are required to proceed.",
+        title: "Name is required",
+        description: "Please enter your name to continue.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Name validation: 2-50 characters, letters and spaces only
+    if (name.trim().length < 2) {
+      toast({
+        title: "Name too short",
+        description: "Name must be at least 2 characters long.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (name.trim().length > 50) {
+      toast({
+        title: "Name too long",
+        description: "Name must be less than 50 characters.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Allow letters, spaces, hyphens, and apostrophes (for names like O'Brien)
+    const namePattern = /^[a-zA-Z\s'-]+$/;
+    if (!namePattern.test(name.trim())) {
+      toast({
+        title: "Invalid name format",
+        description: "Name can only contain letters, spaces, hyphens, and apostrophes.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!gender) {
+      toast({
+        title: "Gender is required",
+        description: "Please select your gender to proceed.",
         variant: "destructive"
       });
       return;
@@ -112,7 +153,7 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({
         title: "Test Mode",
         description: "Proceeding without saving to database",
       });
-      
+
       onComplete?.({
         id: 'test-id',
         name: name.trim(),
@@ -146,7 +187,7 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({
         age: age[0],
         gender
       });
-} catch (error: any) {
+    } catch (error: any) {
       console.error("create-profile failed, trying direct DB insert:", error);
       try {
         const { data: row, error: dbError } = await supabase
@@ -192,61 +233,62 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-background/95 backdrop-blur-md z-50 overflow-y-auto">
-      <div className="flex min-h-screen items-center justify-center p-2 sm:p-4">
-        {/* Decorative background elements */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-20 left-10 w-64 h-64 bg-primary/5 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-20 right-10 w-96 h-96 bg-accent/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-        </div>
+    <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
+      {/* Decorative background elements - Reduced for mobile */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-50">
+        <div className="absolute top-20 left-10 w-64 h-64 bg-primary/5 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-accent/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+      </div>
 
-        <Card className="w-full max-w-2xl bg-card/95 backdrop-blur-sm shadow-2xl border-primary/20 relative my-2">
-        <CardHeader className="text-center space-y-2 pb-4">
-          <div className="mx-auto w-12 h-12 bg-gradient-to-br from-primary to-primary-glow rounded-2xl flex items-center justify-center mb-1 animate-bounce shadow-lg">
-            <Heart className="h-6 w-6 text-primary-foreground" />
+      <Card className="w-full max-w-sm bg-card/95 backdrop-blur-md shadow-2xl border-primary/20 relative rounded-2xl flex flex-col max-h-[90vh] animate-in fade-in zoom-in-95 duration-300">
+        <CardHeader className="text-center space-y-1 pb-2 pt-4 px-4 shrink-0">
+          <div className="flex items-center justify-center gap-2 mb-1">
+            <div className="w-8 h-8 bg-gradient-to-br from-primary to-primary-glow rounded-xl flex items-center justify-center animate-bounce shadow-lg">
+              <Heart className="h-4 w-4 text-primary-foreground" />
+            </div>
+            <CardTitle className="text-xl font-bold bg-gradient-to-r from-primary via-primary-glow to-accent bg-clip-text text-transparent">
+              {isForCouple ? "Couple Setup" : "Create Profile"}
+            </CardTitle>
           </div>
-          <CardTitle className="text-2xl font-bold bg-gradient-to-r from-primary via-primary-glow to-accent bg-clip-text text-transparent">
-            {isForCouple ? "Couple Profile Setup" : "Create Your Profile"}
-          </CardTitle>
-          <p className="text-muted-foreground text-sm max-w-md mx-auto">
-            {isForCouple 
-              ? "Set up your profile to discover your couple compatibility" 
-              : "Tell us about yourself before we analyze your cognitive compatibility"
+          <p className="text-muted-foreground text-xs max-w-md mx-auto line-clamp-1">
+            {isForCouple
+              ? "Discover your couple compatibility"
+              : "Tell us about yourself"
             }
           </p>
-          
+
           {/* Progress Indicator */}
-          <div className="flex justify-center gap-2 pt-1">
-            <div className="h-1.5 w-12 bg-primary rounded-full"></div>
-            <div className="h-1.5 w-12 bg-primary/30 rounded-full"></div>
-            <div className="h-1.5 w-12 bg-primary/30 rounded-full"></div>
+          <div className="flex justify-center gap-1.5 pt-1">
+            <div className="h-1 w-8 bg-primary rounded-full"></div>
+            <div className="h-1 w-8 bg-primary/30 rounded-full"></div>
+            <div className="h-1 w-8 bg-primary/30 rounded-full"></div>
           </div>
         </CardHeader>
 
-        <CardContent className="space-y-4 p-4 sm:p-6">
-          <form onSubmit={handleSubmit} className="space-y-4">
+        <CardContent className="space-y-3 p-4 overflow-y-auto flex-1">
+          <form onSubmit={handleSubmit} className="space-y-3 h-full flex flex-col">
             {/* Name Field */}
-            <div className="space-y-2 group">
-              <Label htmlFor="name" className="text-sm font-semibold flex items-center gap-2">
-                <div className="p-1.5 bg-primary/10 rounded-lg">
-                  <User className="h-4 w-4 text-primary" />
+            <div className="space-y-1.5 group">
+              <Label htmlFor="name" className="text-xs font-semibold flex items-center gap-1.5">
+                <div className="p-1 bg-primary/10 rounded-md">
+                  <User className="h-3 w-3 text-primary" />
                 </div>
-                Your Name
+                Name
                 <span className="text-destructive">*</span>
               </Label>
               <div className="relative">
                 <Input
                   id="name"
                   type="text"
-                  placeholder="Enter your full name"
+                  placeholder="Your name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="text-base h-11 pl-4 pr-12 transition-all duration-300 focus:shadow-lg focus:shadow-primary/20 border-2 focus:border-primary"
+                  className="text-sm h-9 pl-3 pr-8 transition-all duration-300 focus:shadow-md focus:shadow-primary/10 border-input focus:border-primary"
                 />
                 {name.trim() && (
-                  <div className="absolute right-4 top-1/2 -translate-y-1/2">
-                    <div className="bg-green-500 rounded-full p-1">
-                      <Check className="h-4 w-4 text-white" />
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                    <div className="bg-green-500 rounded-full p-0.5">
+                      <Check className="h-3 w-3 text-white" />
                     </div>
                   </div>
                 )}
@@ -254,26 +296,21 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({
             </div>
 
             {/* Age Slider */}
-            <div className="space-y-3">
-              <Label className="text-sm font-semibold flex items-center gap-2">
-                <div className="p-1.5 bg-primary/10 rounded-lg">
-                  <Calendar className="h-4 w-4 text-primary" />
-                </div>
-                Your Age
-                <span className="text-destructive">*</span>
-              </Label>
-              
-              <div className="relative px-2">
-                {/* Large Age Display */}
-                <div className="text-center mb-3">
-                  <div className="inline-block relative">
-                    <span className="text-5xl font-bold bg-gradient-to-br from-primary via-primary-glow to-accent bg-clip-text text-transparent">
-                      {age[0]}
-                    </span>
-                    <span className="text-lg text-muted-foreground ml-2">years</span>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label className="text-xs font-semibold flex items-center gap-1.5">
+                  <div className="p-1 bg-primary/10 rounded-md">
+                    <Calendar className="h-3 w-3 text-primary" />
                   </div>
-                </div>
+                  Age
+                  <span className="text-destructive">*</span>
+                </Label>
+                <span className="text-xl font-bold bg-gradient-to-br from-primary via-primary-glow to-accent bg-clip-text text-transparent">
+                  {age[0]}
+                </span>
+              </div>
 
+              <div className="px-1 py-1">
                 <Slider
                   value={age}
                   onValueChange={setAge}
@@ -282,37 +319,30 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({
                   step={1}
                   className="w-full"
                 />
-                
-                {/* Generation Badge */}
-                <div className="mt-3 text-center">
-                  <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl ${generationInfo.bgColor} border-2 ${generationInfo.borderColor} shadow-lg transition-all duration-500 hover:scale-105`}>
-                    <div className={`p-1.5 bg-gradient-to-br ${generationInfo.gradient} rounded-lg`}>
-                      <generationInfo.icon className="h-4 w-4 text-white" />
-                    </div>
-                    <div className="text-left">
-                      <div className={`font-bold text-base ${generationInfo.textColor}`}>
-                        {generationInfo.label}
-                      </div>
-                      <div className="text-xs text-muted-foreground hidden sm:block">
-                        {generationInfo.description}
-                      </div>
-                    </div>
+
+                {/* Compact Generation Badge */}
+                <div className="mt-2 flex justify-center">
+                  <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg ${generationInfo.bgColor} border ${generationInfo.borderColor} shadow-sm`}>
+                    <generationInfo.icon className="h-3 w-3 text-primary" />
+                    <span className={`font-semibold text-xs ${generationInfo.textColor}`}>
+                      {generationInfo.label}
+                    </span>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Gender Selection */}
-            <div className="space-y-3">
-              <Label className="text-sm font-semibold flex items-center gap-2">
-                <div className="p-1.5 bg-primary/10 rounded-lg">
-                  <Brain className="h-4 w-4 text-primary" />
+            <div className="space-y-2">
+              <Label className="text-xs font-semibold flex items-center gap-1.5">
+                <div className="p-1 bg-primary/10 rounded-md">
+                  <Brain className="h-3 w-3 text-primary" />
                 </div>
                 Gender
                 <span className="text-destructive">*</span>
               </Label>
-              
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+
+              <div className="flex gap-2">
                 {[
                   { value: 'male', label: 'Male', emoji: '👨', gradient: 'from-blue-500 to-blue-600' },
                   { value: 'female', label: 'Female', emoji: '👩', gradient: 'from-pink-500 to-pink-600' },
@@ -320,11 +350,10 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({
                 ].map((option) => (
                   <label
                     key={option.value}
-                    className={`relative flex flex-col items-center justify-center p-4 rounded-xl border-2 cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105 ${
-                      gender === option.value
-                        ? `bg-gradient-to-br ${option.gradient} border-transparent text-white shadow-xl scale-105`
-                        : 'bg-card border-input hover:border-primary/50'
-                    }`}
+                    className={`relative flex-1 flex flex-col items-center justify-center p-2 rounded-lg border cursor-pointer transition-all duration-300 ${gender === option.value
+                      ? `bg-gradient-to-br ${option.gradient} border-transparent text-white shadow-md`
+                      : 'bg-card border-input hover:border-primary/50'
+                      }`}
                   >
                     <input
                       type="radio"
@@ -334,15 +363,10 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({
                       onChange={(e) => setGender(e.target.value)}
                       className="sr-only"
                     />
-                    <span className="text-3xl mb-1">{option.emoji}</span>
-                    <span className={`font-semibold text-base ${gender === option.value ? 'text-white' : ''}`}>
+                    <span className="text-lg mb-0.5">{option.emoji}</span>
+                    <span className={`font-medium text-xs ${gender === option.value ? 'text-white' : ''}`}>
                       {option.label}
                     </span>
-                    {gender === option.value && (
-                      <div className="absolute top-3 right-3 bg-white rounded-full p-1">
-                        <Check className="h-4 w-4 text-green-500" />
-                      </div>
-                    )}
                   </label>
                 ))}
               </div>
@@ -350,28 +374,28 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({
 
 
             {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row gap-3 pt-3">
+            <div className="flex gap-2 pt-2 mt-auto sm:mt-0">
               <Button
                 type="button"
                 variant="outline"
                 onClick={handleCancel}
-                className="flex-1 h-11 text-sm border-2 hover:bg-destructive/10 hover:border-destructive/50 transition-all duration-300"
+                className="flex-1 h-10 text-xs border hover:bg-destructive/10 hover:border-destructive/50 transition-all duration-300"
                 disabled={isSubmitting}
               >
-                <X className="h-5 w-5 mr-2" />
+                <X className="h-4 w-4 mr-1.5" />
                 Cancel
               </Button>
               <Button
                 type="submit"
-                className="flex-1 h-11 text-sm bg-gradient-to-r from-primary via-primary-glow to-accent hover:shadow-2xl hover:shadow-primary/50 transition-all duration-300 font-semibold group"
+                className="flex-[2] h-10 text-xs bg-gradient-to-r from-primary via-primary-glow to-accent hover:shadow-lg hover:shadow-primary/50 transition-all duration-300 font-semibold group"
                 disabled={isSubmitting}
               >
-                {isSubmitting 
-                  ? "Creating..." 
+                {isSubmitting
+                  ? "Creating..."
                   : (
                     <>
-                      {isForCouple ? "Start Compatibility Quiz" : "Start Quiz"}
-                      <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                      {isForCouple ? "Start Quiz" : "Start Quiz"}
+                      <ArrowRight className="h-4 w-4 ml-1.5 group-hover:translate-x-1 transition-transform" />
                     </>
                   )
                 }
@@ -380,8 +404,8 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({
           </form>
         </CardContent>
       </Card>
-      </div>
     </div>
+
   );
 };
 
