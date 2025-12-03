@@ -5,7 +5,6 @@ import RoastOfTheDay from "@/components/RoastOfTheDay";
 import HowItWorks from "@/components/HowItWorks";
 import Features from "@/components/Features";
 import CognitiveTypes from "@/components/CognitiveTypes";
-import TestimonialsSection from "@/components/TestimonialsSection";
 import FinalCTA from "@/components/FinalCTA";
 import Footer from "@/components/Footer";
 
@@ -17,7 +16,7 @@ const Index = () => {
       <Header hide={isModalOpen} />
       <HeroSection onModalStateChange={setIsModalOpen} />
       <RoastOfTheDay />
-      
+
       {/* Divider */}
       <div className="relative py-12 bg-background">
         <div className="container mx-auto px-6">
@@ -33,11 +32,10 @@ const Index = () => {
           </div>
         </div>
       </div>
-      
+
       <HowItWorks />
       <Features />
       <CognitiveTypes />
-      <TestimonialsSection />
       <FinalCTA />
       <Footer />
     </div>
